@@ -27,7 +27,7 @@
 
             {
 
-                $titles = @($cells | % { ("" + $_.InnerText).Trim() })
+                $titles = @($cells | ForEach-Object { ("" + $_.InnerText).Trim() })
                 continue
 
             }
@@ -38,7 +38,7 @@
 
             {
 
-                $titles = @(1..($cells.Count + 2) | % { "P$_" })
+                $titles = @(1..($cells.Count + 2) | ForEach-Object { "P$_" })
 
             }
 
