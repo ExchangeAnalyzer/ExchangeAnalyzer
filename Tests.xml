@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Tests>
+
+	<Test>
+		<Id>EXSRV001</Id>
+		<Category>Exchange Servers</Category>
+		<Name>Build Numbers</Name>
+		<Description>Exchange Servers are running the latest build.</Description>
+		<Reference>https://technet.microsoft.com/en-us/library/hh135098(v=exchg.150).aspx</Reference>
+		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
+		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>EXSRV002</Id>
+		<Category>Exchange Servers</Category>
+		<Name>Foo</Name>
+		<Description>Foo</Description>
+		<Reference>https://bing.com</Reference>
+		<IfPassedComments>All good bro!</IfPassedComments>
+		<IfFailedComments>I've made a terrible mistake.</IfFailedComments>
+	</Test>
+
+</Tests>
