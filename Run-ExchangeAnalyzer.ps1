@@ -51,29 +51,27 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 #This function rolls up test results into an object
 Function Get-TestResultObject($TestID, $PassedList, $FailedList)
 {
+    Write-Verbose "Rolling test result object for $TestID"
+     
     if ($PassedList)
     {
-        foreach ($PassedServer in $PassedList)
-        {
-            $PassedTextList = $PassedTextList + "`r`n" + $PassedServer
-        }
         $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).IfPassedComments
+        $TestOutcome = "Passed"
     }
+
     if ($FailedList)
     {
-        foreach ($FailedServer in $FailedList)
-        {
-            $FailedTextList = $FailedTextList + "`r`n" + $FailedServer
-        }
         $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).IfFailedComments
+        $TestOutcome = "Failed"
     }
 
     $result = [Ordered]@{
         TestID = $TestID
         TestCategory = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Category
         TestName = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Name
-        PassedServers = $PassedTextList
-        FailedServers = $FailedTextList
+        TestOutcome = $TestOutcome
+        PassedObjects = $PassedList
+        FailedObjects = $FailedList
         Comments = $TestComments
         Reference = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Reference
     }
@@ -89,10 +87,13 @@ Function Get-TestResultObject($TestID, $PassedList, $FailedList)
 #Link: #http://www.leeholmes.com/blog/2015/01/05/extracting-tables-from-powershells-invoke-webrequest/
 Function Get-ExchangeBuildNumbers()
 {
+    Write-Verbose "Fetching Exchange build numbers from TechNet"
+    
     $URL = "https://technet.microsoft.com/en-us/library/hh135098(v=exchg.160).aspx"
     $WebPage = Invoke-WebRequest -Uri $URL
     $tables = @($WebPage.Parsedhtml.getElementsByTagName("TABLE"))
 
+    Write-Verbose "Parsing results from web request"
     foreach ($table in $tables)
     {
         $rows = @($table.Rows)
@@ -139,7 +140,7 @@ Function Get-ExchangeBuildNumbers()
 Function Run-EXSRV001()
 {
     $TestID = "EXSRV001"
-    $ExchangeBuildNumbers = Get-ExchangeBuildNumbers
+    Write-Verbose "Starting test $TestID"
 
     $PassedList = @()
     $FailedList = @()
@@ -185,7 +186,8 @@ Function Run-EXSRV001()
     {
         $PassedList += $($server.Name)
     }
-    #$FailedList += "EX2013SRV2"
+    
+    $FailedList += "Foo"
 
     $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
 
@@ -204,6 +206,8 @@ Function Run-EXSRV001()
 #region -Basic Data Collection
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
 #re-used throughout the script.
+
+Write-Verbose "Collecting data about the Exchange organization"
 
 $ExchangeOrganization = Get-OrganizationConfig
 $ExchangeServers = @(Get-ExchangeServer)
@@ -228,6 +232,8 @@ $report += $EXSRV001
 
 #region -Generate Report
 
+Write-Verbose "Generating HTML report"
+
 #HTML HEAD with styles
 $htmlhead="<html>
 			<style>
@@ -247,19 +253,101 @@ $htmlhead="<html>
 			<h1 align=""center"">Exchange Analyzer Report</h1>
 			<h3 align=""center"">Generated: $now</h3>"
 
-$bodyHtml = $report | ConvertTo-Html -Fragment
+
+#Build a list of report categories
+$reportcategories = $report | Group-Object -Property TestCategory | Select Name
+
+#Create report HTML for each category
+foreach ($reportcategory in $reportcategories)
+{
+    $categoryHtmlTable = $null
+    
+    #Create HTML table headings
+    $categoryHtmlHeader = "<h3>Category: $($reportcategory.Name)</h3>
+					        <p>
+					        <table>
+					        <tr>
+					        <th>Test ID</th>
+					        <th>Test Category</th>
+					        <th>Test Name</th>
+					        <th>Test Outcome</th>
+					        <th>Passed Objects</th>
+					        <th>Failed Objects</th>
+					        <th>Comments</th>
+					        <th>Reference</th>
+					        </tr>"
+
+    $categoryHtmlTable += $categoryHtmlHeader
+
+    #Generate each HTML table row
+    foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
+    {
+        $HtmlTableRow = "<tr>"
+        $htmltablerow += "<td>$($reportline.TestID)</td>"
+		$htmltablerow += "<td>$($reportline.TestCategory)</td>"
+		$htmltablerow += "<td>$($reportline.TestName)</td>"
+    
+        Switch ($reportline.TestOutcome)
+        {	
+            "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
+            "Failed" {$htmltablerow += "<td class=""fail"">$($reportline.TestOutcome)</td>"}
+            default {$htmltablerow += "<td>$($reportline.TestOutcome)</td>"}
+		}
+		
+        if ($($reportline.PassedObjects).Count -gt 0)
+        {
+            $ul = "<ul>"
+            foreach ($object in $reportline.PassedObjects)
+            {
+                $ul += "<li>$object</li>"
+            }
+            $ul += "</ul>"
+            $htmltablerow += "<td>$ul</td>"
+        }
+        else
+        {
+            $htmltablerow += "<td>n/a</td>"
+        }
+
+        if ($($reportline.FailedObjects).Count -gt 0)
+        {
+            $ul = "<ul>"
+            foreach ($object in $reportline.FailedObjects)
+            {
+                $ul += "<li>$object</li>"
+            }
+            $ul += "</ul>"
+            $htmltablerow += "<td>$ul</td>"
+        }
+        else
+        {
+            $htmltablerow += "<td>n/a</td>"
+        }
+		
+        $htmltablerow += "<td>$($reportline.Comments)</td>"
+		$htmltablerow += "<td><a href=""$($reportline.Reference)"">$($reportline.Reference)</a></td>"
+    
+        $categoryHtmlTable += $HtmlTableRow
+    }
+
+    $categoryHtmlTable += "</table></p>"
+
+    #Add the category to the full report
+    $bodyHtml += $categoryHtmlTable
+}
 
 $htmltail = "</body>
 			</html>"
 
+#Roll the final HTML by assembling the head, body, and tail
 $reportHtml = $htmlhead + $bodyHtml + $htmltail
-
 $reportHtml | Out-File $reportFile -Force
 
 #endregion Generate Report
 
 
 #endregion Main Script
+Write-Verbose "Finished."
 #...................................
 # Finished
 #...................................
