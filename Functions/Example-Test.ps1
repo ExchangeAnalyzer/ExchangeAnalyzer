@@ -1,3 +1,30 @@
+#These variables will be needed by most tests
+#...................................
+# Variables
+#...................................
+
+$myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$now = Get-Date
+
+#region Get Tests from XML
+
+#Check for presence of Tests.xml file and exit if not found.
+if (!(Test-Path "$MyDir\Tests.xml"))
+{
+    Write-Warning "Tests.xml file not found."
+    EXIT
+}
+
+[xml]$TestsFile = Get-Content "$MyDir\Tests.xml"
+$ExchangeAnalyzerTests = @($TestsFile.Tests)
+
+#endregion Get Tests from XML
+
+
+#...................................
+# Functions
+#...................................
+
 #This function rolls up test results into an object
 Function Get-TestResultObject($TestID, $PassedList, $FailedList)
 {
@@ -40,9 +67,7 @@ Function Run-TESTID()
     $PassedList = @()
     $FailedList = @()
 
-    #Your test logic goes here
-    
-    #Populate the results    
+    #Your test logic goes here and populates the results
     $PassedList += "Foo"
     $FailedList += "Bar" #An empty failed list will result in a test passing.
 
@@ -51,3 +76,26 @@ Function Run-TESTID()
 
     return $ReportObj
 }
+
+
+#...................................
+# Main Script
+#...................................
+
+
+#region -Basic Data Collection
+#Collect information about the Exchange organization, databases, DAGs, and servers to be
+#re-used throughout the script.
+
+Write-Verbose "Collecting data about the Exchange organization"
+
+$ExchangeOrganization = Get-OrganizationConfig
+$ExchangeServers = @(Get-ExchangeServer)
+$ExchangeDatabases = @(Get-MailboxDatabase)
+$ExchangeDAGs = @(Get-DatabaseAvailabilityGroup)
+
+#endregion -Basic Data Collection
+
+#Run your test and see the results
+Run-TESTID
+
