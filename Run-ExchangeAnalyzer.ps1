@@ -180,8 +180,12 @@ Function Run-EXSRV001()
     $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
 
     #Faking the test for now
-    $PassedList += "EX2013SRV1"
-    $FailedList += "EX2013SRV2"
+    
+    foreach($server in $ExchangeServers)
+    {
+        $PassedList += $($server.Name)
+    }
+    #$FailedList += "EX2013SRV2"
 
     $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
 
