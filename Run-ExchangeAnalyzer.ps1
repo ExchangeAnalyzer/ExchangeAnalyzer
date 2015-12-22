@@ -179,15 +179,61 @@ Function Run-EXSRV001()
 
     $Exchange2013Builds = $Exchange2013Builds | Sort 'Product Name','Release Date' -Descending
     $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
-
-    #Faking the test for now
     
     foreach($server in $ExchangeServers)
     {
-        $PassedList += $($server.Name)
+        Write-Verbose "Checking $server"
+        $adv = $server.AdminDisplayVersion
+        if ($adv -like "Version 15.*")
+        {
+            Write-Verbose "$server is at least Exchange 2013"
+
+            $build = ($adv -split "Build ").Trim()[1]
+            $build = $build.SubString(0,$build.Length-1)
+            $arrbuild = $build.Split(".")
+            
+            [int]$tmp = $arrbuild[0]
+            $buildpart1 = "{0:D4}" -f $tmp
+            
+            [int]$tmp = $arrbuild[1]
+            $buildpart2 = "{0:D3}" -f $tmp
+            
+            $MinorVersion = "$buildpart1.$buildpart2"
+
+            if ($adv -like "Version 15.0*")
+            {
+                $MajorVersion = "15.00"
+                $buildnumber = "$MajorVersion.$MinorVersion"
+                $Index = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                $buildage = New-TimeSpan -Start ($Exchange2013Builds[$index]."Release Date") -End $now
+            }
+            if ($adv -like "Version 15.1*")
+            {
+                $MajorVersion = "15.01"
+                $buildnumber = "$MajorVersion.$MinorVersion"
+                $Index = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
+                $buildage = New-TimeSpan -Start ($Exchange2013Builds[$index]."Release Date") -End $now
+            }
+
+            Write-Verbose "$server is N-$index"
+            
+            if ($index -eq 0)
+            {
+                $PassedList += $($Server.Name)
+            }
+            else
+            {
+                $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
+                Write-Verbose "Adding to fail list: $tmpstring"
+                $FailedList += $tmpstring
+            }
+        }
+        else
+        {
+            #Skip servers earlier than v15.0
+            Write-Verbose "$server is earlier than Exchange 2013"
+        }
     }
-    
-    $FailedList += "Foo"
 
     $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
 
