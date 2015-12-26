@@ -517,6 +517,7 @@ $htmlhead="<html>
 			td.warn{background: #FFE600;}
 			td.fail{background: #FF0000; color: #ffffff;}
 			td.info{background: #85D4FF;}
+            ul{list-style: inside; padding-left: 0px;}
 			</style>
 			<body>
 			<h1 align=""center"">Exchange Analyzer Report</h1>
