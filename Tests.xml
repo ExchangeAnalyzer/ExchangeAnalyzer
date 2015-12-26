@@ -20,5 +20,15 @@
 		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
+	
+		<Test>
+		<Id>CAS002</Id>
+		<Category>Client Access</Category>
+		<Name>Server FQDNs in URLs</Name>
+		<Description>Check that CAS URLs don't contain server FQDNs.</Description>
+		<Reference>https://technet.microsoft.com/en-us/library/dd351044(v=exchg.150).aspx#digitalcertificatesbestpractices</Reference>
+		<IfPassedComments>No Exchange HTTPS services have URLs containing server FQDNs.</IfPassedComments>
+		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
+	</Test>
 
 </Tests>
