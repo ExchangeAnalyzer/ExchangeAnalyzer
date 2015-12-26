@@ -12,13 +12,13 @@
 	</Test>
 
 	<Test>
-		<Id>EXSRV002</Id>
-		<Category>Exchange Servers</Category>
-		<Name>Foo</Name>
-		<Description>Foo</Description>
-		<Reference>https://bing.com</Reference>
-		<IfPassedComments>All good bro!</IfPassedComments>
-		<IfFailedComments>I've made a terrible mistake.</IfFailedComments>
+		<Id>CAS001</Id>
+		<Category>Client Access</Category>
+		<Name>Client Access Namespaces</Name>
+		<Description>Check if multiple namespaces exist for a protocol within the same AD site.</Description>
+		<Reference>https://#</Reference>
+		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
+		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
 
 </Tests>
