@@ -240,6 +240,224 @@ Function Run-EXSRV001()
     return $ReportObj
 }
 
+#This function tests each Exchange site to determine whether more than one CAS URL/namespace
+#exists for each HTTPS service.
+Function Run-CAS001()
+{
+    $TestID = "CAS001"
+    Write-Verbose "Starting test $TestID"
+
+    $PassedList = @()
+    $FailedList = @()
+
+    $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
+    $sites = @($ClientAccessServers | Group-Object -Property:Site | Select Name)
+
+    # Get the URLs for each site, and if more than one URL exists for a HTTPS service in the same site it is
+    # considered a fail.
+    foreach ($site in $sites)
+    {
+        $SiteName = ($Site.Name).Split("/")[-1]
+
+        Write-Verbose "Processing $SiteName"
+
+        $SiteOWAInternalUrls = @()
+        $SiteOWAExternalUrls = @()
+
+        $SiteECPInternalUrls = @()
+        $SiteECPExternalUrls = @()
+
+        $SiteOABInternalUrls = @()
+        $SiteOABExternalUrls = @()
+    
+        $SiteRPCInternalUrls = @()
+        $SiteRPCExternalUrls = @()
+
+        $SiteEWSInternalUrls = @()
+        $SiteEWSExternalUrls = @()
+
+        $SIteMAPIInternalUrls = @()
+        $SiteMAPIExternalUrls = @()
+
+        $SiteActiveSyncInternalUrls = @()
+        $SiteActiveSyncExternalUrls = @()
+
+        $SiteAutodiscoverUrls = @()
+
+        $CASinSite = @($ClientAccessServers | Where {$_.Site -eq $site.Name})
+
+        Write-Verbose "Getting OWA Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASOWAUrls = @(Get-OWAVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASOWAUrl in $CASOWAUrls)
+            {
+                if (!($SiteOWAInternalUrls -Contains $CASOWAUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASOWAUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteOWAInternalUrls += $CASOWAUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteOWAExternalUrls -Contains $CASOWAUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASOWAUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteOWAExternalUrls += $CASOWAUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteOWAInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteOWAExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting ECP Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASECPUrls = @(Get-ECPVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASECPUrl in $CASECPUrls)
+            {
+                if (!($SiteECPInternalUrls -Contains $CASECPUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASECPUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteECPInternalUrls += $CASECPUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteECPExternalUrls -Contains $CASECPUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASECPUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteECPExternalUrls += $CASECPUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteECPInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteECPExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting OAB Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASOABUrls = @(Get-OABVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASOABUrl in $CASOABUrls)
+            {
+                if (!($SiteOABInternalUrls -Contains $CASOABUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASOABUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteOABInternalUrls += $CASOABUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteOABExternalUrls -Contains $CASOABUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASOABUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteOABExternalUrls += $CASOABUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteOABInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteOABExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting RPC Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $OA = Get-OutlookAnywhere -Server $CAS -AdPropertiesOnly | Select InternalHostName,ExternalHostName
+            [string]$OAInternalHostName = $OA.InternalHostName
+            [string]$OAExternalHostName = $OA.ExternalHostName
+
+            [string]$OAInternalUrl = "https://$OAInternalHostName/rpc"
+            [string]$OAExternalUrl = "https://$OAExternalHostName/rpc"
+
+            if (!($SiteRPCInternalUrls -Contains $OAInternalUrl) -and ($OAInternalHostName -ne $null))
+            {
+                $SiteRPCInternalUrls += $OAInternalUrl
+            }
+            if (!($SiteRPCExternalUrls -Contains $OAExternalUrl) -and ($OAExternalHostName -ne $null) -and ($OAExternalHostName -ne ""))
+            {
+                $SiteRPCExternalUrls += $OAExternalUrl
+            }
+        }
+
+        if ($SiteRPCInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteRPCExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting EWS Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASEWSUrls = @(Get-WebServicesVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASEWSUrl in $CASEWSUrls)
+            {
+                if (!($SiteEWSInternalUrls -Contains $CASEWSUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASEWSUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteEWSInternalUrls += $CASEWSUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteEWSExternalUrls -Contains $CASEWSUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASEWSUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteEWSExternalUrls += $CASEWSUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteEWSInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteEWSExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting MAPI Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASMAPIUrls = @(Get-MAPIVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASMAPIUrl in $CASMAPIUrls)
+            {
+                if (!($SiteMAPIInternalUrls -Contains $CASMAPIUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASMAPIUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteMAPIInternalUrls += $CASMAPIUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteMAPIExternalUrls -Contains $CASMAPIUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASMAPIUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteMAPIExternalUrls += $CASMAPIUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteMAPIInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteMAPIExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting ActiveSync Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASActiveSyncUrls = @(Get-ActiveSyncVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL)
+            foreach ($CASActiveSyncUrl in $CASActiveSyncUrls)
+            {
+                if (!($SiteActiveSyncInternalUrls -Contains $CASActiveSyncUrl.InternalURL.AbsoluteUri.ToLower()) -and ($CASActiveSyncUrl.InternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteActiveSyncInternalUrls += $CASActiveSyncUrl.InternalURL.AbsoluteUri.ToLower()
+                }
+                if (!($SiteActiveSyncExternalUrls -Contains $CASActiveSyncUrl.ExternalURL.AbsoluteUri.ToLower()) -and ($CASActiveSyncUrl.ExternalURL.AbsoluteUri.ToLower() -ne $null))
+                {
+                    $SiteActiveSyncExternalUrls += $CASActiveSyncUrl.ExternalUrl.AbsoluteUri.ToLower()
+                }
+            }
+        }
+
+        if ($SiteActiveSyncInternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+        if ($SiteActiveSyncExternalUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        Write-Verbose "Getting AutoDiscover Urls"
+
+        foreach ($CAS in $CASinSite)
+        {
+            $CASServer = Get-ClientAccessServer $CAS.Name
+            [string]$AutodiscoverSCP = ($CASServer).AutoDiscoverServiceInternalUri.AbsoluteUri.ToLower()
+            $CASAutodiscoverUrl = $AutodiscoverSCP.Replace("/Autodiscover.xml","")
+            if (!($SiteAutodiscoverUrls -Contains $CASAutodiscoverUrl)) {$SiteAutodiscoverUrls += $CASAutodiscoverUrl}
+        }
+
+        if ($SiteAutodiscoverUrls.Count -gt 1) { if ($FailedList -notcontains $SiteName) { $FailedList += $SiteName} }
+
+        #If the site is not in FailedList by now, add it to $PassedList
+        if ($FailedList -notcontains $SiteName) { $PassedList += $SiteName }
+    }
+
+    #Roll the object to be returned to the results
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
+
+    return $ReportObj
+}
+
 #endregion
 
 
@@ -266,15 +484,20 @@ $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup)
 #region -Start Exchange Server Tests
 
 #region --EXSRV001: Exchange Servers are running the latest build
-
 $EXSRV001 = Run-EXSRV001
 $report += $EXSRV001
-
-
 #endregion --EXSRV001
 
 #endregion - End Exchange Server Tests
 
+#region -Start Client Access Tests
+
+#region --CAS001: Check if multiple namespaces exist for a protocol within the same AD site.
+$CAS001 = Run-CAS001
+$report += $CAS001
+#endregion --CAS001
+
+#endregion -Client Access tests
 
 #region -Generate Report
 
