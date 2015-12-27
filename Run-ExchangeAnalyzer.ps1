@@ -49,7 +49,7 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 #...................................
 
 #This function rolls up test results into an object
-Function Get-TestResultObject($TestID, $PassedList, $FailedList)
+Function Get-TestResultObject($TestID, $PassedList, $FailedList, $ErrorList)
 {
     Write-Verbose "Rolling test result object for $TestID"
      
@@ -68,6 +68,12 @@ Function Get-TestResultObject($TestID, $PassedList, $FailedList)
     if (-not $PassedList -and -not $FailedList)
     {
         $TestComments = "Test could not run."
+        $TestOutcome = "Warning"
+    }
+
+    if ($ErrorList)
+    {
+        $TestComments = "Errors were encountered. $($ErrorList)"
         $TestOutcome = "Warning"
     }
 
@@ -96,48 +102,57 @@ Function Get-ExchangeBuildNumbers()
     Write-Verbose "Fetching Exchange build numbers from TechNet"
     
     $URL = "https://technet.microsoft.com/en-us/library/hh135098(v=exchg.160).aspx"
-    $WebPage = Invoke-WebRequest -Uri $URL
-    $tables = @($WebPage.Parsedhtml.getElementsByTagName("TABLE"))
-
-    Write-Verbose "Parsing results from web request"
-    foreach ($table in $tables)
+    try
     {
-        $rows = @($table.Rows)
+        $WebPage = Invoke-WebRequest -Uri $URL -ErrorAction STOP
+        $tables = @($WebPage.Parsedhtml.getElementsByTagName("TABLE"))
 
-        foreach($row in $rows)
+        Write-Verbose "Parsing results from web request"
+        foreach ($table in $tables)
         {
-            $cells = @($row.Cells)
+            $rows = @($table.Rows)
 
-            ## If we’ve found a table header, remember its titles
-            if($cells[0].tagName -eq "TH")
+            foreach($row in $rows)
             {
-                $titles = @($cells | ForEach-Object { ("" + $_.InnerText).Trim() })
-                continue
+                $cells = @($row.Cells)
+
+                ## If we’ve found a table header, remember its titles
+                if($cells[0].tagName -eq "TH")
+                {
+                    $titles = @($cells | ForEach-Object { ("" + $_.InnerText).Trim() })
+                    continue
+                }
+
+                ## If we haven’t found any table headers, make up names "P1", "P2", etc.
+                if(-not $titles)
+                {
+                    $titles = @(1..($cells.Count + 2) | ForEach-Object { "P$_" })
+                }
+
+                ## Now go through the cells in the the row. For each, try to find the
+                ## title that represents that column and create a hashtable mapping those
+                ## titles to content
+
+                $resultObject = [Ordered] @{}
+
+                for($counter = 0; $counter -lt $cells.Count; $counter++)
+                {
+                    $title = $titles[$counter]
+                    if(-not $title) { continue }
+                    $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
+                }
+
+                ## And finally cast that hashtable to a PSCustomObject
+                [PSCustomObject] $resultObject
             }
-
-            ## If we haven’t found any table headers, make up names "P1", "P2", etc.
-            if(-not $titles)
-            {
-                $titles = @(1..($cells.Count + 2) | ForEach-Object { "P$_" })
-            }
-
-            ## Now go through the cells in the the row. For each, try to find the
-            ## title that represents that column and create a hashtable mapping those
-            ## titles to content
-
-            $resultObject = [Ordered] @{}
-
-            for($counter = 0; $counter -lt $cells.Count; $counter++)
-            {
-                $title = $titles[$counter]
-                if(-not $title) { continue }
-                $resultObject[$title] = ("" + $cells[$counter].InnerText).Trim()
-            }
-
-            ## And finally cast that hashtable to a PSCustomObject
-            [PSCustomObject] $resultObject
-        }
     }
+    }
+    catch
+    {
+        Write-Warning $_.Exception.Message
+        $ExchangeBuildNumbers = "An error occurred. $($_.Exception.Message)"
+    }
+
     return $ExchangeBuildNumbers
 }
 
@@ -196,98 +211,106 @@ Function Run-EXSRV001()
 
     $PassedList = @()
     $FailedList = @()
+    $ErrorList = @()
 
     $TechNetBuilds = Get-ExchangeBuildNumbers
-    $Exchange2013Builds = @()
-    $Exchange2016Builds = @()
-
-    #Process results to rename properties, convert release date strings
-    #to proper date values, and exclude legacy versions
-    foreach ($build in $TechNetBuilds)
+    if ($TechNetBuilds -like "An error occurred*")
     {
-        if ($build.'Build number' -like "15.00.*")
-        {
-            $BuildProperties = [Ordered]@{
-                    'Product Name'="Exchange Server 2013"
-                    'Description'=$build.'Product name'
-                    'Build Number'=$build.'Build number'
-                    'Release Date'=$(Get-Date $build.'Release date')
-                    }
-            $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
-            $Exchange2013Builds += $buildObject
-        }
-        elseif ($build.'Build number' -like "15.01.*")
-        {
-            $BuildProperties = [Ordered]@{
-                    'Product Name'="Exchange Server 2016"
-                    'Description'=$build.'Product name'
-                    'Build Number'=$build.'Build number'
-                    'Release Date'=$(Get-Date $build.'Release date')
-                    }
-            $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
-            $Exchange2016Builds += $buildObject
-        }
+        $ErrorList += $TechNetBuilds
     }
-
-    $Exchange2013Builds = $Exchange2013Builds | Sort 'Product Name','Release Date' -Descending
-    $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
-    
-    foreach($server in $ExchangeServers)
+    else
     {
-        Write-Verbose "Checking $server"
-        $adv = $server.AdminDisplayVersion
-        if ($adv -like "Version 15.*")
+        $Exchange2013Builds = @()
+        $Exchange2016Builds = @()
+
+        #Process results to rename properties, convert release date strings
+        #to proper date values, and exclude legacy versions
+        foreach ($build in $TechNetBuilds)
         {
-            Write-Verbose "$server is at least Exchange 2013"
-
-            $build = ($adv -split "Build ").Trim()[1]
-            $build = $build.SubString(0,$build.Length-1)
-            $arrbuild = $build.Split(".")
-            
-            [int]$tmp = $arrbuild[0]
-            $buildpart1 = "{0:D4}" -f $tmp
-            
-            [int]$tmp = $arrbuild[1]
-            $buildpart2 = "{0:D3}" -f $tmp
-            
-            $MinorVersion = "$buildpart1.$buildpart2"
-
-            if ($adv -like "Version 15.0*")
+            if ($build.'Build number' -like "15.00.*")
             {
-                $MajorVersion = "15.00"
-                $buildnumber = "$MajorVersion.$MinorVersion"
-                $CASndex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
-                $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                $BuildProperties = [Ordered]@{
+                        'Product Name'="Exchange Server 2013"
+                        'Description'=$build.'Product name'
+                        'Build Number'=$build.'Build number'
+                        'Release Date'=$(Get-Date $build.'Release date')
+                        }
+                $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
+                $Exchange2013Builds += $buildObject
             }
-            if ($adv -like "Version 15.1*")
+            elseif ($build.'Build number' -like "15.01.*")
             {
-                $MajorVersion = "15.01"
-                $buildnumber = "$MajorVersion.$MinorVersion"
-                $CASndex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
-                $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                $BuildProperties = [Ordered]@{
+                        'Product Name'="Exchange Server 2016"
+                        'Description'=$build.'Product name'
+                        'Build Number'=$build.'Build number'
+                        'Release Date'=$(Get-Date $build.'Release date')
+                        }
+                $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
+                $Exchange2016Builds += $buildObject
             }
+        }
 
-            Write-Verbose "$server is N-$CASndex"
-            
-            if ($CASndex -eq 0)
+        $Exchange2013Builds = $Exchange2013Builds | Sort 'Product Name','Release Date' -Descending
+        $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
+    
+        foreach($server in $ExchangeServers)
+        {
+            Write-Verbose "Checking $server"
+            $adv = $server.AdminDisplayVersion
+            if ($adv -like "Version 15.*")
             {
-                $PassedList += $($Server.Name)
+                Write-Verbose "$server is at least Exchange 2013"
+
+                $build = ($adv -split "Build ").Trim()[1]
+                $build = $build.SubString(0,$build.Length-1)
+                $arrbuild = $build.Split(".")
+            
+                [int]$tmp = $arrbuild[0]
+                $buildpart1 = "{0:D4}" -f $tmp
+            
+                [int]$tmp = $arrbuild[1]
+                $buildpart2 = "{0:D3}" -f $tmp
+            
+                $MinorVersion = "$buildpart1.$buildpart2"
+
+                if ($adv -like "Version 15.0*")
+                {
+                    $MajorVersion = "15.00"
+                    $buildnumber = "$MajorVersion.$MinorVersion"
+                    $CASndex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                }
+                if ($adv -like "Version 15.1*")
+                {
+                    $MajorVersion = "15.01"
+                    $buildnumber = "$MajorVersion.$MinorVersion"
+                    $CASndex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
+                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                }
+
+                Write-Verbose "$server is N-$CASndex"
+            
+                if ($CASndex -eq 0)
+                {
+                    $PassedList += $($Server.Name)
+                }
+                else
+                {
+                    $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
+                    Write-Verbose "Adding to fail list: $tmpstring"
+                    $FailedList += $tmpstring
+                }
             }
             else
             {
-                $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
-                Write-Verbose "Adding to fail list: $tmpstring"
-                $FailedList += $tmpstring
+                #Skip servers earlier than v15.0
+                Write-Verbose "$server is earlier than Exchange 2013"
             }
-        }
-        else
-        {
-            #Skip servers earlier than v15.0
-            Write-Verbose "$server is earlier than Exchange 2013"
         }
     }
 
-    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList $ErrorList
 
     return $ReportObj
 }
@@ -301,6 +324,7 @@ Function Run-CAS001()
 
     $PassedList = @()
     $FailedList = @()
+    $ErrorList = @()
 
     $sites = @($ClientAccessServers | Group-Object -Property:Site | Select Name)
 
@@ -497,7 +521,7 @@ Function Run-CAS001()
     }
 
     #Roll the object to be returned to the results
-    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList $ErrorList
 
     return $ReportObj
 }
@@ -510,6 +534,7 @@ Function Run-CAS002()
 
     $PassedList = @()
     $FailedList = @()
+    $ErrorList = @()
 
     foreach ($CAS in $ClientAccessServers)
     {
@@ -536,7 +561,7 @@ Function Run-CAS002()
         }
     }
 
-    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList $ErrorList
 
     return $ReportObj
 }
@@ -556,10 +581,19 @@ Function Run-CAS002()
 
 Write-Verbose "Collecting data about the Exchange organization"
 
-$ExchangeOrganization = Get-OrganizationConfig
-$ExchangeServers = @(Get-ExchangeServer)
-$ExchangeDatabases = @(Get-MailboxDatabase -Status)
-$ExchangeDAGs = @(Get-DatabaseAvailabilityGroup)
+try
+{
+    $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
+    $ExchangeServers = @(Get-ExchangeServer -ErrorAction STOP)
+    $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
+    $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -Status -ErrorAction STOP)
+}
+catch
+{
+    Write-Warning "An error has occurred during basic data collection."
+    Write-Warning $_.Exception.Message
+    EXIT
+}
 
 #endregion -Basic Data Collection
 
