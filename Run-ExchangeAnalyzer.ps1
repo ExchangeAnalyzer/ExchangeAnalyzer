@@ -65,6 +65,12 @@ Function Get-TestResultObject($TestID, $PassedList, $FailedList)
         $TestOutcome = "Failed"
     }
 
+    if (-not $PassedList -and -not $FailedList)
+    {
+        $TestComments = "Test could not run."
+        $TestOutcome = "Warning"
+    }
+
     $result = [Ordered]@{
         TestID = $TestID
         TestCategory = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Category
@@ -650,6 +656,7 @@ foreach ($reportcategory in $reportcategories)
         {	
             "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
             "Failed" {$htmltablerow += "<td class=""fail"">$($reportline.TestOutcome)</td>"}
+            "Warning" {$HtmlTableRow += "<td class=""warn"">$($reportline.TestOutcome)</td>"}
             default {$htmltablerow += "<td>$($reportline.TestOutcome)</td>"}
 		}
 		
