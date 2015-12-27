@@ -173,7 +173,7 @@ Function Get-ExchangeURLs()
             AutoDSCP = $AutoD.AutoDiscoverServiceInternalUri
             }
             
-        $CASObj = New-Object -TypeName PSObject -Property $props            
+        $CASObj = New-Object -TypeName PSObject -Property $props
 
         $results += $CASObj
     }
@@ -496,6 +496,45 @@ Function Run-CAS001()
     return $ReportObj
 }
 
+#This function tests each CAS URL to determine whether it contains a server FQDN
+Function Run-CAS002()
+{
+    $TestID = "CAS002"
+    Write-Verbose "----- Starting test $TestID"
+
+    $PassedList = @()
+    $FailedList = @()
+
+    foreach ($CAS in $ClientAccessServers)
+    {
+        $HasUrlsWithFQDN = $false        
+        $serverFQDN = $CAS.Fqdn.ToLower()
+        $serverURLs = @($CASURLs | Where {$_.Name -ieq $CAS.Name})
+        $propertyNames = @($serverURLs | Get-Member -Type NoteProperty | Where {$_.Name -ne "Name"} | Select Name)
+        foreach ($name in $propertyNames)
+        {
+            Write-Verbose "Checking URL $($name.Name)"
+            if ($serverURLs."$($name.name)" -icontains $serverFQDN)
+            {
+                $HasUrlsWithFQDN = $true
+            }
+        }
+
+        if ($HasUrlsWithFQDN)
+        {
+            $FailedList += $($CAS.Name)
+        }
+        else
+        {
+            $PassedList += $($CAS.Name)
+        }
+    }
+
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList
+
+    return $ReportObj
+}
+
 #endregion
 
 
@@ -513,7 +552,7 @@ Write-Verbose "Collecting data about the Exchange organization"
 
 $ExchangeOrganization = Get-OrganizationConfig
 $ExchangeServers = @(Get-ExchangeServer)
-$ExchangeDatabases = @(Get-MailboxDatabase)
+$ExchangeDatabases = @(Get-MailboxDatabase -Status)
 $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup)
 
 #endregion -Basic Data Collection
@@ -541,6 +580,11 @@ $CASURLs = Get-ExchangeURLs
 $CAS001 = Run-CAS001
 $report += $CAS001
 #endregion --CAS001
+
+#region --CAS002: Check that CAS URLs don't contain server FQDNs.
+$CAS002 = Run-CAS002
+$report += $CAS002
+#endregion --CAS002
 
 #endregion -Client Access tests
 
