@@ -31,7 +31,7 @@
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
 	
-		<Test>
+	<Test>
 		<Id>CAS002</Id>
 		<Category>Client Access</Category>
 		<Name>Server FQDNs in URLs</Name>
@@ -41,4 +41,14 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>DB001</Id>
+		<Category>Databases</Category>
+		<Name>Database Backups</Name>
+		<Description>A database backup has been run in the last 24 hours.</Description>
+		<Reference></Reference>
+		<IfPassedComments>All mailbox databases have been backed up within the last 24 hours.</IfPassedComments>
+		<IfFailedComments>One or more Exchange databases has not been backed up within the last 24 hours.</IfFailedComments>
+	</Test>
+	
 </Tests>
