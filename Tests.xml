@@ -4,6 +4,16 @@
 	<Test>
 		<Id>EXSRV001</Id>
 		<Category>Exchange Servers</Category>
+		<Name>Exchange Versions</Name>
+		<Description>Exchange Analyzer supports Exchange Server 2013 or later.</Description>
+		<Reference></Reference>
+		<IfPassedComments>All Exchange servers in the organization are 2013 or later.</IfPassedComments>
+		<IfFailedComments>One or more Exchange servers exist that is not 2013 or later.</IfFailedComments>
+	</Test>
+	
+	<Test>
+		<Id>EXSRV002</Id>
+		<Category>Exchange Servers</Category>
 		<Name>Build Numbers</Name>
 		<Description>Exchange Servers are running the latest build.</Description>
 		<Reference>https://technet.microsoft.com/en-us/library/hh135098(v=exchg.150).aspx</Reference>
