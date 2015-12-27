@@ -202,11 +202,48 @@ Function Get-ExchangeURLs()
     return $results
 }
 
-#This function tests each Exchange server to determine whether it is running the latest
-#build for that version of Exchange.
+#This function tests whether Exchange 2010 or earlier servers exist and flags as a 
+#warning in the Exchange Analyzer report.
 Function Run-EXSRV001()
 {
     $TestID = "EXSRV001"
+    Write-Verbose "----- Starting test $TestID"
+
+    $PassedList = @()
+    $FailedList = @()
+    $ErrorList = @()
+
+    $SupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"})
+    $UnsupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -notlike "Version 15.*"})
+
+    if ($SupportedServers.Count -gt 0)
+    {
+        foreach ($SupportedServer in $SupportedServers)
+        {
+            $PassedList += $($SupportedServer.Name)
+        }
+    }
+    
+    if ($UnsupportedServers.Count -gt 0)
+    {
+        foreach ($UnsupportedServer in $UnsupportedServers)
+        {
+            $FailedList += $($UnsupportedServer.Name)
+        }
+    }
+
+
+    #Roll the object to be returned to the results
+    $ReportObj = Get-TestResultObject $TestID $PassedList $FailedList $ErrorList
+
+    return $ReportObj
+}
+
+#This function tests each Exchange server to determine whether it is running the latest
+#build for that version of Exchange.
+Function Run-EXSRV002()
+{
+    $TestID = "EXSRV002"
     Write-Verbose "----- Starting test $TestID"
 
     $PassedList = @()
@@ -544,7 +581,7 @@ Function Run-CAS002()
         $propertyNames = @($serverURLs | Get-Member -Type NoteProperty | Where {$_.Name -ne "Name"} | Select Name)
         foreach ($name in $propertyNames)
         {
-            Write-Verbose "Checking URL $($name.Name)"
+            Write-Verbose "Checking URL $($serverURLs."$($name.name)")"
             if ($serverURLs."$($name.name)" -icontains $serverFQDN)
             {
                 $HasUrlsWithFQDN = $true
@@ -600,10 +637,23 @@ catch
 
 #region -Start Exchange Server Tests
 
-#region --EXSRV001: Exchange Servers are running the latest build
+#region --EXSRV001: Exchange Servers are 2013 or later
 $EXSRV001 = Run-EXSRV001
-$report += $EXSRV001
+if($($EXSRV001.PassedObjects.Count) -eq 0)
+{
+    Write-Warning "No 2013 or later servers were found in the organization. Exchange Analyzer is exiting."
+    EXIT
+}
+else
+{
+    $report += $EXSRV001
+}
 #endregion --EXSRV001
+
+#region --EXSRV002: Exchange Servers are running the latest build
+$EXSRV002 = Run-EXSRV002
+$report += $EXSRV002
+#endregion --EXSRV002
 
 #endregion - End Exchange Server Tests
 
@@ -725,7 +775,16 @@ foreach ($reportcategory in $reportcategories)
         }
 		
         $htmltablerow += "<td>$($reportline.Comments)</td>"
-		$htmltablerow += "<td><a href=""$($reportline.Reference)"">More Info</a></td>"
+		
+        if ($($reportline.Reference) -eq "")
+        {
+            $htmltablerow += "<td>No additional info</td>"
+        }
+        else
+        {
+            $htmltablerow += "<td><a href=""$($reportline.Reference)"">More Info</a></td>"
+        }
+        
     
         $categoryHtmlTable += $HtmlTableRow
     }
