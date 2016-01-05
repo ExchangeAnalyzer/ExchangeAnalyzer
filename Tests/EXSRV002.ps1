@@ -80,20 +80,36 @@ Function Run-EXSRV002()
                 {
                     $MajorVersion = "15.00"
                     $buildnumber = "$MajorVersion.$MinorVersion"
-                    $CASndex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
-                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                    $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                    Write-Verbose "Exchange version is: $($Exchange2013Builds[$buildindex]."Product Name")"
+                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$buildindex]."Release Date") -End $now
+
+                    #Fixes issue when $buildindex is -1 due to being last item in the array
+                    if ($buildindex -eq "-1")
+                    {
+                        $buildindex = $Exchange2013Builds.Count - 1
+                    }
+
                 }
                 if ($adv -like "Version 15.1*")
                 {
                     $MajorVersion = "15.01"
                     $buildnumber = "$MajorVersion.$MinorVersion"
-                    $CASndex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
-                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$CASndex]."Release Date") -End $now
+                    $buildindex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
+                    Write-Verbose "Exchange version is: $($Exchange2016Builds[$buildindex]."Product Name")"
+                    $buildage = New-TimeSpan -Start ($Exchange2016Builds[$buildindex]."Release Date") -End $now
+
+                    #Fixes issue when $buildindex is -1 due to being last item in the array
+                    if ($buildindex -eq "-1")
+                    {
+                        $buildindex = $Exchange2016Builds.Count - 1
+                    }
+
                 }
 
-                Write-Verbose "$server is N-$CASndex"
+                Write-Verbose "$server is N-$buildindex"
             
-                if ($CASndex -eq 0)
+                if ($buildindex -eq 0)
                 {
                     $PassedList += $($Server.Name)
                 }

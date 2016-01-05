@@ -209,7 +209,7 @@ foreach ($reportcategory in $reportcategories)
         }
         else
         {
-            $htmltablerow += "<td><a href=""$($reportline.Reference)"">More Info</a></td>"
+            $htmltablerow += "<td><a href=""$($reportline.Reference)"" target=""_blank"">More Info</a></td>"
         }
         
     

@@ -66,14 +66,25 @@ Function Run-DB001()
                 $LastBackups = @{
                         Incremental=$LastInc
                         Differential=$LastDiff
-                        LastFull=$LastFull
+                        Full=$LastFull
                         }
             }
 
             $LatestBackup = ($LastBackups.GetEnumerator() | Sort-Object -Property Value)[0]
-            Write-Verbose "Last backup of $($db.name) was $($LatestBackup.Key) $($LatestBackup.Value) hours ago"
+            if ($($LatestBackup.Value) -eq "n/a")
+            {
+                Write-Verbose "$($db.name) has never been backed up."
+            }
+            else
+            {
+                Write-Verbose "Last backup of $($db.name) was $($LatestBackup.Key) $($LatestBackup.Value) hours ago"
+            }
             
-            if ($($LatestBackup.Value) -gt 24)
+            if ($($LatestBackup.Value) -eq "n/a")
+            {
+                $FailedList += "$($db.Name) (Never)"
+            }
+            elseif ($($LatestBackup.Value) -gt 24)
             {
                 $FailedList += "$($db.Name) ($($LatestBackup.Value) hrs ago)"
             }
