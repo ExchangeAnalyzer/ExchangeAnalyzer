@@ -63,7 +63,7 @@ To see verbose output run:
 
 Internet Explorer will automatically open the HTML report when the script has finished. THe report contains information about the tests that were performed, and their results (such as "Passed" or "Failed"). Links to more information is provided for most tests.
 
-[View Sample Report](http://htmlpreview.github.com/?https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/SampleReport.html) (when repo is public)
+![Exchange Analyzer Sample Report](https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/Examples/exchange-analyzer-example-report-01.png)
 
 ##Credits
 
