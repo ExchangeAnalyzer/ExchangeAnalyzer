@@ -7,7 +7,7 @@ Exchange Analyzer is currently a beta release seeking feedback and results from 
 
 ###Table of Contents
 
-- [Installing Exchange Analyzer](##installing-exchange-analyzer)
+- [Installing Exchange Analyzer](#installing-exchange-analyzer)
 - Running Exchange Analyzer
 - Exchange Analyzer Output
 - Wiki Home Page
