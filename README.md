@@ -7,6 +7,7 @@ Exchange Analyzer is currently a beta release seeking feedback and results from 
 
 ###Table of Contents
 
+- [Background and Purpose](#background-and-purpose)
 - [Installing Exchange Analyzer](#installing-exchange-analyzer)
 - [Running Exchange Analyzer](#running-exchange-analyzer)
 - [Exchange Analyzer Output](#exchange-analyzer-output)
@@ -17,6 +18,19 @@ Exchange Analyzer is currently a beta release seeking feedback and results from 
 	- [How to Contribute](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/How-to-Contribute)
 - [Credits](#credits)
 - [License](#license)
+
+##Background and Purpose
+
+Historically, Microsoft has provided tools to scan an Exchange Server organization to check its configuration against known "Best Practices". Exchange 2007 and 2010 included these Best Practice Analyzers (BPA) within the the server software itself, while Exchange 2013's version was shipped externally.
+
+For more information on the previous versions of BPA see the links below:
+
+* [Exchange 2010 BPA](http://blogs.technet.com/b/exchange/archive/2010/07/28/3410533.aspx) 
+* [Exchange 2013 BPA](http://blogs.technet.com/b/exchange/archive/2013/10/01/beta-of-microsoft-office-365-best-practices-analyzer-for-exchange-server-2013-now-available.aspx)
+
+Exchange 2016 was released in early October 2015 and does not yet have a BPA. The Exchange Analyzer tool serves to fill this void.
+
+The Exchange Analyzer tool scans your Exchange Server 2013/2016 organization and evaluates it for compliance with both the [Preferred Architecture](http://blogs.technet.com/b/exchange/archive/2015/10/12/the-exchange-2016-preferred-architecture.aspx) (Microsoft's high-level design recommendations) as well as various recommended practices from the Microsoft MVP and MCM community.
 
 ##Installing Exchange Analyzer
 
@@ -47,7 +61,7 @@ To see verbose output run:
 
 ##Exchange Analyzer Output
 
-Internet Explorer will automatically open the HTML report when the script has finished. 
+Internet Explorer will automatically open the HTML report when the script has finished. THe report contains information about the tests that were performed, and their results (such as "Passed" or "Failed"). Links to more information is provided for most tests.
 
 [View Sample Report](http://htmlpreview.github.com/?https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/SampleReport.html) (when repo is public)
 
