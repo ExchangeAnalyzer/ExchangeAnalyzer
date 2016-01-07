@@ -67,7 +67,7 @@ Internet Explorer will automatically open the HTML report when the script has fi
 
 ##Credits
 
-- Paul Cunningham ([Blog](http://exchangeserverpro.com) | [Twitter](https://twitter.com/exchservpro))
+- Paul Cunningham ([Blog](http://exchangeserverpro.com) | [Github](https://github.com/cunninghamp) | [Twitter](https://twitter.com/exchservpro))
 - Mike Crowley
 - Michael B Smith
 - Brian Desmond
