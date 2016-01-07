@@ -2,7 +2,7 @@
 
 Exchange Analyzer is a PowerShell tool that scans an Exchange Server 2013 or 2016 organization and reports on compliance with best practices.
 
-Exchange Analyzer is currently a beta release seeking feedback and results from real world environments.
+Exchange Analyzer is a community project, and is currently a beta release seeking feedback and results from real world environments.
 
 
 ###Table of Contents
@@ -28,7 +28,7 @@ For more information on the previous versions of BPA see the links below:
 * [Exchange 2010 BPA](http://blogs.technet.com/b/exchange/archive/2010/07/28/3410533.aspx) 
 * [Exchange 2013 BPA](http://blogs.technet.com/b/exchange/archive/2013/10/01/beta-of-microsoft-office-365-best-practices-analyzer-for-exchange-server-2013-now-available.aspx)
 
-Exchange 2016 was released in early October 2015 and does not yet have a BPA. The Exchange Analyzer tool serves to fill this void.
+The Exchange 2013 BPA requires an Office 365 tenant or Azure AD login, and remains in a Beta state. Exchange 2016 was released in early October 2015 and does not yet have a BPA. The Exchange Analyzer tool serves to fill the void by providing an on-premises best practices analyzer that is developed and maintained by the community.
 
 The Exchange Analyzer tool scans your Exchange Server 2013/2016 organization and evaluates it for compliance with both the [Preferred Architecture](http://blogs.technet.com/b/exchange/archive/2015/10/12/the-exchange-2016-preferred-architecture.aspx) (Microsoft's high-level design recommendations) as well as various recommended practices from the Microsoft MVP and MCM community.
 
