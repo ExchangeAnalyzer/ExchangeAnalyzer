@@ -1,6 +1,22 @@
-# ExchangeAnalyzer
+#Exchange Analyzer
 
-##Installing
+Exchange Analyzer is a PowerShell tool that scans an Exchange Server 2013 or 2016 organization and reports on compliance with best practices.
+
+Exchange Analyzer is currently a beta release seeking feedback and results from real world environments.
+
+###Table of Contents
+
+- [Installing Exchange Analyzer](#installing)
+- Running Exchange Analyzer
+- Exchange Analyzer Output
+- Wiki Home Page
+	- Exchange Analyzer Tests
+	- Draft Tests
+	- Development Overview
+	- How to Contribute
+- Credits
+
+##[Installing Exchange Analyzer](#installing)
 
 1. Copy the following files and folders to a computer that has the Exchange 2013/2016 management shell installed. For example, place all of the files and folders in a C:\Scripts\ExchangeAnalyzer folder.
 
