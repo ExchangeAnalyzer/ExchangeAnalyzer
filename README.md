@@ -44,6 +44,7 @@ Exchange Analyzer consists of a series of PowerShell scripts, PowerShell modules
 	- Tests
 
 2. Copy the folders in the Modules folder to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\
+3. Open a new Exchange Management Shell console.
 
 ##Running Exchange Analyzer
 
