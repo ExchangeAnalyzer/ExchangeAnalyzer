@@ -143,12 +143,12 @@ Function Get-ExchangeURLs()
         Write-Verbose "Fetching URLs for $CAS"
         
         #Outlook Anywhere
-        $OA = Get-OutlookAnywhere -Server $CAS -AdPropertiesOnly | Select InternalHostName,ExternalHostName
+        $OA = Get-OutlookAnywhere -Server $CAS.Name -AdPropertiesOnly | Select InternalHostName,ExternalHostName
         if ($OA.InternalHostname -eq $null) { $OA.InternalHostName = "Not set" }
         if ($OA.ExternalHostname -eq $null) { $OA.ExternalHostName = "Not set" }
         
         #Outlook on the web
-        $OWA = Get-OWAVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $OWA = Get-OWAVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($OWA.InternalURL -eq $null)
         {
             $OWA.InternalURL = "Not set"
@@ -167,7 +167,7 @@ Function Get-ExchangeURLs()
         }
                 
         #Exchange Control Panel
-        $ECP = Get-ECPVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $ECP = Get-ECPVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($ECP.InternalURL -eq $null)
         {
             $ECP.InternalURL = "Not set"
@@ -186,7 +186,7 @@ Function Get-ExchangeURLs()
         }
                
         #Offline Address Book        
-        $OAB = Get-OABVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $OAB = Get-OABVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($OAB.InternalURL -eq $null)
         {
             $OAB.InternalURL = "Not set"
@@ -205,7 +205,7 @@ Function Get-ExchangeURLs()
         }
                 
         #Exchange Web Services
-        $EWS = Get-WebServicesVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $EWS = Get-WebServicesVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($EWS.InternalURL -eq $null)
         {
             $EWS.InternalURL = "Not set"
@@ -224,7 +224,7 @@ Function Get-ExchangeURLs()
         }
                 
         #MAPI
-        $MAPI = Get-MAPIVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $MAPI = Get-MAPIVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($MAPI.InternalURL -eq $null)
         {
             $MAPI.InternalURL = "Not set"
@@ -243,7 +243,7 @@ Function Get-ExchangeURLs()
         }
                
         #ActiveSync
-        $EAS = Get-ActiveSyncVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        $EAS = Get-ActiveSyncVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
         if ($EAS.InternalURL -eq $null)
         {
             $EAS.InternalURL = "Not set"
