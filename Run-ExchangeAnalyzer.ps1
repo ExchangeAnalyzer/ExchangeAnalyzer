@@ -54,18 +54,26 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
 #re-used throughout the script.
 
-Write-Verbose "Collecting data about the Exchange organization"
+$ProgressActivity = "Initializing"
+
+$msgString = "Collecting data about the Exchange organization"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 0
+Write-Verbose $msgString
 
 try
 {
+    Write-Progress -Activity $ProgressActivity -Status "Get-OrganizationConfig" -PercentComplete 1
     $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
     
+    Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
     $ExchangeServers = @(Get-ExchangeServer -ErrorAction STOP)
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
 
+    Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 3
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDatabases.Count) databases found."
 
+    Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
     $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
 }
@@ -77,10 +85,15 @@ catch
 }
 
 #Get all Exchange HTTPS URLs to use for CAS tests
-Write-Verbose "Determining Client Access servers"
+$msgString = "Determining Client Access servers"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 5
+Write-Verbose $msgString
 $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
-Write-Verbose "Collecting Exchange URLs"
+
+$msgString = "Collecting Exchange URLs from Client Access servers"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 6
+Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers)
 Write-Verbose "$($CASURLs.Count) URLs collected."
 
@@ -88,9 +101,18 @@ Write-Verbose "$($CASURLs.Count) URLs collected."
 #endregion -Basic Data Collection
 
 #region -Run tests
-
+#The tests listed in Tests.xml will be performed as long as the corresponding PowerShell
+#script for that test ID is found in the \Tests folder.
+$ProgressActivity = "Running Tests"
+$NumberOfTests = ($ExchangeAnalyzerTests.Test).Count
+$TestCount = 0
 foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 {
+	$TestDescription = ($exchangeanalyzertests.Childnodes | Where {$_.Id -eq $Test}).Description
+    $TestCount += 1
+    $pct = $TestCount/$NumberOfTests * 100
+	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
+
     if (Test-Path "$MyDir\Tests\$($Test).ps1")
     {
         $testresult = Invoke-Expression -Command "$MyDir\Tests\$($Test).ps1"
@@ -98,7 +120,7 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
     }
     else
     {
-        Write-Warning "$($Test) script wasn't found in Tests folder."
+        Write-Warning "$($Test) script wasn't found in $MyDir\Tests folder."
     }
 }
 
@@ -106,8 +128,10 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 #endregion -Run tests
 
 #region -Generate Report
-
-Write-Verbose "Generating HTML report"
+$ProgressActivity = "Finishing"
+$msgString = "Generating HTML report"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 99
+Write-Verbose $msgString
 
 #HTML HEAD with styles
 $htmlhead="<html>
@@ -235,7 +259,9 @@ $reportHtml | Out-File $reportFile -Force
 #endregion Main Script
 
 
-Write-Verbose "Finished."
+$msgString = "Finished"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 100
+Write-Verbose $msgString
 
 iex $reportFile
 #...................................
