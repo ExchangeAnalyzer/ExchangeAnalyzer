@@ -82,7 +82,7 @@ $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and 
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 Write-Verbose "Collecting Exchange URLs"
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers)
-Write-Verbose "$($CASURLs.Count) URLs collected."
+Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 
 
 #endregion -Basic Data Collection
