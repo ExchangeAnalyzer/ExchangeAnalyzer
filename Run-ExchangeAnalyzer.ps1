@@ -34,9 +34,19 @@ http://exchangeanalyzer.com
     * Twitter:	http://twitter.com/exchservpro
 
 - Mike Crowley
+    * Website: https://mikecrowley.wordpress.com/
+    * Twitter: https://twitter.com/miketcrowley
+
 - Michael B Smith
+    * Website: http://theessentialexchange.com/
+    * Twitter: https://twitter.com/essentialexch
+
 - Brian Desmond
+    * Website: http://www.briandesmond.com/
+    * Twitter: https://twitter.com/brdesmond
+
 - Damian Scoles
+    * Website: https://justaucguy.wordpress.com/
 
 
 *** Change Log ***
@@ -48,7 +58,7 @@ V0.01, 14/01/2016 - Public beta release
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Paul Cunningham
+Copyright (c) 2015 Paul Cunningham, exchangeanalyzer.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
