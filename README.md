@@ -37,7 +37,7 @@ The Exchange Analyzer tool scans your Exchange Server 2013/2016 organization and
 Exchange Analyzer consists of a series of PowerShell scripts, PowerShell modules, and XML data files. Installation is performed manually using the following steps.
 
 1. Download the latest Zip file from the [TechNet Script Gallery](https://gallery.technet.microsoft.com/office/Exchange-Analyzer-6e20132e).
-2. Copy the following files and folders to a computer that has the Exchange 2013/2016 management shell installed. For example, place all of the files and folders in a C:\Scripts\ExchangeAnalyzer folder.
+2. Extract or copy the following files and folders to a computer that has the Exchange 2013/2016 management shell installed. For example, place all of the files and folders in a C:\Scripts\ExchangeAnalyzer folder.
 
 	- Run-ExchangeAnalyzer.ps1
 	- \Data
