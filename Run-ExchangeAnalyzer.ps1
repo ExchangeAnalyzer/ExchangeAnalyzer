@@ -9,7 +9,6 @@ Run-ExchangeAnalyzer.ps1 - An Exchange Server Configuration Analyzer
 param ()
 #endregion
 
-#Import-Module ExchangeAnalyzer
 
 #region Start variables
 
@@ -68,6 +67,13 @@ try
     Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
     $ExchangeServers = @(Get-ExchangeServer -ErrorAction STOP)
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
+
+    #Check for supported servers before continuing
+    if (($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"}).Count -eq 0)
+    {
+        Write-Warning "No Exchange 2013 or later servers were found. Exchange Analyzer is exiting."
+        EXIT
+    }
 
     Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 3
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
