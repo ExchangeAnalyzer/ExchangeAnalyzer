@@ -95,7 +95,7 @@ $msgString = "Collecting Exchange URLs from Client Access servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 6
 Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers)
-Write-Verbose "$($CASURLs.Count) URLs collected."
+Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 
 
 #endregion -Basic Data Collection
