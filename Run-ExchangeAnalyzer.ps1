@@ -1,7 +1,76 @@
 ﻿<#
 .SYNOPSIS
-Run-ExchangeAnalyzer.ps1 - An Exchange Server Configuration Analyzer
+Exchange Analyzer - An Exchange Server 2013/2016 Best Practices Analyzer
+
+.DESCRIPTION 
+Exchange Analyzer is a PowerShell tool that scans an Exchange Server 2013 or 2016 organization
+and reports on compliance with best practices.
+
+Please refer to the installation and usage instructions at http://exchangeanalyzer.com
+
+.OUTPUTS
+Results are output to a HTML report.
+
+.PARAMETER Verbose
+Verbose output is displayed in the Exchange management shell.
+
+.EXAMPLE
+.\Run-ExchangeAnalyzer.ps1
+Runs the Exchange Analyzer.
+
+.EXAMPLE
+.\Run-ExchangeAnalyzer.ps1 -Verbose
+Runs the Exchange Analyzer with -Verbose output.
+
+.LINK
+http://exchangeanalyzer.com
+
+.NOTES
+
+*** Credits ***
+
+- Paul Cunningham
+    * Website:	http://exchangeserverpro.com
+    * Twitter:	http://twitter.com/exchservpro
+
+- Mike Crowley
+- Michael B Smith
+- Brian Desmond
+- Damian Scoles
+
+
+*** Change Log ***
+
+V0.01, 14/01/2016 - Public beta release
+
+
+*** License ***
+
+The MIT License (MIT)
+
+Copyright (c) 2015 Paul Cunningham
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 #>
+
+
+#requires -Modules ExchangeAnalyzer
 
 #region Start parameters
 
