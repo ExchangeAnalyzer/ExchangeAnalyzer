@@ -179,7 +179,7 @@ Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 $msgString = "Collecting Exchange URLs from Client Access servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 6
 Write-Verbose $msgString
-$CASURLs = @(Get-ExchangeURLs $ClientAccessServers)
+$CASURLs = @(Get-ExchangeURLs $ClientAccessServers -Verbose:($PSBoundParameters['Verbose'] -eq $true)
 Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 
 
