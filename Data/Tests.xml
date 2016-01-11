@@ -16,7 +16,7 @@
 		<Category>Exchange Servers</Category>
 		<Name>Build Numbers</Name>
 		<Description>Check if Exchange Servers are running the latest build.</Description>
-		<Reference>https://technet.microsoft.com/en-us/library/hh135098(v=exchg.150).aspx</Reference>
+		<Reference>http://exchangeserverpro.com/exchange-best-practices-keeping-servers-updates/</Reference>
 		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
 		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
 	</Test>
@@ -36,7 +36,7 @@
 		<Category>Client Access</Category>
 		<Name>Server FQDNs in URLs</Name>
 		<Description>Check that CAS URLs don't contain server FQDNs.</Description>
-		<Reference>https://technet.microsoft.com/en-us/library/dd351044(v=exchg.150).aspx#digitalcertificatesbestpractices</Reference>
+		<Reference>http://exchangeserverpro.com/avoiding-exchange-2013-server-names-ssl-certificates/</Reference>
 		<IfPassedComments>No Exchange HTTPS services have URLs containing server FQDNs.</IfPassedComments>
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
