@@ -5,18 +5,18 @@
 		<Id>EXSRV001</Id>
 		<Category>Exchange Servers</Category>
 		<Name>Exchange Versions</Name>
-		<Description>Exchange Analyzer supports Exchange Server 2013 or later.</Description>
-		<Reference></Reference>
-		<IfPassedComments>All Exchange servers in the organization are 2013 or later.</IfPassedComments>
-		<IfFailedComments>One or more Exchange servers exist that is not 2013 or later.</IfFailedComments>
+		<Description>Exchange Analyzer supports Exchange Server 2013 and 2016.</Description>
+		<Reference>https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Frequently-Asked-Questions#why-doesnt-exchange-analyzer-support-exchange-server-2010-or-earlier</Reference>
+		<IfPassedComments>All Exchange servers in the organization are Exchange 2013/2016.</IfPassedComments>
+		<IfFailedComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfFailedComments>
 	</Test>
 	
 	<Test>
 		<Id>EXSRV002</Id>
 		<Category>Exchange Servers</Category>
 		<Name>Build Numbers</Name>
-		<Description>Exchange Servers are running the latest build.</Description>
-		<Reference>https://technet.microsoft.com/en-us/library/hh135098(v=exchg.150).aspx</Reference>
+		<Description>Check if Exchange Servers are running the latest build.</Description>
+		<Reference>http://exchangeserverpro.com/exchange-best-practices-keeping-servers-updates/</Reference>
 		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
 		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
 	</Test>
@@ -36,7 +36,7 @@
 		<Category>Client Access</Category>
 		<Name>Server FQDNs in URLs</Name>
 		<Description>Check that CAS URLs don't contain server FQDNs.</Description>
-		<Reference>https://technet.microsoft.com/en-us/library/dd351044(v=exchg.150).aspx#digitalcertificatesbestpractices</Reference>
+		<Reference>http://exchangeserverpro.com/avoiding-exchange-2013-server-names-ssl-certificates/</Reference>
 		<IfPassedComments>No Exchange HTTPS services have URLs containing server FQDNs.</IfPassedComments>
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
@@ -45,7 +45,7 @@
 		<Id>DB001</Id>
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
-		<Description>A database backup has been run in the last 24 hours.</Description>
+		<Description>Check that a database backup has been run in the last 24 hours.</Description>
 		<Reference></Reference>
 		<IfPassedComments>All mailbox databases have been backed up within the last 24 hours.</IfPassedComments>
 		<IfFailedComments>One or more Exchange databases has not been backed up within the last 24 hours.</IfFailedComments>

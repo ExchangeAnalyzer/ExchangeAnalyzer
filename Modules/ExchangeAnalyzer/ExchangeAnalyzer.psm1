@@ -141,33 +141,148 @@ Function Get-ExchangeURLs()
     foreach ($CAS in $ClientAccessServers)
     {
         Write-Verbose "Fetching URLs for $CAS"
-        $OA = Get-OutlookAnywhere -Server $CAS -AdPropertiesOnly | Select InternalHostName,ExternalHostName
-        $OWA = Get-OWAVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
-        $ECP = Get-ECPVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
-        $OAB = Get-OABVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
-        $EWS = Get-WebServicesVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
-        $MAPI = Get-MAPIVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
-        $EAS = Get-ActiveSyncVirtualDirectory -Server $CAS -AdPropertiesOnly | Select InternalURL,ExternalURL
+        
+        #Outlook Anywhere
+        $OA = Get-OutlookAnywhere -Server $CAS.Name -AdPropertiesOnly | Select InternalHostName,ExternalHostName
+        if ($OA.InternalHostname -eq $null) { $OA.InternalHostName = "Not set" }
+        if ($OA.ExternalHostname -eq $null) { $OA.ExternalHostName = "Not set" }
+        
+        #Outlook on the web
+        $OWA = Get-OWAVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($OWA.InternalURL -eq $null)
+        {
+            $OWA.InternalURL = "Not set"
+        }
+        else
+        {
+            $OWA.InternalURL = $OWA.InternalURL.AbsoluteUri
+        }
+        if ($OWA.ExternalURL -eq $null)
+        {
+            $OWA.ExternalURL = "Not set"
+        }
+        else
+        {
+            $OWA.ExternalURL = $OWA.ExternalURL.AbsoluteUri
+        }
+                
+        #Exchange Control Panel
+        $ECP = Get-ECPVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($ECP.InternalURL -eq $null)
+        {
+            $ECP.InternalURL = "Not set"
+        }
+        else
+        {
+            $ECP.InternalURL = $ECP.InternalURL.AbsoluteUri
+        }
+        if ($ECP.ExternalURL -eq $null)
+        {
+            $ECP.ExternalURL = "Not set"
+        }
+        else
+        {
+            $ECP.ExternalURL = $ECP.ExternalURL.AbsoluteUri
+        }
+               
+        #Offline Address Book        
+        $OAB = Get-OABVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($OAB.InternalURL -eq $null)
+        {
+            $OAB.InternalURL = "Not set"
+        }
+        else
+        {
+            $OAB.InternalURL = $OAB.InternalURL.AbsoluteUri
+        }
+        if ($OAB.ExternalURL -eq $null)
+        {
+            $OAB.ExternalURL = "Not set"
+        }
+        else
+        {
+            $OAB.ExternalURL = $OAB.ExternalURL.AbsoluteUri
+        }
+                
+        #Exchange Web Services
+        $EWS = Get-WebServicesVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($EWS.InternalURL -eq $null)
+        {
+            $EWS.InternalURL = "Not set"
+        }
+        else
+        {
+            $EWS.InternalURL = $EWS.InternalURL.AbsoluteUri
+        }
+        if ($EWS.ExternalURL -eq $null)
+        {
+            $EWS.ExternalURL = "Not set"
+        }
+        else
+        {
+            $EWS.ExternalURL = $EWS.ExternalURL.AbsoluteUri
+        }
+                
+        #MAPI
+        $MAPI = Get-MAPIVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($MAPI.InternalURL -eq $null)
+        {
+            $MAPI.InternalURL = "Not set"
+        }
+        else
+        {
+            $MAPI.InternalURL = $MAPI.InternalURL.AbsoluteUri
+        }
+        if ($MAPI.ExternalURL -eq $null)
+        {
+            $MAPI.ExternalURL = "Not set"
+        }
+        else
+        {
+            $MAPI.ExternalURL = $MAPI.ExternalURL.AbsoluteUri
+        }
+               
+        #ActiveSync
+        $EAS = Get-ActiveSyncVirtualDirectory -Server $CAS.Name -AdPropertiesOnly | Select InternalURL,ExternalURL
+        if ($EAS.InternalURL -eq $null)
+        {
+            $EAS.InternalURL = "Not set"
+        }
+        else
+        {
+            $EAS.InternalURL = $EAS.InternalURL.AbsoluteUri
+        }
+        if ($EAS.ExternalURL -eq $null)
+        {
+            $EAS.ExternalURL = "Not set"
+        }
+        else
+        {
+            $EAS.ExternalURL = $EAS.ExternalURL.AbsoluteUri
+        }
+                
+        #AutoDiscover
         Write-Verbose "Fetching AutoD SCP for $CAS"
         $AutoD = Get-ClientAccessServer $CAS.Name | Select AutoDiscoverServiceInternalUri
+        if ($AutoD.AutoDiscoverServiceInternalUri -eq $null) { $AutoD.AutoDiscoverServiceInternalUri -eq "Not set" }
 
         Write-Verbose "Creating object for CAS Urls"
         $props = [Ordered]@{
             Name = $CAS.Name
             OAInternal = $OA.InternalHostName
             OAExternal = $OA.ExternalHostName
-            OWAInternal = $OWA.InternalURL.AbsoluteUri
-            OWAExternal = $OWA.ExternalURL.AbsoluteUri
-            ECPInternal = $ECP.InternalURL.AbsoluteUri
-            ECPExternal = $ECP.ExternalURL.AbsoluteUri
-            OABInternal = $OAB.InternalURL.AbsoluteUri
-            OABExternal = $OAB.ExternalURL.AbsoluteUri
-            EWSInternal = $EWS.InternalURL.AbsoluteUri
-            EWSExternal = $EWS.ExternalURL.AbsoluteUri
-            MAPIInternal = $MAPI.InternalURL.AbsoluteUri
-            MAPIExternal = $MAPI.ExternalURL.AbsoluteUri
-            EASInternal = $EAS.InternalURL.AbsoluteUri
-            EASExternal = $EAS.ExternalURL.AbsoluteUri
+            OWAInternal = $OWA.InternalURL
+            OWAExternal = $OWA.ExternalURL
+            ECPInternal = $ECP.InternalURL
+            ECPExternal = $ECP.ExternalURL
+            OABInternal = $OAB.InternalURL
+            OABExternal = $OAB.ExternalURL
+            EWSInternal = $EWS.InternalURL
+            EWSExternal = $EWS.ExternalURL
+            MAPIInternal = $MAPI.InternalURL
+            MAPIExternal = $MAPI.ExternalURL
+            EASInternal = $EAS.InternalURL
+            EASExternal = $EAS.ExternalURL
             AutoDSCP = $AutoD.AutoDiscoverServiceInternalUri
             }
             
