@@ -26,7 +26,7 @@
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
 		<Description>Check if multiple namespaces exist for a protocol within the same AD site.</Description>
-		<Reference>http://blogs.technet.com/b/exchange/archive/2015/10/06/namespace-planning-in-exchange-2016.aspx</Reference>
+		<Reference>http://exchangeserverpro.com/exchange-best-practices-client-access-namespaces/</Reference>
 		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
