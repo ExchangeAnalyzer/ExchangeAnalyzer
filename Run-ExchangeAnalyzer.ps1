@@ -161,6 +161,16 @@ try
     Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
     $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
+
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 5
+    $ADDomain = Get-ADDomain -ErrorAction STOP
+ 
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 6
+    $ADForest = Get-ADForest -ErrorAction STOP
+ 
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 7
+    $ADDomainControllers = @(Get-ADDomainController -ErrorAction STOP)
+    Write-Verbose "$($ADDomainControllers.Count) Domain Controller(s) found."
 }
 catch
 {
@@ -171,13 +181,13 @@ catch
 
 #Get all Exchange HTTPS URLs to use for CAS tests
 $msgString = "Determining Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 5
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 8
 Write-Verbose $msgString
 $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 6
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 9
 Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers -Verbose:($PSBoundParameters['Verbose'] -eq $true))
 Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
