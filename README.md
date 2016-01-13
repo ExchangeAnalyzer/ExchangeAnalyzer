@@ -18,6 +18,7 @@ Exchange Analyzer is a community project, and is currently a beta release seekin
 	- [How to Contribute](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/How-to-Contribute)
 - [Credits](#credits)
 - [License](#license)
+- [Mailing List](#mailing-list)
 
 ##Background and Purpose
 
@@ -78,3 +79,8 @@ Internet Explorer will automatically open the HTML report when the script has fi
 ##License
 
 Exchange Analyzer is released under the MIT license (MIT). Full text of the license is available [here](https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/LICENSE).
+
+##Mailing List
+
+To subscribe to receive news and updates about Exchange Analyzer by email [click here](http://tinyletter.com/ExchangeAnalyzer).
+
