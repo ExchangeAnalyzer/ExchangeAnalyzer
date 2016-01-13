@@ -13,7 +13,7 @@ Exchange Analyzer is a community project, and is currently a beta release seekin
 - [Exchange Analyzer Output](#exchange-analyzer-output)
 - [Wiki Home Page](https://github.com/cunninghamp/ExchangeAnalyzer/wiki)
 	- [Exchange Analyzer Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests)
-	- [Draft Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Draft-Tests)
+	- [Proposed Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Proposed-Tests)
 	- [Development Overview](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Development-Overview)
 	- [How to Contribute](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/How-to-Contribute)
 - [Credits](#credits)
