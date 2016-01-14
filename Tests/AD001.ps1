@@ -1,4 +1,5 @@
 #requires -Modules ExchangeAnalyzer
+#requires -Modules ActiveDirectory
 
 #This function verifies the Active Directory Domain level is Windows 2008 or greater
 Function Run-AD001()

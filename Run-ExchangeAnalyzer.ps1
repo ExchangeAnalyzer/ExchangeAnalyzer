@@ -81,6 +81,7 @@ SOFTWARE.
 
 
 #requires -Modules ExchangeAnalyzer
+#requires -Modules ActiveDirectory
 
 #region Start parameters
 
