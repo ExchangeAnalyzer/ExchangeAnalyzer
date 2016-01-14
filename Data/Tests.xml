@@ -60,4 +60,14 @@
 		<IfPassedComments>One or more domains is above the Windows 2008 functional level.</IfPassedComments>
 		<IfFailedComments>One or more domains is below the Windows 2008 functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>Ad002</Id>
+		<Category>Active Directory</Category>
+		<Name>AD Forest Level</Name>
+		<Description>Check that the forest is at a Windows 2008 or higher level.</Description>
+		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
+		<IfPassedComments>One or more forests is above the Windows 2008 functional level.</IfPassedComments>
+		<IfFailedComments>One or more forests is below the Windows 2008 functional level.</IfFailedComments>
+	</Test>
 </Tests>
