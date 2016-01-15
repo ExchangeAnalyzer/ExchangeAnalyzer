@@ -17,10 +17,31 @@ Function Run-AD001()
     $domaindnsname = ($addomain).dnsroot
     $domainmode = ($addomain).domainmode
 
-    if (($domainmode -like "*2012*") -or ($domainmode -like "*2008*")) {
-        $PassedList += $($domaindnsname)
-    } else {
-        $FailedList += $($domaindnsname)
+    foreach ($server in $exchangeservers) { 
+        $admin = $server.admindisplayversion
+        [string]$ver=[string]$admin.major+'.'+[string]$admin.minor
+        if ($Ver -like "15.0") {$Ex2013 = $true}
+        if ($Ver -like "15.1") {$Ex2016 = $true}
+    }
+    
+    if ($ex2013 -eq $true) {
+        # All Exchange 2013 servers, no Exchange 2016 servers found
+        if ($ex2016 -eq $null) {
+            if (($domainmode -like "*2012*") -or ($domainmode -like "*2008*") -or ($domainmode -like "2003*")) {
+                $PassedList += $($domaindnsname)
+            } else {
+                $FailedList += $($domaindnsname)
+            }
+        }
+    }
+  
+    if ($ex2016 -eq $true) {
+        # Exchange 2016 servers found
+        if (($domainmode -like "*2012*") -or ($domainmode -like "*2008*")) {
+            $PassedList += $($domaindnsname)
+        } else {
+            $FailedList += $($domaindnsname)
+        }   
     }
 
     #Roll the object to be returned to the results
