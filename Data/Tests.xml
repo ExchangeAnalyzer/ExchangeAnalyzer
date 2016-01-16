@@ -55,9 +55,9 @@
 		<Id>AD001</Id>
 		<Category>Active Directory</Category>
 		<Name>AD Domain Level</Name>
-		<Description>Check that the domain is at the required level.</Description>
+		<Description>Check that the domains are at the required level.</Description>
 		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
-		<IfPassedComments>One or more domains is above the required functional level.</IfPassedComments>
+		<IfPassedComments>All Active Directory domains are at or above the required functional level.</IfPassedComments>
 		<IfFailedComments>One or more domains is below the required functional level.</IfFailedComments>
 	</Test>
 
@@ -67,7 +67,7 @@
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>
 		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
-		<IfPassedComments>One or more forests is above the required functional level.</IfPassedComments>
-		<IfFailedComments>One or more forests is below the required functional level.</IfFailedComments>
+		<IfPassedComments>The forest is at or above the required functional level.</IfPassedComments>
+		<IfFailedComments>The forest is below the required functional level.</IfFailedComments>
 	</Test>
 </Tests>
