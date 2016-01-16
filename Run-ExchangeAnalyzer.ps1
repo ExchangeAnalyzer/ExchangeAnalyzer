@@ -110,13 +110,13 @@ $reportFile = "$($myDir)\ExchangeAnalyzerReport.html"
 #region Get Tests from XML
 
 #Check for presence of Tests.xml file and exit if not found.
-if (!(Test-Path "$MyDir\Data\Tests.xml"))
+if (!(Test-Path "$($MyDir)\Data\Tests.xml"))
 {
     Write-Warning "Tests.xml file not found."
     EXIT
 }
 
-[xml]$TestsFile = Get-Content "$MyDir\Data\Tests.xml"
+[xml]$TestsFile = Get-Content "$($MyDir)\Data\Tests.xml"
 $ExchangeAnalyzerTests = @($TestsFile.Tests)
 
 #endregion Get Tests from XML
@@ -200,14 +200,16 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
     $pct = $TestCount/$NumberOfTests * 100
 	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
 
-    if (Test-Path "$MyDir\Tests\$($Test).ps1")
+    if (Test-Path "$($MyDir)\Tests\$($Test).ps1")
     {
-        $testresult = Invoke-Expression -Command "$MyDir\Tests\$($Test).ps1"
+        #Escape any spaces in path prior to running Invoke-Expression
+        $command = "$($MyDir)\Tests\$($Test).ps1" -replace ' ','` '
+        $testresult = Invoke-Expression -Command $command
         $report += $testresult
     }
     else
     {
-        Write-Warning "$($Test) script wasn't found in $MyDir\Tests folder."
+        Write-Warning "$($Test) script wasn't found in $($MyDir)\Tests folder."
     }
 }
 
@@ -350,7 +352,9 @@ $msgString = "Finished"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 100
 Write-Verbose $msgString
 
-iex $reportFile
+#Escape any spaces in path prior to running Invoke-Expression
+$command = $reportfile -replace ' ','` '
+Invoke-Expression -Command $command
 #...................................
 # Finished
 #...................................
