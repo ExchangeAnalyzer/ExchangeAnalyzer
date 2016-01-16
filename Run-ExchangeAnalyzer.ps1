@@ -158,8 +158,10 @@ try
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDatabases.Count) databases found."
 
+    #Do not use -Status switch here as it causes an error to be thrown. DAG status should be
+    #queried later after filtering DAG list to only v15.x DAGs.
     Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
-    $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -Status -ErrorAction STOP)
+    $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
 }
 catch
