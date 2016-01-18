@@ -22,12 +22,16 @@ Function Run-AD001()
     $AllDomains = $domains
     $AllForests = $forest
 
+    Write-Verbose "$($domains.count) domain(s) found."
+
     # Check for other forest domains (via trusts)
     If($? -and $Domains -ne $Null) {
+        Write-Verbose "Checking for domain trusts to other forests."
         ForEach($Domain in $Domains) { 
             # Get list of AD Domain Trusts in each domain
             $ADDomainTrusts = Get-ADObject -Filter {ObjectClass -eq "trustedDomain"} -Server $Domain -Properties * -EA 0
             If($? -and $ADDomainTrusts -ne $Null) {
+                Write-Verbose "Domain trusts found."
                 If($ADDomainTrusts -is [array]) {
                     [int]$ADDomainTrustsCount = $ADDomainTrusts.Count 
                 } Else {
@@ -46,20 +50,40 @@ Function Run-AD001()
                     }
                 }
             }
+            else
+            {
+                Write-Verbose "No domain trusts found."
+            }
         }
+    }
+    else
+    {
+        Write-Verbose "An error occurred or no domains were found."
     }
 
     foreach ($server in $exchangeservers) { 
         $admin = $server.admindisplayversion
-        [string]$ver=[string]$admin.major+'.'+[string]$admin.minor
-        if ($Ver -like "15.0") {$Ex2013 = $true}
-        if ($Ver -like "15.1") {$Ex2016 = $true}
+        Write-Verbose $admin
+        #[string]$ver=[string]$admin.major+'.'+[string]$admin.minor
+        #Write-Verbose $ver
+        if ($admin -like "Version 15.0*")
+        {
+            $Ex2013 = $true
+            Write-Verbose "Exchange 2013 detected."    
+        }
+        if ($admin -like "Version 15.1*")
+        {
+            $Ex2016 = $true
+            Write-Verbose "Exchange 2016 detected."
+        }
     }
     
     if ($ex2013 -eq $true) {
+    Write-Verbose "At least one Exchange 2013 server detected."
     # All Exchange 2013 servers, no Exchange 2016 servers found
         foreach ($domain in $alldomains) {
             $pdc = (get-addomain $domain).pdcemulator
+            Write-Verbose "Using PDCE $pdc"
             $dse = ([ADSI] "LDAP://$pdc/RootDSE")
             $dlevel = $dse.domainFunctionality
             $flevel = $dse.forestFunctionality
@@ -73,9 +97,11 @@ Function Run-AD001()
     }
 
     if ($ex2016 -eq $true) {
+    Write-Verbose "At least one Exchange 2016 server detected."
     # Exchange 2016 servers found
         foreach ($domain in $alldomains) {
             $pdc = (get-addomain $domain).pdcemulator
+            Write-Verbose "Using PDCE $pdc"
             $dse = ([ADSI] "LDAP://$pdc/RootDSE")
             $dlevel = $dse.domainFunctionality
             $flevel = $dse.forestFunctionality
