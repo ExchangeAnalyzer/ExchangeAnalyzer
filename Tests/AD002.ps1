@@ -14,8 +14,40 @@ Function Run-AD002()
     $FailedList = @()
     $ErrorList = @()
 
-    $forestname = ($adforest).name
-    $forestmode = ($adforest).forestmode
+    $# Domain Check - Current Forest
+    $Domains = @()
+    $Forest = @()
+    $Domains = @((get-adforest).domains)
+    $Forest = @((get-adforest).name)
+    $AllDomains = $domains
+    $AllForests = $forest
+
+    # Check for other forest domains (via trusts)
+    If($? -and $Domains -ne $Null) {
+        ForEach($Domain in $Domains) { 
+            # Get list of AD Domain Trusts in each domain
+            $ADDomainTrusts = Get-ADObject -Filter {ObjectClass -eq "trustedDomain"} -Server $Domain -Properties * -EA 0
+            If($? -and $ADDomainTrusts -ne $Null) {
+                If($ADDomainTrusts -is [array]) {
+                    [int]$ADDomainTrustsCount = $ADDomainTrusts.Count 
+                } Else {
+                    [int]$ADDomainTrustsCount = 1
+                }
+                ForEach($Trust in $ADDomainTrusts) { 
+                    [string]$TrustName = $Trust.Name
+                    If ($TrustName -ne $Forests) {
+                        $TrustAttributesNumber = $Trust.TrustAttributes
+                        if (($TrustAttributesNumber -eq "8")) {
+                            $newdomains = (get-adforest $trustname).domains
+                            $newforest = (get-adforest $trustname).name
+                            $alldomains += $newdomains
+                            $allforests += $newforest
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     foreach ($server in $exchangeservers) { 
         $admin = $server.admindisplayversion
@@ -25,24 +57,35 @@ Function Run-AD002()
     }
 
     if ($ex2013 -eq $true) {
-        # All Exchange 2013 servers, no Exchange 2016 servers found
-        if ($ex2016 -eq $null) {
-            if (($forestmode -like "*2012*") -or ($forestmode -like "*2008*") -or ($forestmode -like "2003*")) {
-                $PassedList += $($forestname)
-            } else {
-                $FailedList += $($forestname)
+    # All Exchange 2013 servers, no Exchange 2016 servers found
+        Foreach ($forest in $allforests) {
+            $DC = (get-adforest $forest).GlobalCatalogs
+            $dse = ([ADSI] "LDAP://$dc/RootDSE")
+            $flevel = $dse.forestFunctionality
+            if ($flevel -ge "2") {
+                $PassedList += $($ADforest)
+            }
+            if (($flevel -lt "2") -and ($flevel -gt "0")) {
+                $FailedList += $($ADforest)
+            }
+        }
+    }
+
+    if ($ex2016 -eq $true) {
+    # Exchange 2016 servers found
+         Foreach ($forest in $allforests) {
+            $DC = (get-adforest $forest).GlobalCatalogs
+            $dse = ([ADSI] "LDAP://$dc/RootDSE")
+            $flevel = $dse.forestFunctionality
+            if ($flevel -ge "3") {
+                $PassedList += $($Forest)
+            }
+            if (($flevel -lt "3") -and ($flevel -gt "0")) {
+                $FailedList += $($Forest)
             }
         }
     }
     
-    if ($ex2016 -eq $true) {
-        # Exchange 2016 servers found
-        if (($forestmode -like "*2012*") -or ($forestmode -like "*2008*")) {
-            $PassedList += $($forestname)
-        } else {
-            $FailedList += $($forestname)
-        }
-    }
 
     #Roll the object to be returned to the results
     $ReportObj = Get-TestResultObject -ExchangeAnalyzerTests $ExchangeAnalyzerTests `

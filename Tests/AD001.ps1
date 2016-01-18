@@ -1,7 +1,7 @@
 #requires -Modules ExchangeAnalyzer
 #requires -Modules ActiveDirectory
 
-#This function verifies the Active Directory Domain level is Windows 2008 or greater
+#This function verifies the Active Directory Domain level is at the correct level
 Function Run-AD001()
 {
     [CmdletBinding()]
@@ -14,8 +14,40 @@ Function Run-AD001()
     $FailedList = @()
     $ErrorList = @()
 
-    $domaindnsname = ($addomain).dnsroot
-    $domainmode = ($addomain).domainmode
+    # Domain Check - Current Forest
+    $Domains = @()
+    $Forest = @()
+    $Domains = @((get-adforest).domains)
+    $Forest = @((get-adforest).name)
+    $AllDomains = $domains
+    $AllForests = $forest
+
+    # Check for other forest domains (via trusts)
+    If($? -and $Domains -ne $Null) {
+        ForEach($Domain in $Domains) { 
+            # Get list of AD Domain Trusts in each domain
+            $ADDomainTrusts = Get-ADObject -Filter {ObjectClass -eq "trustedDomain"} -Server $Domain -Properties * -EA 0
+            If($? -and $ADDomainTrusts -ne $Null) {
+                If($ADDomainTrusts -is [array]) {
+                    [int]$ADDomainTrustsCount = $ADDomainTrusts.Count 
+                } Else {
+                    [int]$ADDomainTrustsCount = 1
+                }
+                ForEach($Trust in $ADDomainTrusts) { 
+                    [string]$TrustName = $Trust.Name
+                    If ($TrustName -ne $Forests) {
+                        $TrustAttributesNumber = $Trust.TrustAttributes
+                        if (($TrustAttributesNumber -eq "8")) {
+                            $newdomains = (get-adforest $trustname).domains
+                            $newforest = (get-adforest $trustname).name
+                            $alldomains += $newdomains
+                            $allforests += $newforest
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     foreach ($server in $exchangeservers) { 
         $admin = $server.admindisplayversion
@@ -25,23 +57,35 @@ Function Run-AD001()
     }
     
     if ($ex2013 -eq $true) {
-        # All Exchange 2013 servers, no Exchange 2016 servers found
-        if ($ex2016 -eq $null) {
-            if (($domainmode -like "*2012*") -or ($domainmode -like "*2008*") -or ($domainmode -like "2003*")) {
-                $PassedList += $($domaindnsname)
-            } else {
-                $FailedList += $($domaindnsname)
+    # All Exchange 2013 servers, no Exchange 2016 servers found
+        foreach ($domain in $alldomains) {
+            $pdc = (get-addomain $domain).pdcemulator
+            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
+            $dlevel = $dse.domainFunctionality
+            $flevel = $dse.forestFunctionality
+            if ($dlevel -ge "2") {
+                $PassedList += $($domain)
+            }
+            if (($dlevel -lt "2") -and ($dlevel -gt "0")) {
+                $FailedList += $($domain)
             }
         }
     }
-  
+
     if ($ex2016 -eq $true) {
-        # Exchange 2016 servers found
-        if (($domainmode -like "*2012*") -or ($domainmode -like "*2008*")) {
-            $PassedList += $($domaindnsname)
-        } else {
-            $FailedList += $($domaindnsname)
-        }   
+    # Exchange 2016 servers found
+        foreach ($domain in $alldomains) {
+            $pdc = (get-addomain $domain).pdcemulator
+            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
+            $dlevel = $dse.domainFunctionality
+            $flevel = $dse.forestFunctionality
+            if ($dlevel -ge "3") {
+                $PassedList += $($domain)
+            }
+            if (($dlevel -lt "3") -and ($dlevel -gt "0")) {
+                $FailedList += $($domain)
+            }
+        }
     }
 
     #Roll the object to be returned to the results
