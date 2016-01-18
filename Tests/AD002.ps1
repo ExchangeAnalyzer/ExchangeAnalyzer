@@ -14,7 +14,7 @@ Function Run-AD002()
     $FailedList = @()
     $ErrorList = @()
 
-    $# Domain Check - Current Forest
+    # Domain Check - Current Forest
     $Domains = @()
     $Forest = @()
     $Domains = @((get-adforest).domains)
