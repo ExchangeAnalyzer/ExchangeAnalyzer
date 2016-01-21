@@ -249,10 +249,46 @@ $htmlhead="<html>
 			td.info{background: #85D4FF;}
             ul{list-style: inside; padding-left: 0px;}
 			</style>
-			<body>
-			<h1 align=""center"">Exchange Analyzer Report</h1>
-			<h3 align=""center"">Generated: $now</h3>"
+			<body>"
 
+#HTML intro
+$IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
+			<h3 align=""center"">Generated: $now</h3>
+            <h3 align=""center"">Organization: $($ExchangeOrganization.Name)</h3>
+            <p>The following guidelines apply to this report:
+            <ul>
+                <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
+                <li>Click the ""More Info"" link for each test to learn more about that test, what a pass or fail means, and recommendations for how to respond.</li>
+                <li>A test can fail if it can't complete successfully, or if a condition was encountered that requires manual assessment.</li>
+                <li>For some organizations a failed test may be due to a deliberate design or operational decision.</li>
+                <li>Please review the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
+            </ul>
+            </p>"
+
+#Count of test results
+$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
+$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
+$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
+$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+
+#HTML summary table
+$SummaryTableHtml  = "<h3 align=""center"">Summary:</h3>
+                      <p align=""center"">
+                      <table>
+                      <tr>
+                      <th>Passed</th>
+                      <th>Warning</th>
+                      <th>Failed</th>
+                      <th>Info</th>
+                      </tr>
+                      <tr>
+                      <td class=""pass"">$TotalPassed</td>
+                      <td class=""warn"">$TotalWarning</td>
+                      <td class=""fail"">$TotalFailed</td>
+                      <td class=""info"">$TotalInfo</td>
+                      </tr>
+                      </table>
+                      </p>"
 
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
@@ -350,7 +386,7 @@ $htmltail = "</body>
 			</html>"
 
 #Roll the final HTML by assembling the head, body, and tail
-$reportHtml = $htmlhead + $bodyHtml + $htmltail
+$reportHtml = $htmlhead + $IntroHtml + $SummaryTableHtml + $bodyHtml + $htmltail
 $reportHtml | Out-File $reportFile -Force
 
 #endregion Generate Report
