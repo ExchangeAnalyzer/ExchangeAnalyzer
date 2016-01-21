@@ -84,7 +84,7 @@ Function Run-AD002()
 
     foreach ($forest in $allforests)
     {
-        $DC = (get-adforest $forest).GlobalCatalogs
+        $DC = @((get-adforest $forest).GlobalCatalogs)[0]
         Write-Verbose "Using GC $DC"
         $dse = ([ADSI] "LDAP://$dc/RootDSE")
         $flevel = $dse.forestFunctionality
