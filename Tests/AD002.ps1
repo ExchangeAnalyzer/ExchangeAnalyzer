@@ -1,5 +1,4 @@
 #requires -Modules ExchangeAnalyzer
-#requires -Modules ActiveDirectory
 
 #This function verifies the Active Directory Forest level is Windows 2008 or greater
 Function Run-AD002()

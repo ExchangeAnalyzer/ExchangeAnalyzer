@@ -1,5 +1,4 @@
 #requires -Modules ExchangeAnalyzer
-#requires -Modules ActiveDirectory
 
 #This function verifies the Active Directory Domain level is at the correct level
 Function Run-AD001()
