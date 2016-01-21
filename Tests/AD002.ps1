@@ -49,43 +49,65 @@ Function Run-AD002()
         }
     }
 
-    foreach ($server in $exchangeservers) { 
-        $admin = $server.admindisplayversion
-        [string]$ver=[string]$admin.major+'.'+[string]$admin.minor
-        if ($Ver -like "15.0") {$Ex2013 = $true}
-        if ($Ver -like "15.1") {$Ex2016 = $true}
+    #Determine newest and oldest Exchange versions in the org and set min/max functional levels
+    #based on supportability matrix: https://technet.microsoft.com/library/ff728623(v=exchg.150).aspx
+
+    $ExchangeVersions = @{
+                        Newest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[0].AdminDisplayVersion
+                        Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
+                        }
+
+    if ($ExchangeVersions.Newest -like "Version 15.1*")
+    {
+        $MinFunctionalLevel = 3
+        $MinFunctionalLevelText = "Windows Server 2008"
+    }
+    else
+    {
+        $MinFunctionalLevel = 2
+        $MinFunctionalLevelText = "Windows Server 2003"
     }
 
-    if ($ex2013 -eq $true) {
-    # All Exchange 2013 servers, no Exchange 2016 servers found
-        Foreach ($forest in $allforests) {
-            $DC = (get-adforest $forest).GlobalCatalogs
-            $dse = ([ADSI] "LDAP://$dc/RootDSE")
-            $flevel = $dse.forestFunctionality
-            if ($flevel -ge "2") {
-                $PassedList += $($ADforest)
-            }
-            if (($flevel -lt "2") -and ($flevel -gt "0")) {
-                $FailedList += $($ADforest)
-            }
-        }
+    if ($ExchangeVersions.Oldest -like "Version 8.0*")
+    {
+        $MaxFunctionalLevel = 5
+        $MaxFunctionalLevelText = "Windows Server 2012"
+    }
+    else
+    {
+        $MaxFunctionalLevel = 6
+        $MaxFunctionalLevelText = "Windows Server 2012 R2"
     }
 
-    if ($ex2016 -eq $true) {
-    # Exchange 2016 servers found
-         Foreach ($forest in $allforests) {
-            $DC = (get-adforest $forest).GlobalCatalogs
-            $dse = ([ADSI] "LDAP://$dc/RootDSE")
-            $flevel = $dse.forestFunctionality
-            if ($flevel -ge "3") {
-                $PassedList += $($Forest)
-            }
-            if (($flevel -lt "3") -and ($flevel -gt "0")) {
-                $FailedList += $($Forest)
-            }
+    Write-Verbose "The Forest Functional level must be:"
+    Write-Verbose " - Minimum: $MinFunctionalLevelText"
+    Write-Verbose " - Maximum: $MaxFunctionalLevelText"
+
+    foreach ($forest in $allforests)
+    {
+        $DC = (get-adforest $forest).GlobalCatalogs
+        Write-Verbose "Using GC $DC"
+        $dse = ([ADSI] "LDAP://$dc/RootDSE")
+        $flevel = $dse.forestFunctionality
+
+        switch ($flevel)
+        {
+            2 {$fleveltext = "Windows Server 2003"}
+            3 {$fleveltext = "Windows Server 2008"}
+            4 {$fleveltext = "Windows Server 2008 R2"}
+            5 {$fleveltext = "Windows Server 2012"}
+            6 {$fleveltext = "Windows Server 2012 R2"}
+        }
+
+        if ($flevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)
+        {
+            $PassedList += "$($forest) ($fleveltext)"
+        }
+        else
+        {
+            $FailedList += "$($forest) ($fleveltext)"
         }
     }
-    
 
     #Roll the object to be returned to the results
     $ReportObj = Get-TestResultObject -ExchangeAnalyzerTests $ExchangeAnalyzerTests `

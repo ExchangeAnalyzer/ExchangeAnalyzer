@@ -61,7 +61,8 @@ Function Run-AD001()
         Write-Verbose "An error occurred or no domains were found."
     }
 
-    #Determine newest and oldest Exchange versions in the org
+    #Determine newest and oldest Exchange versions in the org and set min/max functional levels
+    #based on supportability matrix: https://technet.microsoft.com/library/ff728623(v=exchg.150).aspx
 
     $ExchangeVersions = @{
                         Newest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[0].AdminDisplayVersion
@@ -90,51 +91,34 @@ Function Run-AD001()
         $MaxFunctionalLevelText = "Windows Server 2012 R2"
     }
 
-    Write-Verbose "The Forest/Domain Functional level must be:"
+    Write-Verbose "The Domain Functional level must be:"
     Write-Verbose " - Minimum: $MinFunctionalLevelText"
     Write-Verbose " - Maximum: $MaxFunctionalLevelText"
 
-
-
-    if ($HasLegacy -eq $true)
+    foreach ($domain in $alldomains)
     {
+        $pdc = (get-addomain $domain).pdcemulator
+        Write-Verbose "Using PDCE $pdc"
+        $dse = ([ADSI] "LDAP://$pdc/RootDSE")
+        $dlevel = $dse.domainFunctionality
+        #$flevel = $dse.forestFunctionality
 
-    }
-
-    if ($HasEx2013 -eq $true -and $HasEx2016 -ne $true -and $)
-    {
-        Write-Verbose "Only Exchange 2013 servers exist."
-        # All Exchange 2013 servers, no Exchange 2016 servers found
-        foreach ($domain in $alldomains) {
-            $pdc = (get-addomain $domain).pdcemulator
-            Write-Verbose "Using PDCE $pdc"
-            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
-            $dlevel = $dse.domainFunctionality
-            $flevel = $dse.forestFunctionality
-            if ($dlevel -ge "2") {
-                $PassedList += $($domain)
-            }
-            if (($dlevel -lt "2") -and ($dlevel -gt "0")) {
-                $FailedList += $($domain)
-            }
+        switch ($dlevel)
+        {
+            2 {$dleveltext = "Windows Server 2003"}
+            3 {$dleveltext = "Windows Server 2008"}
+            4 {$dleveltext = "Windows Server 2008 R2"}
+            5 {$dleveltext = "Windows Server 2012"}
+            6 {$dleveltext = "Windows Server 2012 R2"}
         }
-    }
 
-    if ($ex2016 -eq $true) {
-    Write-Verbose "At least one Exchange 2016 server detected."
-    # Exchange 2016 servers found
-        foreach ($domain in $alldomains) {
-            $pdc = (get-addomain $domain).pdcemulator
-            Write-Verbose "Using PDCE $pdc"
-            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
-            $dlevel = $dse.domainFunctionality
-            $flevel = $dse.forestFunctionality
-            if ($dlevel -ge "3") {
-                $PassedList += $($domain)
-            }
-            if (($dlevel -lt "3") -and ($dlevel -gt "0")) {
-                $FailedList += $($domain)
-            }
+        if ($dlevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)
+        {
+            $PassedList += "$($domain) ($dleveltext)"
+        }
+        else
+        {
+            $FailedList += "$($domain) ($dleveltext)"
         }
     }
 
