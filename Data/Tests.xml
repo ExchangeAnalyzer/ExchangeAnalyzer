@@ -58,7 +58,7 @@
 		<Description>Check that the domains are at the required level.</Description>
 		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
 		<IfPassedComments>All Active Directory domains meet the required functional level.</IfPassedComments>
-		<IfFailedComments>One or more domains do not meet the required functional level.</IfFailedComments>
+		<IfFailedComments>One or more Active Directory domains do not meet the required functional level.</IfFailedComments>
 	</Test>
 
 	<Test>
@@ -67,7 +67,7 @@
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>
 		<Reference>https://technet.microsoft.com/en-us/library/bb691354(v=exchg.160).aspx</Reference>
-		<IfPassedComments>The forest meets the required functional level.</IfPassedComments>
-		<IfFailedComments>The forest does not meet the required functional level.</IfFailedComments>
+		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
+		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
 </Tests>
