@@ -225,10 +225,10 @@ Write-Verbose $msgString
 #HTML HEAD with styles
 $htmlhead="<html>
 			<style>
-			BODY{font-family: Arial; font-size: 8pt;}
-			H1{font-size: 16px;}
-			H2{font-size: 14px;}
-			H3{font-size: 12px;}
+			BODY{font-family: Arial; font-size: 10pt;}
+			H1{font-size: 22px;}
+			H2{font-size: 20px; padding-top: 10px;}
+			H3{font-size: 16px; padding-top: 8px;}
 			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
 			TD{border: 1px solid black; padding: 5px; }
@@ -261,7 +261,7 @@ $TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
 $TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
 
 #HTML summary table
-$SummaryTableHtml  = "<h3 align=""center"">Summary:</h3>
+$SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
                       <p align=""center"">
                       <table>
                       <tr>
@@ -279,6 +279,65 @@ $SummaryTableHtml  = "<h3 align=""center"">Summary:</h3>
                       </table>
                       </p>"
 
+#Build table of CAS URLs
+$CASURLSummaryHtml = $null
+$CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
+
+foreach ($server in $CASURLs)
+{
+    $CASURLSummaryHtml += "<table>
+                            <tr>
+                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $server.Name}).Site.Split("/")[-1])</th>
+                            </tr>
+                            <tr>
+                            <th>Service</th>
+                            <th>Internal URL</th>
+                            <th>External Url</th>
+                            </tr>
+                            <tr>
+                            <td>Outlook Anywhere</td>
+                            <td>$($server.OAInternal)</td>
+                            <td>$($server.OAExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>MAPI/HTTP</td>
+                            <td>$($server.MAPIInternal)</td>
+                            <td>$($server.MAPIExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Outlook on the web (OWA)</td>
+                            <td>$($server.OWAInternal)</td>
+                            <td>$($server.OWAExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Exchange Control Panel</td>
+                            <td>$($server.ECPInternal)</td>
+                            <td>$($server.ECPExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>ActiveSync</td>
+                            <td>$($server.EASInternal)</td>
+                            <td>$($server.EASExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Offline Address Book</td>
+                            <td>$($server.OABInternal)</td>
+                            <td>$($server.OABExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Exchange Web Access</td>
+                            <td>$($server.EWSInternal)</td>
+                            <td>$($server.EWSExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>AutoDiscover</td>
+                            <td>$($server.AutoDSCP)</td>
+                            <td>n/a</td>
+                            </tr>
+                            </table>
+                            </p>"
+}
+
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
 
@@ -288,8 +347,16 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable = $null
     
     #Create HTML table headings
-    $categoryHtmlHeader = "<h3>Category: $($reportcategory.Name)</h3>
-					        <p>
+    if ($($reportcategory.Name) -eq "Client Access")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $CASURLSummaryHtml
+    }
+    else
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+    }
+    $categoryHtmlHeader += "<p>
 					        <table>
 					        <tr>
 					        <th>Test ID</th>
@@ -371,7 +438,8 @@ foreach ($reportcategory in $reportcategories)
     $bodyHtml += $categoryHtmlTable
 }
 
-$htmltail = "</body>
+$htmltail = "<p align=""center"">Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
+            </body>
 			</html>"
 
 #Roll the final HTML by assembling the head, body, and tail
