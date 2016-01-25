@@ -263,7 +263,7 @@ Function Get-ExchangeURLs()
                 
         #AutoDiscover
         Write-Verbose "Fetching AutoD SCP for $CAS"
-        $AutoD = Get-ClientAccessServer $CAS.Name | Select AutoDiscoverServiceInternalUri
+        $AutoD = Get-ClientAccessServer $CAS.Name -WarningAction Ignore | Select AutoDiscoverServiceInternalUri
         if ($AutoD.AutoDiscoverServiceInternalUri -eq $null) { $AutoD.AutoDiscoverServiceInternalUri -eq "Not set" }
 
         Write-Verbose "Creating object for CAS Urls"
