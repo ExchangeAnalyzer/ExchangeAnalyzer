@@ -1,5 +1,4 @@
 #requires -Modules ExchangeAnalyzer
-#requires -Modules ActiveDirectory
 
 #This function verifies the Active Directory Domain level is at the correct level
 Function Run-AD001()
@@ -61,56 +60,64 @@ Function Run-AD001()
         Write-Verbose "An error occurred or no domains were found."
     }
 
-    foreach ($server in $exchangeservers) { 
-        $admin = $server.admindisplayversion
-        Write-Verbose $admin
-        #[string]$ver=[string]$admin.major+'.'+[string]$admin.minor
-        #Write-Verbose $ver
-        if ($admin -like "Version 15.0*")
-        {
-            $Ex2013 = $true
-            Write-Verbose "Exchange 2013 detected."    
-        }
-        if ($admin -like "Version 15.1*")
-        {
-            $Ex2016 = $true
-            Write-Verbose "Exchange 2016 detected."
-        }
+    #Determine newest and oldest Exchange versions in the org and set min/max functional levels
+    #based on supportability matrix: https://technet.microsoft.com/library/ff728623(v=exchg.150).aspx
+
+    $ExchangeVersions = @{
+                        Newest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[0].AdminDisplayVersion
+                        Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
+                        }
+
+    if ($ExchangeVersions.Newest -like "Version 15.1*")
+    {
+        $MinFunctionalLevel = 3
+        $MinFunctionalLevelText = "Windows Server 2008"
     }
-    
-    if ($ex2013 -eq $true) {
-    Write-Verbose "At least one Exchange 2013 server detected."
-    # All Exchange 2013 servers, no Exchange 2016 servers found
-        foreach ($domain in $alldomains) {
-            $pdc = (get-addomain $domain).pdcemulator
-            Write-Verbose "Using PDCE $pdc"
-            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
-            $dlevel = $dse.domainFunctionality
-            $flevel = $dse.forestFunctionality
-            if ($dlevel -ge "2") {
-                $PassedList += $($domain)
-            }
-            if (($dlevel -lt "2") -and ($dlevel -gt "0")) {
-                $FailedList += $($domain)
-            }
-        }
+    else
+    {
+        $MinFunctionalLevel = 2
+        $MinFunctionalLevelText = "Windows Server 2003"
     }
 
-    if ($ex2016 -eq $true) {
-    Write-Verbose "At least one Exchange 2016 server detected."
-    # Exchange 2016 servers found
-        foreach ($domain in $alldomains) {
-            $pdc = (get-addomain $domain).pdcemulator
-            Write-Verbose "Using PDCE $pdc"
-            $dse = ([ADSI] "LDAP://$pdc/RootDSE")
-            $dlevel = $dse.domainFunctionality
-            $flevel = $dse.forestFunctionality
-            if ($dlevel -ge "3") {
-                $PassedList += $($domain)
-            }
-            if (($dlevel -lt "3") -and ($dlevel -gt "0")) {
-                $FailedList += $($domain)
-            }
+    if ($ExchangeVersions.Oldest -like "Version 8.0*")
+    {
+        $MaxFunctionalLevel = 5
+        $MaxFunctionalLevelText = "Windows Server 2012"
+    }
+    else
+    {
+        $MaxFunctionalLevel = 6
+        $MaxFunctionalLevelText = "Windows Server 2012 R2"
+    }
+
+    Write-Verbose "The Domain Functional level must be:"
+    Write-Verbose " - Minimum: $MinFunctionalLevelText"
+    Write-Verbose " - Maximum: $MaxFunctionalLevelText"
+
+    foreach ($domain in $alldomains)
+    {
+        $pdc = (get-addomain $domain).pdcemulator
+        Write-Verbose "Using PDCE $pdc"
+        $dse = ([ADSI] "LDAP://$pdc/RootDSE")
+        $dlevel = $dse.domainFunctionality
+        #$flevel = $dse.forestFunctionality
+
+        switch ($dlevel)
+        {
+            2 {$dleveltext = "Windows Server 2003"}
+            3 {$dleveltext = "Windows Server 2008"}
+            4 {$dleveltext = "Windows Server 2008 R2"}
+            5 {$dleveltext = "Windows Server 2012"}
+            6 {$dleveltext = "Windows Server 2012 R2"}
+        }
+
+        if ($dlevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)
+        {
+            $PassedList += "$($domain) ($dleveltext)"
+        }
+        else
+        {
+            $FailedList += "$($domain) ($dleveltext)"
         }
     }
 
