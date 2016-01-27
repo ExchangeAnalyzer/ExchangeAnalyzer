@@ -86,7 +86,10 @@ SOFTWARE.
 #region Start parameters
 
 [CmdletBinding()]
-param ()
+param (
+    [Parameter(Mandatory=$false)]
+    [string]$FileName
+)
 #endregion
 
 
@@ -102,8 +105,6 @@ $shortdate = $now.ToShortDateString()					#Short date format for reports, logs, 
 $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
-$reportFile = "$($myDir)\ExchangeAnalyzerReport.html"
-
 
 #endregion
 
@@ -128,6 +129,17 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 # Main Script
 #...................................
 
+#region -File Name Generation
+# Generate an output filename for the script
+
+if ($FileName) {
+    # If the user has passed the filename parameter to the script, use that.
+    $reportFile = $FileName
+} else {
+    # If the user did not pass a filename, generate one based on date/time.
+    $reportFile = "$($MyDir)\ExchangeAnalyzerReport-$(Get-Date -UFormat %Y%m%d-%H%M).html"
+}
+#end region
 
 #region -Basic Data Collection
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
