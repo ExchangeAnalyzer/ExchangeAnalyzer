@@ -116,6 +116,9 @@ $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
 
+# What file types may be provided when creating the script?"
+$supportedOutputFileTypes = @("html","htm")
+
 #endregion
 
 
@@ -145,35 +148,39 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 if ($FileName) {
     # If the user has passed the filename parameter to the script, use that.
     try {
-        if ([System.IO.Path]::IsPathRooted($FileName)) {
-            # Path provided by user is absolute; use it as is.
-            $reportFile = $FileName
-            # Ensure the folder exists
-            $ReportFileFolder = Split-Path $FileName -Parent
-            if (-not (Test-Path $ReportFileFolder -PathType Container -ErrorAction SilentlyContinue)) {
-                # Folder does not exist, create it
-                Write-Verbose "$ReportFileFolder does not exist. Attempting to create it."
-                try {
-                    $null = New-Item -ItemType Directory -Force -Path $ReportFileFolder
-                    Write-Verbose "$ReportFilefolder was created."
-                } catch {
-                    throw "Folder $ReportFileFolder does not exist, and was unable to be created."
+        $FileNameExtension = $FileName.Split(".")[-1]
+        if ($supportedOutputFileTypes -icontains $FileNameExtension) {
+            if ([System.IO.Path]::IsPathRooted($FileName)) {
+                # Path provided by user is absolute; use it as is.
+                $reportFile = $FileName
+                # Ensure the folder exists
+                $ReportFileFolder = Split-Path $FileName -Parent
+                if (-not (Test-Path $ReportFileFolder -PathType Container -ErrorAction SilentlyContinue)) {
+                    # Folder does not exist, create it
+                    Write-Verbose "$ReportFileFolder does not exist. Attempting to create it."
+                    try {
+                        $null = New-Item -ItemType Directory -Force -Path $ReportFileFolder
+                        Write-Verbose "$ReportFilefolder was created."
+                    } catch {
+                        throw "Folder $ReportFileFolder does not exist, and was unable to be created."
+                    }
                 }
+            } else {
+                # Path provided by user is relative; base it in $MyDir.
+                $reportFile = Join-Path $myDir $FileName
             }
-
         } else {
-            # Path provided by user is relative; base it in $MyDir.
-            $reportFile = Join-Path $myDir $FileName
+            throw "Unsupported file type: $FileNameExtension"
         }
     } catch {
-        throw "Unable to validate passed -FileName as a relative or absolute path"
+        throw "Unable to validate passed -FileName as a relative or absolute path. Exception: $($_.ToString())"
     }
         
 } else {
     # If the user did not pass a filename, generate one based on date/time.
     $reportFile = "$($MyDir)\ExchangeAnalyzerReport-$(Get-Date -UFormat %Y%m%d-%H%M).html"
 }
-#end region
+#endregion
 
 #region -Basic Data Collection
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
