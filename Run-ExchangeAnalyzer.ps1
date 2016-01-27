@@ -148,6 +148,19 @@ if ($FileName) {
         if ([System.IO.Path]::IsPathRooted($FileName)) {
             # Path provided by user is absolute; use it as is.
             $reportFile = $FileName
+            # Ensure the folder exists
+            $ReportFileFolder = Split-Path $FileName -Parent
+            if (-not (Test-Path $ReportFileFolder -PathType Container -ErrorAction SilentlyContinue)) {
+                # Folder does not exist, create it
+                Write-Verbose "$ReportFileFolder does not exist. Attempting to create it."
+                try {
+                    $null = New-Item -ItemType Directory -Force -Path $ReportFileFolder
+                    Write-Verbose "$ReportFilefolder was created."
+                } catch {
+                    throw "Folder $ReportFileFolder does not exist, and was unable to be created."
+                }
+            }
+
         } else {
             # Path provided by user is relative; base it in $MyDir.
             $reportFile = Join-Path $myDir $FileName
