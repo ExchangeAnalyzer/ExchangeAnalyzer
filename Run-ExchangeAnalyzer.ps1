@@ -11,12 +11,22 @@ Please refer to the installation and usage instructions at http://exchangeanalyz
 .OUTPUTS
 Results are output to a HTML report.
 
+.PARAMETER FileName
+Specifies the relative or absolute path to the output file.
+
+If this parameter is not supplied, the default ExchangeAnalyzerReport-date-time.html
+output path will be utilized.
+
 .PARAMETER Verbose
 Verbose output is displayed in the Exchange management shell.
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1
 Runs the Exchange Analyzer.
+
+.EXAMPLE
+.\Run-ExchangeAnalyzer.ps1 -FileName C:\ExchangeReports\ContosoExchange.html
+Runs the Exchange Analyzer outputting results to C:\ExchangeReports\ContosoExchange.html
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1 -Verbose
