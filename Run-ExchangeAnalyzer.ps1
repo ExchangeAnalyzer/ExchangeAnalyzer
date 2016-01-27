@@ -134,7 +134,18 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 
 if ($FileName) {
     # If the user has passed the filename parameter to the script, use that.
-    $reportFile = $FileName
+    try {
+        if ([System.IO.Path]::IsPathRooted($FileName)) {
+            # Path provided by user is absolute; use it as is.
+            $reportFile = $FileName
+        } else {
+            # Path provided by user is relative; base it in $MyDir.
+            $reportFile = Join-Path $myDir $FileName
+        }
+    } catch {
+        throw "Unable to validate passed -FileName as a relative or absolute path"
+    }
+        
 } else {
     # If the user did not pass a filename, generate one based on date/time.
     $reportFile = "$($MyDir)\ExchangeAnalyzerReport-$(Get-Date -UFormat %Y%m%d-%H%M).html"
