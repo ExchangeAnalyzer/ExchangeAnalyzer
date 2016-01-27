@@ -116,7 +116,7 @@ $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
 
-# What file types may be provided when creating the script?"
+# What file types may be provided when creating the output file?"
 $supportedOutputFileTypes = @("html","htm")
 
 #endregion
