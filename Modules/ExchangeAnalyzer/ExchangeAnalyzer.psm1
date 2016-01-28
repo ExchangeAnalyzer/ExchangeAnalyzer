@@ -20,6 +20,8 @@ Function Get-TestResultObject()
 	)
 
     Write-Verbose "Rolling test result object for $TestID"
+    
+    $ReferenceURLBase = "https://github.com/cunninghamp/ExchangeAnalyzer/wiki"
      
     if ($PassedList)
     {
@@ -53,7 +55,7 @@ Function Get-TestResultObject()
         PassedObjects = $PassedList
         FailedObjects = $FailedList
         Comments = $TestComments
-        Reference = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Reference
+        Reference = "$($ReferenceURLBase)/$($TestID)"
     }
     
     $TestResultObj = New-Object -TypeName PSObject -Property $result 
