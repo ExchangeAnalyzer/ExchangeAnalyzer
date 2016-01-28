@@ -2,7 +2,7 @@
 
 Exchange Analyzer is a PowerShell tool that scans an Exchange Server 2013 or 2016 organization and reports on compliance with best practices.
 
-Exchange Analyzer is a community project, and is currently a beta release seeking feedback and results from real world environments.
+Exchange Analyzer is a community project, and is currently a beta release seeking feedback and results from real world environments. A [list of implemented tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests) is available on the [Exchange Analyzer Wiki](https://github.com/cunninghamp/ExchangeAnalyzer/wiki). A list of [proposed tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Proposed-Tests) that are yet to be developed is also available.
 
 
 ###Table of Contents
@@ -13,11 +13,12 @@ Exchange Analyzer is a community project, and is currently a beta release seekin
 - [Exchange Analyzer Output](#exchange-analyzer-output)
 - [Wiki Home Page](https://github.com/cunninghamp/ExchangeAnalyzer/wiki)
 	- [Exchange Analyzer Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests)
-	- [Draft Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Draft-Tests)
+	- [Proposed Tests](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Proposed-Tests)
 	- [Development Overview](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Development-Overview)
 	- [How to Contribute](https://github.com/cunninghamp/ExchangeAnalyzer/wiki/How-to-Contribute)
 - [Credits](#credits)
 - [License](#license)
+- [Mailing List](#mailing-list)
 
 ##Background and Purpose
 
@@ -78,3 +79,8 @@ Internet Explorer will automatically open the HTML report when the script has fi
 ##License
 
 Exchange Analyzer is released under the MIT license (MIT). Full text of the license is available [here](https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/LICENSE).
+
+##Mailing List
+
+To subscribe to receive news and updates about Exchange Analyzer by email [click here](http://tinyletter.com/ExchangeAnalyzer).
+

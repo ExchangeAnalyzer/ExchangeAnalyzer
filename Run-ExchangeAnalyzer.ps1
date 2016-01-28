@@ -29,6 +29,8 @@ http://exchangeanalyzer.com
 
 *** Credits ***
 
+----- Core Team -----
+
 - Paul Cunningham
     * Website:	http://exchangeserverpro.com
     * Twitter:	http://twitter.com/exchservpro
@@ -48,10 +50,15 @@ http://exchangeanalyzer.com
 - Damian Scoles
     * Website: https://justaucguy.wordpress.com/
 
+----- Additional Contributions -----
+
+https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
+
 
 *** Change Log ***
 
-V0.01, 14/01/2016 - Public beta release
+v0.1.1-Beta.2, 28/01/2016 - Second public beta release
+V0.1.0-Beta.1, 14/01/2016 - Public beta release
 
 
 *** License ***
@@ -81,6 +88,7 @@ SOFTWARE.
 
 
 #requires -Modules ExchangeAnalyzer
+#requires -Modules ActiveDirectory
 
 #region Start parameters
 
@@ -110,13 +118,13 @@ $reportFile = "$($myDir)\ExchangeAnalyzerReport.html"
 #region Get Tests from XML
 
 #Check for presence of Tests.xml file and exit if not found.
-if (!(Test-Path "$MyDir\Data\Tests.xml"))
+if (!(Test-Path "$($MyDir)\Data\Tests.xml"))
 {
     Write-Warning "Tests.xml file not found."
     EXIT
 }
 
-[xml]$TestsFile = Get-Content "$MyDir\Data\Tests.xml"
+[xml]$TestsFile = Get-Content "$($MyDir)\Data\Tests.xml"
 $ExchangeAnalyzerTests = @($TestsFile.Tests)
 
 #endregion Get Tests from XML
@@ -158,9 +166,21 @@ try
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDatabases.Count) databases found."
 
+    #Do not use -Status switch here as it causes an error to be thrown. DAG status should be
+    #queried later after filtering DAG list to only v15.x DAGs.
     Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
-    $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -Status -ErrorAction STOP)
+    $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
+
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 5
+    $ADDomain = Get-ADDomain -ErrorAction STOP
+ 
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 6
+    $ADForest = Get-ADForest -ErrorAction STOP
+ 
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 7
+    $ADDomainControllers = @(Get-ADDomainController -ErrorAction STOP)
+    Write-Verbose "$($ADDomainControllers.Count) Domain Controller(s) found."
 }
 catch
 {
@@ -171,13 +191,13 @@ catch
 
 #Get all Exchange HTTPS URLs to use for CAS tests
 $msgString = "Determining Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 5
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 8
 Write-Verbose $msgString
 $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 6
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 9
 Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers -Verbose:($PSBoundParameters['Verbose'] -eq $true))
 Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
@@ -198,14 +218,16 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
     $pct = $TestCount/$NumberOfTests * 100
 	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
 
-    if (Test-Path "$MyDir\Tests\$($Test).ps1")
+    if (Test-Path "$($MyDir)\Tests\$($Test).ps1")
     {
-        $testresult = Invoke-Expression -Command "$MyDir\Tests\$($Test).ps1"
+        #Escape any spaces in path prior to running Invoke-Expression
+        $command = "$($MyDir)\Tests\$($Test).ps1" -replace ' ','` '
+        $testresult = Invoke-Expression -Command $command
         $report += $testresult
     }
     else
     {
-        Write-Warning "$($Test) script wasn't found in $MyDir\Tests folder."
+        Write-Warning "$($Test) script wasn't found in $($MyDir)\Tests folder."
     }
 }
 
@@ -221,10 +243,10 @@ Write-Verbose $msgString
 #HTML HEAD with styles
 $htmlhead="<html>
 			<style>
-			BODY{font-family: Arial; font-size: 8pt;}
-			H1{font-size: 16px;}
-			H2{font-size: 14px;}
-			H3{font-size: 12px;}
+			BODY{font-family: Arial; font-size: 10pt;}
+			H1{font-size: 22px;}
+			H2{font-size: 20px; padding-top: 10px;}
+			H3{font-size: 16px; padding-top: 8px;}
 			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
 			TD{border: 1px solid black; padding: 5px; }
@@ -234,10 +256,105 @@ $htmlhead="<html>
 			td.info{background: #85D4FF;}
             ul{list-style: inside; padding-left: 0px;}
 			</style>
-			<body>
-			<h1 align=""center"">Exchange Analyzer Report</h1>
-			<h3 align=""center"">Generated: $now</h3>"
+			<body>"
 
+#HTML intro
+$IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
+			<h3 align=""center"">Generated: $now</h3>
+            <h3 align=""center"">Organization: $($ExchangeOrganization.Name)</h3>
+            <p>The following guidelines apply to this report:
+            <ul>
+                <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
+                <li>Click the ""More Info"" link for each test to learn more about that test, what a pass or fail means, and recommendations for how to respond.</li>
+                <li>A test can fail if it can't complete successfully, or if a condition was encountered that requires manual assessment.</li>
+                <li>For some organizations a failed test may be due to a deliberate design or operational decision.</li>
+                <li>Please review the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
+            </ul>
+            </p>"
+
+#Count of test results
+$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
+$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
+$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
+$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+
+#HTML summary table
+$SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
+                      <p align=""center"">
+                      <table>
+                      <tr>
+                      <th>Passed</th>
+                      <th>Warning</th>
+                      <th>Failed</th>
+                      <th>Info</th>
+                      </tr>
+                      <tr>
+                      <td class=""pass"">$TotalPassed</td>
+                      <td class=""warn"">$TotalWarning</td>
+                      <td class=""fail"">$TotalFailed</td>
+                      <td class=""info"">$TotalInfo</td>
+                      </tr>
+                      </table>
+                      </p>"
+
+#Build table of CAS URLs
+$CASURLSummaryHtml = $null
+$CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
+
+foreach ($server in $CASURLs)
+{
+    $CASURLSummaryHtml += "<table>
+                            <tr>
+                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $server.Name}).Site.Split("/")[-1])</th>
+                            </tr>
+                            <tr>
+                            <th>Service</th>
+                            <th>Internal URL</th>
+                            <th>External Url</th>
+                            </tr>
+                            <tr>
+                            <td>Outlook Anywhere</td>
+                            <td>$($server.OAInternal)</td>
+                            <td>$($server.OAExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>MAPI/HTTP</td>
+                            <td>$($server.MAPIInternal)</td>
+                            <td>$($server.MAPIExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Outlook on the web (OWA)</td>
+                            <td>$($server.OWAInternal)</td>
+                            <td>$($server.OWAExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Exchange Control Panel</td>
+                            <td>$($server.ECPInternal)</td>
+                            <td>$($server.ECPExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>ActiveSync</td>
+                            <td>$($server.EASInternal)</td>
+                            <td>$($server.EASExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Offline Address Book</td>
+                            <td>$($server.OABInternal)</td>
+                            <td>$($server.OABExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>Exchange Web Access</td>
+                            <td>$($server.EWSInternal)</td>
+                            <td>$($server.EWSExternal)</td>
+                            </tr>
+                            <tr>
+                            <td>AutoDiscover</td>
+                            <td>$($server.AutoDSCP)</td>
+                            <td>n/a</td>
+                            </tr>
+                            </table>
+                            </p>"
+}
 
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
@@ -248,8 +365,16 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable = $null
     
     #Create HTML table headings
-    $categoryHtmlHeader = "<h3>Category: $($reportcategory.Name)</h3>
-					        <p>
+    if ($($reportcategory.Name) -eq "Client Access")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $CASURLSummaryHtml
+    }
+    else
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+    }
+    $categoryHtmlHeader += "<p>
 					        <table>
 					        <tr>
 					        <th>Test ID</th>
@@ -331,11 +456,12 @@ foreach ($reportcategory in $reportcategories)
     $bodyHtml += $categoryHtmlTable
 }
 
-$htmltail = "</body>
+$htmltail = "<p align=""center"">Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
+            </body>
 			</html>"
 
 #Roll the final HTML by assembling the head, body, and tail
-$reportHtml = $htmlhead + $bodyHtml + $htmltail
+$reportHtml = $htmlhead + $IntroHtml + $SummaryTableHtml + $bodyHtml + $htmltail
 $reportHtml | Out-File $reportFile -Force
 
 #endregion Generate Report
@@ -348,7 +474,9 @@ $msgString = "Finished"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 100
 Write-Verbose $msgString
 
-iex $reportFile
+#Escape any spaces in path prior to running Invoke-Expression
+$command = $reportfile -replace ' ','` '
+Invoke-Expression -Command $command
 #...................................
 # Finished
 #...................................
