@@ -29,6 +29,8 @@ http://exchangeanalyzer.com
 
 *** Credits ***
 
+----- Core Team -----
+
 - Paul Cunningham
     * Website:	http://exchangeserverpro.com
     * Twitter:	http://twitter.com/exchservpro
@@ -48,10 +50,15 @@ http://exchangeanalyzer.com
 - Damian Scoles
     * Website: https://justaucguy.wordpress.com/
 
+----- Additional Contributions -----
+
+https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
+
 
 *** Change Log ***
 
-V0.01, 14/01/2016 - Public beta release
+v0.1.1-Beta.2, 28/01/2016 - Second public beta release
+V0.1.0-Beta.1, 14/01/2016 - Public beta release
 
 
 *** License ***
