@@ -31,7 +31,7 @@ Function Run-EXSRV001()
         foreach ($UnsupportedServer in $UnsupportedServers)
         {
             Write-Verbose "$($UnsupportedServer) is not supported by ExchangeAnalyzer"
-            $FailedList += $($UnsupportedServer.Name)
+            $InfoList += $($UnsupportedServer.Name)
         }
     }
 
@@ -41,6 +41,8 @@ Function Run-EXSRV001()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
 
