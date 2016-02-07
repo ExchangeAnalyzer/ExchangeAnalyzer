@@ -247,8 +247,17 @@ $htmlhead="<html>
 			H1{font-size: 22px;}
 			H2{font-size: 20px; padding-top: 10px;}
 			H3{font-size: 16px; padding-top: 8px;}
-			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
+			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt; table-layout: fixed;}
+            TABLE.testresults{width: 800px;}
+            TABLE.summary{text-align: center; width: auto;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
+            TH.summary{width: 80px;}
+            TH.test{width: 120px;}
+            TH.description{width: 150px;}
+            TH.outcome{width: 50px}
+            TH.comments{width: 120px;}
+            TH.details{width: 220px;}
+            TH.reference{width: 60px;}
 			TD{border: 1px solid black; padding: 5px; vertical-align: top; }
 			td.pass{background: #7FFF00;}
 			td.warn{background: #FFE600;}
@@ -281,12 +290,12 @@ $TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
 #HTML summary table
 $SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
                       <p align=""center"">
-                      <table>
+                      <table class=""summary"">
                       <tr>
-                      <th>Passed</th>
-                      <th>Warning</th>
-                      <th>Failed</th>
-                      <th>Info</th>
+                      <th class=""summary"">Passed</th>
+                      <th class=""summary"">Warning</th>
+                      <th class=""summary"">Failed</th>
+                      <th class=""summary"">Info</th>
                       </tr>
                       <tr>
                       <td class=""pass"">$TotalPassed</td>
@@ -375,14 +384,14 @@ foreach ($reportcategory in $reportcategories)
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
     }
     $categoryHtmlHeader += "<p>
-					        <table>
+					        <table class=""testresults"">
 					        <tr>
-					        <th>Test</th>
-                            <th>Description</th>
-					        <th>Outcome</th>
-					        <th>Comments</th>
-					        <th>Details</th>
-					        <th>Reference</th>
+					        <th class=""test"">Test</th>
+                            <th class=""description"">Description</th>
+					        <th class=""outcome"">Outcome</th>
+					        <th class=""comments"">Comments</th>
+					        <th class=""details"">Details</th>
+					        <th class=""reference"">Reference</th>
 					        </tr>"
 
     $categoryHtmlTable += $categoryHtmlHeader
