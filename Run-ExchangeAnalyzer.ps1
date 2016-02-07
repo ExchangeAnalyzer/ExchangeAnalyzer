@@ -377,13 +377,10 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlHeader += "<p>
 					        <table>
 					        <tr>
-					        <th>Test ID</th>
-					        <th>Test Category</th>
 					        <th>Test Name</th>
 					        <th>Test Outcome</th>
-					        <th>Passed Objects</th>
-					        <th>Failed Objects</th>
 					        <th>Comments</th>
+					        <th>Details</th>
 					        <th>Reference</th>
 					        </tr>"
 
@@ -393,8 +390,6 @@ foreach ($reportcategory in $reportcategories)
     foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
     {
         $HtmlTableRow = "<tr>"
-        $htmltablerow += "<td>$($reportline.TestID)</td>"
-		$htmltablerow += "<td>$($reportline.TestCategory)</td>"
 		$htmltablerow += "<td>$($reportline.TestName)</td>"
     
         Switch ($reportline.TestOutcome)
@@ -402,41 +397,73 @@ foreach ($reportcategory in $reportcategories)
             "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
             "Failed" {$htmltablerow += "<td class=""fail"">$($reportline.TestOutcome)</td>"}
             "Warning" {$HtmlTableRow += "<td class=""warn"">$($reportline.TestOutcome)</td>"}
+            "Info" {$HtmlTableRow += "<td class=""info"">$($reportline.TestOutcome)</td>"}
             default {$htmltablerow += "<td>$($reportline.TestOutcome)</td>"}
 		}
+
+        $htmltablerow += "<td>$($reportline.Comments)</td>"
 		
-        if ($($reportline.PassedObjects).Count -gt 0)
+        #Build list of passed, warning, failed, and info objects for report details column
+        $TestDetails = $null
+
+        if ($($reportline.InfoObjects).Count -gt 0)
         {
-            $ul = "<ul>"
-            foreach ($object in $reportline.PassedObjects)
+            $TestDetails += "<p>Info objects:</p><ul>"
+            foreach ($object in $reportline.InfoObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            $TestDetails += "<p>Info objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.PassedObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Passed objects:</p><ul>"
+            foreach ($object in $reportline.PassedObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            $TestDetails += "<p>Passed objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.WarningObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Warning objects:</p><ul>"
+            foreach ($object in $reportline.WarningObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            $TestDetails += "<p>Warning objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.FailedObjects).Count -gt 0)
         {
-            $ul = "<ul>"
+            $TestDetails += "<p>Failed objects:</p><ul>"
             foreach ($object in $reportline.FailedObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            $TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
-		
-        $htmltablerow += "<td>$($reportline.Comments)</td>"
-		
+
+        $htmltablerow += "<td>$ul</td>"
+				
         if ($($reportline.Reference) -eq "")
         {
             $htmltablerow += "<td>No additional info</td>"
