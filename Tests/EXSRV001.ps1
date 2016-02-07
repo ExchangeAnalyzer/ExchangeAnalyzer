@@ -12,6 +12,8 @@ Function Run-EXSRV001()
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
     $SupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"})
