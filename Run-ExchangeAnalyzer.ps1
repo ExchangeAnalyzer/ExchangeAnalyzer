@@ -268,9 +268,9 @@ $htmlhead="<html>
 			<body>"
 
 #HTML intro
-$IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
-			<h3 align=""center"">Generated: $now</h3>
-            <h3 align=""center"">Organization: $($ExchangeOrganization.Name)</h3>
+$IntroHtml="<h1>Exchange Analyzer Report</h1>
+			<p><strong>Generated:</strong> $now</p>
+            <p><strong>Organization:</strong> $($ExchangeOrganization.Name)</p>
             <p>The following guidelines apply to this report:
             <ul>
                 <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
@@ -288,8 +288,8 @@ $TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
 $TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
 
 #HTML summary table
-$SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
-                      <p align=""center"">
+$SummaryTableHtml  = "<h2>Summary:</h2>
+                      <p>
                       <table class=""summary"">
                       <tr>
                       <th class=""summary"">Passed</th>
@@ -493,7 +493,7 @@ foreach ($reportcategory in $reportcategories)
     $bodyHtml += $categoryHtmlTable
 }
 
-$htmltail = "<p align=""center"">Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
+$htmltail = "<p>Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
             </body>
 			</html>"
 
