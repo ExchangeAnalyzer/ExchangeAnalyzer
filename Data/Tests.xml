@@ -6,9 +6,9 @@
 		<Category>Exchange Servers</Category>
 		<Name>Exchange Versions</Name>
 		<Description>Exchange Analyzer supports Exchange Server 2013 and 2016.</Description>
-		<IfInfoComments></IfInfoComments>
+		<IfInfoComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfInfoComments>
 		<IfPassedComments>All Exchange servers in the organization are Exchange 2013/2016.</IfPassedComments>
-		<IfWarningComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfWarningComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments></IfFailedComments>
 	</Test>
 	
@@ -19,7 +19,7 @@
 		<Description>Check if Exchange Servers are running the latest build.</Description>
 		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfWarningComments>
 		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
 	</Test>
 
