@@ -79,6 +79,7 @@ Function Get-TestResultObject()
         TestID = $TestID
         TestCategory = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Category
         TestName = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Name
+        TestDescription = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Description
         TestOutcome = $TestOutcome
         PassedObjects = $PassedList
         FailedObjects = $FailedList
