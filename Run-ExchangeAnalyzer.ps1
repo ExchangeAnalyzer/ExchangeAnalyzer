@@ -378,6 +378,7 @@ foreach ($reportcategory in $reportcategories)
 					        <table>
 					        <tr>
 					        <th>Test Name</th>
+                            <th>Test Description</th>
 					        <th>Test Outcome</th>
 					        <th>Comments</th>
 					        <th>Details</th>
@@ -391,7 +392,7 @@ foreach ($reportcategory in $reportcategories)
     {
         $HtmlTableRow = "<tr>"
 		$htmltablerow += "<td>$($reportline.TestName)</td>"
-    
+		$htmltablerow += "<td>$($reportline.TestDescription)</td>"    
         Switch ($reportline.TestOutcome)
         {	
             "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
@@ -462,7 +463,7 @@ foreach ($reportcategory in $reportcategories)
             $TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
 
-        $htmltablerow += "<td>$ul</td>"
+        $htmltablerow += "<td>$TestDetails/td>"
 				
         if ($($reportline.Reference) -eq "")
         {
