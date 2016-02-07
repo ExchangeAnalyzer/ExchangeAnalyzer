@@ -249,7 +249,7 @@ $htmlhead="<html>
 			H3{font-size: 16px; padding-top: 8px;}
 			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
-			TD{border: 1px solid black; padding: 5px; }
+			TD{border: 1px solid black; padding: 5px; vertical-align: top; }
 			td.pass{background: #7FFF00;}
 			td.warn{background: #FFE600;}
 			td.fail{background: #FF0000; color: #ffffff;}
@@ -377,9 +377,9 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlHeader += "<p>
 					        <table>
 					        <tr>
-					        <th>Test Name</th>
-                            <th>Test Description</th>
-					        <th>Test Outcome</th>
+					        <th>Test</th>
+                            <th>Description</th>
+					        <th>Outcome</th>
 					        <th>Comments</th>
 					        <th>Details</th>
 					        <th>Reference</th>
@@ -463,7 +463,7 @@ foreach ($reportcategory in $reportcategories)
             $TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
 
-        $htmltablerow += "<td>$TestDetails/td>"
+        $htmltablerow += "<td>$TestDetails</td>"
 				
         if ($($reportline.Reference) -eq "")
         {
