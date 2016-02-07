@@ -248,7 +248,7 @@ $htmlhead="<html>
 			H2{font-size: 20px; padding-top: 10px;}
 			H3{font-size: 16px; padding-top: 8px;}
 			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt; table-layout: fixed;}
-            TABLE.testresults{width: 800px;}
+            TABLE.testresults{width: 850px;}
             TABLE.summary{text-align: center; width: auto;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
             TH.summary{width: 80px;}
@@ -256,7 +256,7 @@ $htmlhead="<html>
             TH.description{width: 150px;}
             TH.outcome{width: 50px}
             TH.comments{width: 120px;}
-            TH.details{width: 220px;}
+            TH.details{width: 270px;}
             TH.reference{width: 60px;}
 			TD{border: 1px solid black; padding: 5px; vertical-align: top; }
 			td.pass{background: #7FFF00;}
