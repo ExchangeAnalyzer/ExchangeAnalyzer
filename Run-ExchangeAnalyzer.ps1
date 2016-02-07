@@ -418,7 +418,7 @@ foreach ($reportcategory in $reportcategories)
 
         if ($($reportline.InfoObjects).Count -gt 0)
         {
-            $TestDetails += "<p>Info objects:</p><ul>"
+            $TestDetails += "<p>Info items:</p><ul>"
             foreach ($object in $reportline.InfoObjects)
             {
                 $TestDetails += "<li>$object</li>"
@@ -427,12 +427,12 @@ foreach ($reportcategory in $reportcategories)
         }
         else
         {
-            $TestDetails += "<p>Info objects:</p><ul><li>n/a</li></ul>"
+            #$TestDetails += "<p>Info objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.PassedObjects).Count -gt 0)
         {
-            $TestDetails += "<p>Passed objects:</p><ul>"
+            $TestDetails += "<p>Passed items:</p><ul>"
             foreach ($object in $reportline.PassedObjects)
             {
                 $TestDetails += "<li>$object</li>"
@@ -441,12 +441,12 @@ foreach ($reportcategory in $reportcategories)
         }
         else
         {
-            $TestDetails += "<p>Passed objects:</p><ul><li>n/a</li></ul>"
+            #$TestDetails += "<p>Passed objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.WarningObjects).Count -gt 0)
         {
-            $TestDetails += "<p>Warning objects:</p><ul>"
+            $TestDetails += "<p>Warning items:</p><ul>"
             foreach ($object in $reportline.WarningObjects)
             {
                 $TestDetails += "<li>$object</li>"
@@ -455,12 +455,12 @@ foreach ($reportcategory in $reportcategories)
         }
         else
         {
-            $TestDetails += "<p>Warning objects:</p><ul><li>n/a</li></ul>"
+            #$TestDetails += "<p>Warning objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.FailedObjects).Count -gt 0)
         {
-            $TestDetails += "<p>Failed objects:</p><ul>"
+            $TestDetails += "<p>Failed items:</p><ul>"
             foreach ($object in $reportline.FailedObjects)
             {
                 $TestDetails += "<li>$object</li>"
@@ -469,7 +469,7 @@ foreach ($reportcategory in $reportcategories)
         }
         else
         {
-            $TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
+            #$TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
 
         $htmltablerow += "<td>$TestDetails</td>"
