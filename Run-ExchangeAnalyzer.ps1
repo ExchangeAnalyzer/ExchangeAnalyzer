@@ -11,12 +11,22 @@ Please refer to the installation and usage instructions at http://exchangeanalyz
 .OUTPUTS
 Results are output to a HTML report.
 
+.PARAMETER FileName
+Specifies the relative or absolute path to the output file.
+
+If this parameter is not supplied, the default ExchangeAnalyzerReport-date-time.html
+output path will be utilized.
+
 .PARAMETER Verbose
 Verbose output is displayed in the Exchange management shell.
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1
 Runs the Exchange Analyzer.
+
+.EXAMPLE
+.\Run-ExchangeAnalyzer.ps1 -FileName C:\ExchangeReports\ContosoExchange.html
+Runs the Exchange Analyzer outputting results to C:\ExchangeReports\ContosoExchange.html
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1 -Verbose
@@ -93,7 +103,10 @@ SOFTWARE.
 #region Start parameters
 
 [CmdletBinding()]
-param ()
+param (
+    [Parameter(Mandatory=$false)]
+    [string]$FileName
+)
 #endregion
 
 
@@ -109,8 +122,9 @@ $shortdate = $now.ToShortDateString()					#Short date format for reports, logs, 
 $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
-$reportFile = "$($myDir)\ExchangeAnalyzerReport.html"
 
+# What file types may be provided when creating the output file?"
+$supportedOutputFileTypes = @("html","htm")
 
 #endregion
 
@@ -135,6 +149,45 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 # Main Script
 #...................................
 
+#region -File Name Generation
+# Generate an output filename for the script
+
+if ($FileName) {
+    # If the user has passed the filename parameter to the script, use that.
+    try {
+        $FileNameExtension = $FileName.Split(".")[-1]
+        if ($supportedOutputFileTypes -icontains $FileNameExtension) {
+            if ([System.IO.Path]::IsPathRooted($FileName)) {
+                # Path provided by user is absolute; use it as is.
+                $reportFile = $FileName
+                # Ensure the folder exists
+                $ReportFileFolder = Split-Path $FileName -Parent
+                if (-not (Test-Path $ReportFileFolder -PathType Container -ErrorAction SilentlyContinue)) {
+                    # Folder does not exist, create it
+                    Write-Verbose "$ReportFileFolder does not exist. Attempting to create it."
+                    try {
+                        $null = New-Item -ItemType Directory -Force -Path $ReportFileFolder
+                        Write-Verbose "$ReportFilefolder was created."
+                    } catch {
+                        throw "Folder $ReportFileFolder does not exist, and was unable to be created."
+                    }
+                }
+            } else {
+                # Path provided by user is relative; base it in $MyDir.
+                $reportFile = Join-Path $myDir $FileName
+            }
+        } else {
+            throw "Unsupported file type: $FileNameExtension"
+        }
+    } catch {
+        throw "Unable to validate passed -FileName as a relative or absolute path. Exception: $($_.ToString())"
+    }
+        
+} else {
+    # If the user did not pass a filename, generate one based on date/time.
+    $reportFile = "$($MyDir)\ExchangeAnalyzerReport-$(Get-Date -UFormat %Y%m%d-%H%M).html"
+}
+#endregion
 
 #region -Basic Data Collection
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
