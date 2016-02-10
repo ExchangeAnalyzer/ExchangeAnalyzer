@@ -368,7 +368,7 @@ foreach ($server in $CASURLs)
 {
     $CASURLSummaryHtml += "<table>
                             <tr>
-                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $server.Name}).Site.Split("/")[-1])</th>
+                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.Split("/")[-1])</th>
                             </tr>
                             <tr>
                             <th>Service</th>
