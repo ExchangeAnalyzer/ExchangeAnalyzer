@@ -179,7 +179,7 @@ try
     $ADForest = Get-ADForest -ErrorAction STOP
  
     Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 7
-    $ADDomainControllers = @(Get-ADDomainController -ErrorAction STOP)
+    $ADDomainControllers = @(Get-ADDomainController -filter * -ErrorAction STOP)
     Write-Verbose "$($ADDomainControllers.Count) Domain Controller(s) found."
 }
 catch
