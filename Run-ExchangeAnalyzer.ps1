@@ -411,7 +411,7 @@ foreach ($server in $CASURLs)
                             <td>$($server.EWSExternal)</td>
                             </tr>
                             <tr>
-                            <td>AutoDiscover</td>
+                            <td>AutoDiscover (SCP)</td>
                             <td>$($server.AutoDSCP)</td>
                             <td>n/a</td>
                             </tr>
