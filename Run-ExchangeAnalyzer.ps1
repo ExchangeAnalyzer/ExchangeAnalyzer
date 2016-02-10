@@ -247,9 +247,18 @@ $htmlhead="<html>
 			H1{font-size: 22px;}
 			H2{font-size: 20px; padding-top: 10px;}
 			H3{font-size: 16px; padding-top: 8px;}
-			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
+			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt; table-layout: fixed;}
+            TABLE.testresults{width: 850px;}
+            TABLE.summary{text-align: center; width: auto;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
-			TD{border: 1px solid black; padding: 5px; }
+            TH.summary{width: 80px;}
+            TH.test{width: 120px;}
+            TH.description{width: 150px;}
+            TH.outcome{width: 50px}
+            TH.comments{width: 120px;}
+            TH.details{width: 270px;}
+            TH.reference{width: 60px;}
+			TD{border: 1px solid black; padding: 5px; vertical-align: top; }
 			td.pass{background: #7FFF00;}
 			td.warn{background: #FFE600;}
 			td.fail{background: #FF0000; color: #ffffff;}
@@ -259,9 +268,9 @@ $htmlhead="<html>
 			<body>"
 
 #HTML intro
-$IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
-			<h3 align=""center"">Generated: $now</h3>
-            <h3 align=""center"">Organization: $($ExchangeOrganization.Name)</h3>
+$IntroHtml="<h1>Exchange Analyzer Report</h1>
+			<p><strong>Generated:</strong> $now</p>
+            <p><strong>Organization:</strong> $($ExchangeOrganization.Name)</p>
             <p>The following guidelines apply to this report:
             <ul>
                 <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
@@ -279,14 +288,14 @@ $TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
 $TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
 
 #HTML summary table
-$SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
-                      <p align=""center"">
-                      <table>
+$SummaryTableHtml  = "<h2>Summary:</h2>
+                      <p>
+                      <table class=""summary"">
                       <tr>
-                      <th>Passed</th>
-                      <th>Warning</th>
-                      <th>Failed</th>
-                      <th>Info</th>
+                      <th class=""summary"">Passed</th>
+                      <th class=""summary"">Warning</th>
+                      <th class=""summary"">Failed</th>
+                      <th class=""summary"">Info</th>
                       </tr>
                       <tr>
                       <td class=""pass"">$TotalPassed</td>
@@ -375,16 +384,14 @@ foreach ($reportcategory in $reportcategories)
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
     }
     $categoryHtmlHeader += "<p>
-					        <table>
+					        <table class=""testresults"">
 					        <tr>
-					        <th>Test ID</th>
-					        <th>Test Category</th>
-					        <th>Test Name</th>
-					        <th>Test Outcome</th>
-					        <th>Passed Objects</th>
-					        <th>Failed Objects</th>
-					        <th>Comments</th>
-					        <th>Reference</th>
+					        <th class=""test"">Test</th>
+                            <th class=""description"">Description</th>
+					        <th class=""outcome"">Outcome</th>
+					        <th class=""comments"">Comments</th>
+					        <th class=""details"">Details</th>
+					        <th class=""reference"">Reference</th>
 					        </tr>"
 
     $categoryHtmlTable += $categoryHtmlHeader
@@ -393,50 +400,80 @@ foreach ($reportcategory in $reportcategories)
     foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
     {
         $HtmlTableRow = "<tr>"
-        $htmltablerow += "<td>$($reportline.TestID)</td>"
-		$htmltablerow += "<td>$($reportline.TestCategory)</td>"
 		$htmltablerow += "<td>$($reportline.TestName)</td>"
-    
+		$htmltablerow += "<td>$($reportline.TestDescription)</td>"    
         Switch ($reportline.TestOutcome)
         {	
             "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
             "Failed" {$htmltablerow += "<td class=""fail"">$($reportline.TestOutcome)</td>"}
             "Warning" {$HtmlTableRow += "<td class=""warn"">$($reportline.TestOutcome)</td>"}
+            "Info" {$HtmlTableRow += "<td class=""info"">$($reportline.TestOutcome)</td>"}
             default {$htmltablerow += "<td>$($reportline.TestOutcome)</td>"}
 		}
+
+        $htmltablerow += "<td>$($reportline.Comments)</td>"
 		
-        if ($($reportline.PassedObjects).Count -gt 0)
+        #Build list of passed, warning, failed, and info objects for report details column
+        $TestDetails = $null
+
+        if ($($reportline.InfoObjects).Count -gt 0)
         {
-            $ul = "<ul>"
-            foreach ($object in $reportline.PassedObjects)
+            $TestDetails += "<p>Info items:</p><ul>"
+            foreach ($object in $reportline.InfoObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            #$TestDetails += "<p>Info objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.PassedObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Passed items:</p><ul>"
+            foreach ($object in $reportline.PassedObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            #$TestDetails += "<p>Passed objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.WarningObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Warning items:</p><ul>"
+            foreach ($object in $reportline.WarningObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            #$TestDetails += "<p>Warning objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.FailedObjects).Count -gt 0)
         {
-            $ul = "<ul>"
+            $TestDetails += "<p>Failed items:</p><ul>"
             foreach ($object in $reportline.FailedObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            #$TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
-		
-        $htmltablerow += "<td>$($reportline.Comments)</td>"
-		
+
+        $htmltablerow += "<td>$TestDetails</td>"
+				
         if ($($reportline.Reference) -eq "")
         {
             $htmltablerow += "<td>No additional info</td>"
@@ -456,7 +493,7 @@ foreach ($reportcategory in $reportcategories)
     $bodyHtml += $categoryHtmlTable
 }
 
-$htmltail = "<p align=""center"">Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
+$htmltail = "<p>Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
             </body>
 			</html>"
 

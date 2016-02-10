@@ -12,6 +12,8 @@ Function Run-EXSRV002()
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
     Write-Verbose "Scraping TechNet page"
@@ -108,14 +110,20 @@ Function Run-EXSRV002()
                 }
 
                 Write-Verbose "$server is N-$buildindex"
-            
+                $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
+
                 if ($buildindex -eq 0)
                 {
+                    Write-Verbose "Adding to passed list: $tmpstring"
                     $PassedList += $($Server.Name)
                 }
-                else
+                elseif ($buildindex -eq 1)
                 {
-                    $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
+                    Write-Verbose "Adding to warning list: $tmpstring"
+                    $WarningList += $tmpstring
+                }
+                else
+                {        
                     Write-Verbose "Adding to fail list: $tmpstring"
                     $FailedList += $tmpstring
                 }
@@ -123,7 +131,7 @@ Function Run-EXSRV002()
             else
             {
                 #Skip servers earlier than v15.0
-                Write-Verbose "$server is earlier than Exchange 2013"
+                Write-Verbose "$server is earlier than Exchange 2013 and will not be checked."
             }
         }
     }
@@ -133,6 +141,8 @@ Function Run-EXSRV002()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
     return $ReportObj
