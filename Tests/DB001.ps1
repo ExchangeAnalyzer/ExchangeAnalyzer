@@ -82,7 +82,7 @@ Function Run-DB001()
             
             if ($($LatestBackup.Value) -eq "n/a")
             {
-                $FailedList += "$($db.Name) (Never)"
+                $FailedList += "$($db.Name) (Never backed up)"
             }
             elseif ($($LatestBackup.Value) -gt 24)
             {
@@ -90,7 +90,7 @@ Function Run-DB001()
             }
             elseif ($($LatestBackup.Value) -ieq "Never")
             {
-                $FailedList += "$($db.name) (never)"
+                $FailedList += "$($db.name) (Never backed up)"
             }
             else
             {
