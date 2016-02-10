@@ -205,7 +205,8 @@ try
     $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
     
     Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
-    $ExchangeServers = @(Get-ExchangeServer -ErrorAction STOP)
+    $ExchangeServersAll = @(Get-ExchangeServer -ErrorAction STOP)
+    $ExchangeServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
 
     #Check for supported servers before continuing
@@ -431,10 +432,12 @@ foreach ($reportcategory in $reportcategories)
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $CASURLSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
     }
     else
     {
-        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>
+                                <p>Results for $($reportcategory.Name) tests:</p>"
     }
     $categoryHtmlHeader += "<p>
 					        <table class=""testresults"">

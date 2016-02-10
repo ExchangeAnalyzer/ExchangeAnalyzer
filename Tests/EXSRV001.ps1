@@ -16,8 +16,8 @@ Function Run-EXSRV001()
     $InfoList = @()
     $ErrorList = @()
 
-    $SupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"})
-    $UnsupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -notlike "Version 15.*"})
+    $SupportedServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
+    $UnsupportedServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -notlike "Version 15.*"})
 
     if ($SupportedServers.Count -gt 0)
     {
