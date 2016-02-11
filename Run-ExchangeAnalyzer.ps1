@@ -366,9 +366,12 @@ $CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
 
 foreach ($server in $CASURLs)
 {
+    #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
+    $ServerADSite = ($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+
     $CASURLSummaryHtml += "<table>
                             <tr>
-                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.Name)</th>
+                            <th colspan=""3"">Server: $($server.Name), Site: $($ServerADSite.Split("/")[-1])</th>
                             </tr>
                             <tr>
                             <th>Service</th>
