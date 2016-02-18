@@ -12,10 +12,12 @@ Function Run-EXSRV001()
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
-    $SupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"})
-    $UnsupportedServers = @($ExchangeServers | Where {$_.AdminDisplayVersion -notlike "Version 15.*"})
+    $SupportedServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
+    $UnsupportedServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -notlike "Version 15.*"})
 
     if ($SupportedServers.Count -gt 0)
     {
@@ -31,7 +33,7 @@ Function Run-EXSRV001()
         foreach ($UnsupportedServer in $UnsupportedServers)
         {
             Write-Verbose "$($UnsupportedServer) is not supported by ExchangeAnalyzer"
-            $FailedList += $($UnsupportedServer.Name)
+            $InfoList += $($UnsupportedServer.Name)
         }
     }
 
@@ -41,6 +43,8 @@ Function Run-EXSRV001()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
 

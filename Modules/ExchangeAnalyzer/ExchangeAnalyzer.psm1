@@ -16,26 +16,54 @@ Function Get-TestResultObject()
 	    $FailedList,
 
 	    [Parameter()]
+	    $WarningList,
+
+	    [Parameter()]
+	    $InfoList,
+
+	    [Parameter()]
 	    $ErrorList
 	)
 
     Write-Verbose "Rolling test result object for $TestID"
     
+    $TestComments = $null
+
     $ReferenceURLBase = "https://github.com/cunninghamp/ExchangeAnalyzer/wiki"
-     
-    if ($PassedList)
+    
+    #A test can only pass if there are items in $passedlist and no failed, warning, or info items 
+    if ($PassedList -and -not $FailedList -and -not $WarningList -and -not $InfoList)
     {
         $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).IfPassedComments
         $TestOutcome = "Passed"
     }
 
+    #A test that has a possibility of an Info outcome should not have any possibility of failed
+    #or warning items, but can still throw a warning if the test fails to run or encounters other
+    #errors while running.
+    if ($InfoList)
+    {
+        $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.id -eq $TestID}).IfInfoComments
+        $TestOutcome = "Info"
+    }
+
+    #If any items are in $warninglist the overall outcome is Warning, unless failed items are
+    #encountered next
+    if ($WarningList)
+    {
+        $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).IfWarningComments
+        $TestOutcome = "Warning"
+    }
+
+    #If any items are in $failedlist the overall outcome is Failed
     if ($FailedList)
     {
         $TestComments = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).IfFailedComments
         $TestOutcome = "Failed"
     }
 
-    if (-not $PassedList -and -not $FailedList)
+    #If no passed, failed, warning, or info items exist the test likely had an unexpected error.
+    if (-not $PassedList -and -not $FailedList -and -not $WarningList -and -not $InfoList)
     {
         $TestComments = "Test could not run."
         $TestOutcome = "Warning"
@@ -51,9 +79,12 @@ Function Get-TestResultObject()
         TestID = $TestID
         TestCategory = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Category
         TestName = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Name
+        TestDescription = ($ExchangeAnalyzerTests.Test | Where {$_.Id -eq $TestID}).Description
         TestOutcome = $TestOutcome
         PassedObjects = $PassedList
         FailedObjects = $FailedList
+        WarningObjects = $WarningList
+        InfoObjects = $InfoList
         Comments = $TestComments
         Reference = "$($ReferenceURLBase)/$($TestID)"
     }

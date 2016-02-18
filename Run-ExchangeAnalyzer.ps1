@@ -11,12 +11,22 @@ Please refer to the installation and usage instructions at http://exchangeanalyz
 .OUTPUTS
 Results are output to a HTML report.
 
+.PARAMETER FileName
+Specifies the relative or absolute path to the output file.
+
+If this parameter is not supplied, the default ExchangeAnalyzerReport-date-time.html
+output path will be utilized.
+
 .PARAMETER Verbose
 Verbose output is displayed in the Exchange management shell.
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1
 Runs the Exchange Analyzer.
+
+.EXAMPLE
+.\Run-ExchangeAnalyzer.ps1 -FileName C:\ExchangeReports\ContosoExchange.html
+Runs the Exchange Analyzer outputting results to C:\ExchangeReports\ContosoExchange.html
 
 .EXAMPLE
 .\Run-ExchangeAnalyzer.ps1 -Verbose
@@ -93,7 +103,10 @@ SOFTWARE.
 #region Start parameters
 
 [CmdletBinding()]
-param ()
+param (
+    [Parameter(Mandatory=$false)]
+    [string]$FileName
+)
 #endregion
 
 
@@ -109,8 +122,9 @@ $shortdate = $now.ToShortDateString()					#Short date format for reports, logs, 
 $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
-$reportFile = "$($myDir)\ExchangeAnalyzerReport.html"
 
+# What file types may be provided when creating the output file?"
+$supportedOutputFileTypes = @("html","htm")
 
 #endregion
 
@@ -135,6 +149,45 @@ $ExchangeAnalyzerTests = @($TestsFile.Tests)
 # Main Script
 #...................................
 
+#region -File Name Generation
+# Generate an output filename for the script
+
+if ($FileName) {
+    # If the user has passed the filename parameter to the script, use that.
+    try {
+        $FileNameExtension = $FileName.Split(".")[-1]
+        if ($supportedOutputFileTypes -icontains $FileNameExtension) {
+            if ([System.IO.Path]::IsPathRooted($FileName)) {
+                # Path provided by user is absolute; use it as is.
+                $reportFile = $FileName
+                # Ensure the folder exists
+                $ReportFileFolder = Split-Path $FileName -Parent
+                if (-not (Test-Path $ReportFileFolder -PathType Container -ErrorAction SilentlyContinue)) {
+                    # Folder does not exist, create it
+                    Write-Verbose "$ReportFileFolder does not exist. Attempting to create it."
+                    try {
+                        $null = New-Item -ItemType Directory -Force -Path $ReportFileFolder
+                        Write-Verbose "$ReportFilefolder was created."
+                    } catch {
+                        throw "Folder $ReportFileFolder does not exist, and was unable to be created."
+                    }
+                }
+            } else {
+                # Path provided by user is relative; base it in $MyDir.
+                $reportFile = Join-Path $myDir $FileName
+            }
+        } else {
+            throw "Unsupported file type: $FileNameExtension"
+        }
+    } catch {
+        throw "Unable to validate passed -FileName as a relative or absolute path. Exception: $($_.ToString())"
+    }
+        
+} else {
+    # If the user did not pass a filename, generate one based on date/time.
+    $reportFile = "$($MyDir)\ExchangeAnalyzerReport-$(Get-Date -UFormat %Y%m%d-%H%M).html"
+}
+#endregion
 
 #region -Basic Data Collection
 #Collect information about the Exchange organization, databases, DAGs, and servers to be
@@ -152,7 +205,8 @@ try
     $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
     
     Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
-    $ExchangeServers = @(Get-ExchangeServer -ErrorAction STOP)
+    $ExchangeServersAll = @(Get-ExchangeServer -ErrorAction STOP)
+    $ExchangeServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
 
     #Check for supported servers before continuing
@@ -247,9 +301,18 @@ $htmlhead="<html>
 			H1{font-size: 22px;}
 			H2{font-size: 20px; padding-top: 10px;}
 			H3{font-size: 16px; padding-top: 8px;}
-			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt;}
+			TABLE{border: 1px solid black; border-collapse: collapse; font-size: 8pt; table-layout: fixed;}
+            TABLE.testresults{width: 850px;}
+            TABLE.summary{text-align: center; width: auto;}
 			TH{border: 1px solid black; background: #dddddd; padding: 5px; color: #000000;}
-			TD{border: 1px solid black; padding: 5px; }
+            TH.summary{width: 80px;}
+            TH.test{width: 120px;}
+            TH.description{width: 150px;}
+            TH.outcome{width: 50px}
+            TH.comments{width: 120px;}
+            TH.details{width: 270px;}
+            TH.reference{width: 60px;}
+			TD{border: 1px solid black; padding: 5px; vertical-align: top; }
 			td.pass{background: #7FFF00;}
 			td.warn{background: #FFE600;}
 			td.fail{background: #FF0000; color: #ffffff;}
@@ -259,9 +322,9 @@ $htmlhead="<html>
 			<body>"
 
 #HTML intro
-$IntroHtml="<h1 align=""center"">Exchange Analyzer Report</h1>
-			<h3 align=""center"">Generated: $now</h3>
-            <h3 align=""center"">Organization: $($ExchangeOrganization.Name)</h3>
+$IntroHtml="<h1>Exchange Analyzer Report</h1>
+			<p><strong>Generated:</strong> $now</p>
+            <p><strong>Organization:</strong> $($ExchangeOrganization.Name)</p>
             <p>The following guidelines apply to this report:
             <ul>
                 <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
@@ -279,14 +342,14 @@ $TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
 $TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
 
 #HTML summary table
-$SummaryTableHtml  = "<h2 align=""center"">Summary:</h2>
-                      <p align=""center"">
-                      <table>
+$SummaryTableHtml  = "<h2>Summary:</h2>
+                      <p>
+                      <table class=""summary"">
                       <tr>
-                      <th>Passed</th>
-                      <th>Warning</th>
-                      <th>Failed</th>
-                      <th>Info</th>
+                      <th class=""summary"">Passed</th>
+                      <th class=""summary"">Warning</th>
+                      <th class=""summary"">Failed</th>
+                      <th class=""summary"">Info</th>
                       </tr>
                       <tr>
                       <td class=""pass"">$TotalPassed</td>
@@ -303,9 +366,12 @@ $CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
 
 foreach ($server in $CASURLs)
 {
+    #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
+    $ServerADSite = ($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+
     $CASURLSummaryHtml += "<table>
                             <tr>
-                            <th colspan=""3"">Server: $($server.Name), Site: $(($ExchangeServers | Where {$_.Name -ieq $server.Name}).Site.Split("/")[-1])</th>
+                            <th colspan=""3"">Server: $($server.Name), Site: $($ServerADSite.Split("/")[-1])</th>
                             </tr>
                             <tr>
                             <th>Service</th>
@@ -348,7 +414,7 @@ foreach ($server in $CASURLs)
                             <td>$($server.EWSExternal)</td>
                             </tr>
                             <tr>
-                            <td>AutoDiscover</td>
+                            <td>AutoDiscover (SCP)</td>
                             <td>$($server.AutoDSCP)</td>
                             <td>n/a</td>
                             </tr>
@@ -369,22 +435,22 @@ foreach ($reportcategory in $reportcategories)
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $CASURLSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
     }
     else
     {
-        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>
+                                <p>Results for $($reportcategory.Name) tests:</p>"
     }
     $categoryHtmlHeader += "<p>
-					        <table>
+					        <table class=""testresults"">
 					        <tr>
-					        <th>Test ID</th>
-					        <th>Test Category</th>
-					        <th>Test Name</th>
-					        <th>Test Outcome</th>
-					        <th>Passed Objects</th>
-					        <th>Failed Objects</th>
-					        <th>Comments</th>
-					        <th>Reference</th>
+					        <th class=""test"">Test</th>
+                            <th class=""description"">Description</th>
+					        <th class=""outcome"">Outcome</th>
+					        <th class=""comments"">Comments</th>
+					        <th class=""details"">Details</th>
+					        <th class=""reference"">Reference</th>
 					        </tr>"
 
     $categoryHtmlTable += $categoryHtmlHeader
@@ -393,50 +459,80 @@ foreach ($reportcategory in $reportcategories)
     foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
     {
         $HtmlTableRow = "<tr>"
-        $htmltablerow += "<td>$($reportline.TestID)</td>"
-		$htmltablerow += "<td>$($reportline.TestCategory)</td>"
 		$htmltablerow += "<td>$($reportline.TestName)</td>"
-    
+		$htmltablerow += "<td>$($reportline.TestDescription)</td>"    
         Switch ($reportline.TestOutcome)
         {	
             "Passed" {$htmltablerow += "<td class=""pass"">$($reportline.TestOutcome)</td>"}
             "Failed" {$htmltablerow += "<td class=""fail"">$($reportline.TestOutcome)</td>"}
             "Warning" {$HtmlTableRow += "<td class=""warn"">$($reportline.TestOutcome)</td>"}
+            "Info" {$HtmlTableRow += "<td class=""info"">$($reportline.TestOutcome)</td>"}
             default {$htmltablerow += "<td>$($reportline.TestOutcome)</td>"}
 		}
+
+        $htmltablerow += "<td>$($reportline.Comments)</td>"
 		
-        if ($($reportline.PassedObjects).Count -gt 0)
+        #Build list of passed, warning, failed, and info objects for report details column
+        $TestDetails = $null
+
+        if ($($reportline.InfoObjects).Count -gt 0)
         {
-            $ul = "<ul>"
-            foreach ($object in $reportline.PassedObjects)
+            $TestDetails += "<p>Info items:</p><ul>"
+            foreach ($object in $reportline.InfoObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            #$TestDetails += "<p>Info objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.PassedObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Passed items:</p><ul>"
+            foreach ($object in $reportline.PassedObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            #$TestDetails += "<p>Passed objects:</p><ul><li>n/a</li></ul>"
+        }
+
+        if ($($reportline.WarningObjects).Count -gt 0)
+        {
+            $TestDetails += "<p>Warning items:</p><ul>"
+            foreach ($object in $reportline.WarningObjects)
+            {
+                $TestDetails += "<li>$object</li>"
+            }
+            $TestDetails += "</ul>"
+        }
+        else
+        {
+            #$TestDetails += "<p>Warning objects:</p><ul><li>n/a</li></ul>"
         }
 
         if ($($reportline.FailedObjects).Count -gt 0)
         {
-            $ul = "<ul>"
+            $TestDetails += "<p>Failed items:</p><ul>"
             foreach ($object in $reportline.FailedObjects)
             {
-                $ul += "<li>$object</li>"
+                $TestDetails += "<li>$object</li>"
             }
-            $ul += "</ul>"
-            $htmltablerow += "<td>$ul</td>"
+            $TestDetails += "</ul>"
         }
         else
         {
-            $htmltablerow += "<td>n/a</td>"
+            #$TestDetails += "<p>Failed objects:</p><ul><li>n/a</li></ul>"
         }
-		
-        $htmltablerow += "<td>$($reportline.Comments)</td>"
-		
+
+        $htmltablerow += "<td>$TestDetails</td>"
+				
         if ($($reportline.Reference) -eq "")
         {
             $htmltablerow += "<td>No additional info</td>"
@@ -456,7 +552,7 @@ foreach ($reportcategory in $reportcategories)
     $bodyHtml += $categoryHtmlTable
 }
 
-$htmltail = "<p align=""center"">Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
+$htmltail = "<p>Report created by <a href=""http://exchangeanalyzer.com"">Exchange Analyzer</a></p>
             </body>
 			</html>"
 

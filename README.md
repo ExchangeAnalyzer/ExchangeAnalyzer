@@ -45,8 +45,9 @@ Exchange Analyzer consists of a series of PowerShell scripts, PowerShell modules
 	- \Modules
 	- \Tests
 
-3. Copy the folders in the Modules folder to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\
-4. Open a new Exchange Management Shell console.
+3. Check the files and unblock them if required.
+4. Copy the folders in the Modules folder to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\
+5. Open a new Exchange Management Shell console.
 
 ##Running Exchange Analyzer
 

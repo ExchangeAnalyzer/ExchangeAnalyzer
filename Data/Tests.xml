@@ -6,8 +6,10 @@
 		<Category>Exchange Servers</Category>
 		<Name>Exchange Versions</Name>
 		<Description>Exchange Analyzer supports Exchange Server 2013 and 2016.</Description>
+		<IfInfoComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfInfoComments>
 		<IfPassedComments>All Exchange servers in the organization are Exchange 2013/2016.</IfPassedComments>
-		<IfFailedComments>One or more Exchange servers exist that are not running Exchange 2013 or 2016.</IfFailedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
 	</Test>
 	
 	<Test>
@@ -15,7 +17,9 @@
 		<Category>Exchange Servers</Category>
 		<Name>Build Numbers</Name>
 		<Description>Check if Exchange Servers are running the latest build.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>All Exchange Server 2013/2016 servers are running the latest build.</IfPassedComments>
+		<IfWarningComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfWarningComments>
 		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running the latest build.</IfFailedComments>
 	</Test>
 
@@ -24,7 +28,9 @@
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
 		<Description>Check if multiple namespaces exist for a protocol within the same AD site.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>All Exchange sites have a single namespace per HTTPS protocol.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>One or more Exchange sites has more than one namespace per HTTPS protocol.</IfFailedComments>
 	</Test>
 	
@@ -33,7 +39,9 @@
 		<Category>Client Access</Category>
 		<Name>Server FQDNs in URLs</Name>
 		<Description>Check that CAS URLs don't contain server FQDNs.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>No Exchange HTTPS services have URLs containing server FQDNs.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
@@ -42,7 +50,9 @@
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
 		<Description>Check that a database backup has been run in the last 24 hours.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>All mailbox databases have been backed up within the last 24 hours.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>One or more Exchange databases has not been backed up within the last 24 hours.</IfFailedComments>
 	</Test>
 	
@@ -51,7 +61,9 @@
 		<Category>Active Directory</Category>
 		<Name>AD Domain Level</Name>
 		<Description>Check that the domains are at the required level.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>All Active Directory domains meet the required functional level.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>One or more Active Directory domains do not meet the required functional level.</IfFailedComments>
 	</Test>
 
@@ -60,7 +72,9 @@
 		<Category>Active Directory</Category>
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>
+		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
 </Tests>

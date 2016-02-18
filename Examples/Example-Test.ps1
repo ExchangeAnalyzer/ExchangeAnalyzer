@@ -1,11 +1,16 @@
 #This is your test
 Function Run-TESTID()
 {
+    [CmdletBinding()]
+    param()
+
     $TestID = "TESTID"
     Write-Verbose "----- Starting test $TestID"
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
     #Your test logic goes here and populates the results
@@ -18,6 +23,8 @@ Function Run-TESTID()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
 
