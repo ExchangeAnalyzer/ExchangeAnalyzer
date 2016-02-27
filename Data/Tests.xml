@@ -77,4 +77,16 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+
+	<Test>
+		<Id>HW001</Id>
+		<Category>Hardware</Category>
+		<Name>Physical or Virtual</Name>
+		<Description>Check that the Exchange Server is Physical or Virtual.</Description>
+		<IfPassedComments/>
+		<IfFailedComments/>
+		<IfInfoComments>The Exchange Server is installed on a Physical Server.</IfInfoComments>
+		<IfWarningComments>The Exchange Server is installed on a Virtual Server.</IfWarningComments>
+	</Test>
+
 </Tests>
