@@ -46,6 +46,17 @@
 	</Test>
 
 	<Test>
+		<Id>CAS003</Id>
+		<Category>Client Access</Category>
+		<Name>SSL 3.0 Support</Name>
+		<Description>SSL3 protocol support (should be disabled)</Description>
+        <IfInfoComments/>
+        <IfPassedComments>SSL v3 is disabled as per best practice.</IfPassedComments>
+		<IfWarningComments/>
+        <IfFailedComments>SSL v3 is not disabled as per best practice.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
