@@ -46,6 +46,17 @@
 	</Test>
 
 	<Test>
+		<Id>POP002</Id>
+		<Category>POP</Category>
+		<Name>POP Secure Login</Name>
+		<Description>Check that insecure POP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No POP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more POP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more POP services allows insecure login.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
