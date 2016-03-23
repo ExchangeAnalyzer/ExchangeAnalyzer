@@ -45,6 +45,17 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>POP001</Id>
+		<Category>POP</Category>
+		<Name>POP Service Status</Name>
+		<Description>Check the status of the POP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>POP002</Id>
 		<Category>POP</Category>
@@ -89,14 +100,4 @@
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
     
-    <Test>
-		<Id>POP001</Id>
-		<Category>POP</Category>
-		<Name>POP Service Status</Name>
-		<Description>Check the status of the POP services.</Description>
-		<IfInfoComments></IfInfoComments>
-		<IfPassedComments></IfPassedComments>
-		<IfWarningComments></IfWarningComments>
-		<IfFailedComments></IfFailedComments>
-	</Test>
 </Tests>
