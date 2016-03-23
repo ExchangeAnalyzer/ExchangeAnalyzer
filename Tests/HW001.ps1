@@ -38,14 +38,14 @@ Function Run-HW001()
         } elseif($virtual.Manufacturer.Length -gt 0) {
 
             # Server is running on a Physical Server
-            $WarningList = "Physical"
-            write-verbose "The server $name is virtualized on the $Virtualtype platform."
+            $InfoList = "Physical"
+            write-verbose "The server $name is running on physical hardware."
         } else {
 
             # This server is on an unknown platform
             $VirtualType = "Unknown"
             $Infolist += $($name)
-            write-verbose "The server $name is virtualized on an unknown platform."
+            write-verbose "The server $name is running on an unknown platform."
         }
     }
 
