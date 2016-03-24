@@ -64,7 +64,7 @@ Function Run-CAS003()
         }
         else
         {
-            $FailedList += $name
+            $WarningList += "$name - unable to connect to registry"
             Write-Verbose "Unable to connect to registry of $name"
         }
     }
