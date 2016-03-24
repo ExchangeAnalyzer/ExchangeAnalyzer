@@ -17,7 +17,7 @@ Function Run-CAS003()
         # Set the inital value
         $name = $server.name
         $up = $true
-        $success = $false
+        $SSLv3Enabled = $null
         try {
             $Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey("LocalMachine",$name)
         } catch {
@@ -29,7 +29,7 @@ Function Run-CAS003()
             $check1 = $registry.OpenSubKey("System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0")
 
             if ($check1 -ne $null) {
-                # Check the next registry pat
+                # Check the next registry path
                 $check2 = $registry.OpenSubKey("System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server")
         
                 if ($check2 -ne $null) {
@@ -37,24 +37,35 @@ Function Run-CAS003()
                     # Check to see if Enabled value is present with a '0' value
                     $check3 = $registry.OpenSubKey("System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server").GetValue("Enabled")
                     if ($Check3 -eq "0") {
-                        $Success = $true
+                        $SSLv3Enabled = $true
                     } else {
-                        $Success = $false
+                        $SSLv3Enabled = $false
                     }
                 }
             }
         
             # Decide if the test has failed based off of the values missing or present and what value is there if present
-            If ($Success -eq $true) {
-                $PassedList += $name
-                write-verbose "SSL 3.0 is disabled on the server $name!!"
-            } else {
-                $FailedList += $name
-                write-verbose "SSL 3.0 is not disabed on server $name!!"
+            Switch ($SSLv3Enabled)
+            {
+                $true {
+                        $PassedList += $name
+                        Write-Verbose "SSL 3.0 is disabled on the server $name"
+                    }
+                $false {
+                        $FailedList += $name
+                        Write-Verbose "SSL 3.0 is not disabed on server $name"    
+                    }
+                default {
+                        Write-Verbose "SSL 3.0 status could not be determined for $name"
+                        $WarningList += "$name - SSL 3.0 status unknown"
+                    }
             }
-        } else {
+
+        }
+        else
+        {
             $FailedList += $name
-            write-verbose "The server $name is down and SSL 3.0 settings cannot be verified."
+            Write-Verbose "Unable to connect to registry of $name"
         }
     }
 
@@ -63,6 +74,8 @@ Function Run-CAS003()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
 
