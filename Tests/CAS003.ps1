@@ -11,6 +11,8 @@ Function Run-CAS003()
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
     foreach ($server in $exchangeservers) {
