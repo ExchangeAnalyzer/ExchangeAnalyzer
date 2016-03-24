@@ -28,7 +28,14 @@ Function Run-DB001()
 	        Write-Verbose "Checking $db"
             if ($db.Mounted -eq $false)
             {
-                $tmpString = "$($db.name) is dismounted."
+                $tmpString = "$($db.name) is dismounted"
+                Write-Verbose $tmpString
+                $WarningList += $tmpString
+            }
+            elseif ($db.Mounted -eq $null)
+            {
+                #Indicates Information Store service was stopped on the server
+                $tmpString = "$($db.Name) could not be reached"
                 Write-Verbose $tmpString
                 $WarningList += $tmpString
             }
