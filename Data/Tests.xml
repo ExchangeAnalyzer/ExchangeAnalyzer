@@ -99,7 +99,6 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
-<<<<<<< HEAD
 
 	<Test>
 		<Id>HW001</Id>
@@ -111,8 +110,4 @@
 		<IfInfoComments>The Exchange Server is installed on a Physical Server.</IfInfoComments>
 		<IfWarningComments>The Exchange Server is installed on a Virtual Server.</IfWarningComments>
 	</Test>
-
-=======
-    
->>>>>>> refs/remotes/origin/development
 </Tests>
