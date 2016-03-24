@@ -86,7 +86,7 @@ Function Run-DB001()
             {
                 $FailedList += "$($db.Name) (Never backed up)"
             }
-            elseif ($($LatestBackup.Value) -gt 24)
+            elseif ($($LatestBackup.Value.ToInt32($null)) -gt 24)
             {
                 $FailedList += "$($db.Name) ($($LatestBackup.Value) hrs ago)"
             }
