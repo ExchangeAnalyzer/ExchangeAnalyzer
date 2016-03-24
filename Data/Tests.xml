@@ -45,6 +45,28 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>POP001</Id>
+		<Category>POP</Category>
+		<Name>POP Service Status</Name>
+		<Description>Check the status of the POP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>POP002</Id>
+		<Category>POP</Category>
+		<Name>POP Secure Login</Name>
+		<Description>Check that insecure POP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No POP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more POP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more POP services allows insecure login.</IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
@@ -77,6 +99,7 @@
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
 	</Test>
+<<<<<<< HEAD
 
 	<Test>
 		<Id>HW001</Id>
@@ -89,4 +112,7 @@
 		<IfWarningComments>The Exchange Server is installed on a Virtual Server.</IfWarningComments>
 	</Test>
 
+=======
+    
+>>>>>>> refs/remotes/origin/development
 </Tests>
