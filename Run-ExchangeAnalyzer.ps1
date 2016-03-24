@@ -260,7 +260,8 @@ Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 $msgString = "Collecting POP settings from Client Access and Mailbox servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 10
 Write-Verbose $msgString
-$AllPOPSettings = @($ExchangeServers | Get-PopSettings)
+#This needs to be processed as a foreach to work in PS remoting
+$AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
 
 #endregion -Basic Data Collection
 
