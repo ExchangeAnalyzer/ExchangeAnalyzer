@@ -45,6 +45,17 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>CAS003</Id>
+		<Category>Client Access</Category>
+		<Name>SSL 3.0 Support</Name>
+		<Description>Check that SSL 3.0 protocol support is disabled</Description>
+        <IfInfoComments/>
+        <IfPassedComments>All Exchange servers have SSL 3.0 disabled.</IfPassedComments>
+		<IfWarningComments/>
+        <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
+	</Test>
+
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
@@ -76,17 +87,6 @@
 		<IfPassedComments>No POP services have protocol logging enabled.</IfPassedComments>
 		<IfWarningComments>One or more POP services has protocol logging enabled.</IfWarningComments>
 		<IfFailedComments></IfFailedComments>
-	</Test>
-
-	<Test>
-		<Id>CAS003</Id>
-		<Category>Client Access</Category>
-		<Name>SSL 3.0 Support</Name>
-		<Description>SSL3 protocol support (should be disabled)</Description>
-        <IfInfoComments/>
-        <IfPassedComments>SSL v3 is disabled as per best practice.</IfPassedComments>
-		<IfWarningComments/>
-        <IfFailedComments>SSL v3 is not disabled as per best practice.</IfFailedComments>
 	</Test>
 
 	<Test>
