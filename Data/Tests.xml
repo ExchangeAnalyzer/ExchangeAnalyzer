@@ -45,6 +45,17 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>CAS003</Id>
+		<Category>Client Access</Category>
+		<Name>SSL 3.0 Support</Name>
+		<Description>Check that SSL 3.0 protocol support is disabled</Description>
+        <IfInfoComments/>
+        <IfPassedComments>All Exchange servers have SSL 3.0 disabled.</IfPassedComments>
+		<IfWarningComments/>
+        <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
+	</Test>
+
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
