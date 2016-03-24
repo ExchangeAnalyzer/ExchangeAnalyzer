@@ -45,6 +45,39 @@
 		<IfFailedComments>One or more Exchange HTTPS services has a URL containing server FQDNs.</IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>POP001</Id>
+		<Category>POP</Category>
+		<Name>POP Service Status</Name>
+		<Description>Check the status of the POP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>POP002</Id>
+		<Category>POP</Category>
+		<Name>POP Secure Login</Name>
+		<Description>Check that insecure POP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No POP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more POP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more POP services allows insecure login.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>POP003</Id>
+		<Category>POP</Category>
+		<Name>POP Protocol Logging</Name>
+		<Description>Check that protocol logging is not enabled for POP.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No POP services have protocol logging enabled.</IfPassedComments>
+		<IfWarningComments>One or more POP services has protocol logging enabled.</IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>CAS003</Id>
 		<Category>Client Access</Category>
@@ -87,5 +120,16 @@
 		<IfPassedComments>The Active Directory forest meets the required functional level.</IfPassedComments>
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments>The Active Directory forest does not meet the required functional level.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>HW001</Id>
+		<Category>Hardware</Category>
+		<Name>Physical or Virtual</Name>
+		<Description>Check whether the Exchange Server is Physical or Virtual.</Description>
+		<IfPassedComments/>
+		<IfFailedComments/>
+		<IfInfoComments>All Exchange servers are physical servers.</IfInfoComments>
+		<IfWarningComments>One more more Exchange servers are a virtual server.</IfWarningComments>
 	</Test>
 </Tests>
