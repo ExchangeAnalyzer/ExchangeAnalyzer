@@ -26,8 +26,16 @@ Function Run-DB001()
         foreach ($db in $mailboxdatabases)
         {
 	        Write-Verbose "Checking $db"
-            if ( -not $db.LastFullBackup -and -not $db.LastIncrementalBackup -and -not $db.LastDifferentialBackup)
-	        {
+            if ($db.Mounted -eq $false)
+            {
+                $tmpString = "$($db.name) is dismounted."
+                Write-Verbose $tmpString
+                $WarningList += $tmpString
+            }
+            else
+            {
+                if ( -not $db.LastFullBackup -and -not $db.LastIncrementalBackup -and -not $db.LastDifferentialBackup)
+	                                            {
 		        #No backup timestamp was present. This means either the database has
 		        #never been backed up, or it was unreachable when this script ran
 		        $LastBackups = @{
@@ -36,7 +44,7 @@ Function Run-DB001()
                 
                 #Write-Verbose "Last backup of $($db.name) was $($LatestBackup.Value)."
 	        }
-	        else
+	            else
 	        {
                 if (-not $db.LastIncrementalBackup)
                 {
@@ -72,33 +80,33 @@ Function Run-DB001()
                         }
             }
 
-            $LatestBackup = ($LastBackups.GetEnumerator() | Sort-Object -Property Value)[0]
-            if ($($LatestBackup.Value) -eq "n/a")
-            {
-                Write-Verbose "$($db.name) has never been backed up."
-            }
-            else
-            {
-                Write-Verbose "Last backup of $($db.name) was $($LatestBackup.Key) $($LatestBackup.Value) hours ago"
-            }
+                $LatestBackup = ($LastBackups.GetEnumerator() | Sort-Object -Property Value)[0]
+                if ($($LatestBackup.Value) -eq "n/a")
+                {
+                    Write-Verbose "$($db.name) has never been backed up."
+                }
+                else
+                {
+                    Write-Verbose "Last backup of $($db.name) was $($LatestBackup.Key) $($LatestBackup.Value) hours ago"
+                }
             
-            if ($($LatestBackup.Value) -eq "n/a")
-            {
-                $FailedList += "$($db.Name) (Never backed up)"
+                if ($($LatestBackup.Value) -eq "n/a")
+                {
+                    $FailedList += "$($db.Name) (Never backed up)"
+                }
+                elseif ($($LatestBackup.Value.ToInt32($null)) -gt 24)
+                {
+                    $FailedList += "$($db.Name) ($($LatestBackup.Value) hrs ago)"
+                }
+                elseif ($($LatestBackup.Value) -ieq "Never")
+                {
+                    $FailedList += "$($db.name) (Never backed up)"
+                }
+                else
+                {
+                    $PassedList += "$($db.Name)"
+                }
             }
-            elseif ($($LatestBackup.Value.ToInt32($null)) -gt 24)
-            {
-                $FailedList += "$($db.Name) ($($LatestBackup.Value) hrs ago)"
-            }
-            elseif ($($LatestBackup.Value) -ieq "Never")
-            {
-                $FailedList += "$($db.name) (Never backed up)"
-            }
-            else
-            {
-                $PassedList += "$($db.Name)"
-            }
-
         }
     }
     else
