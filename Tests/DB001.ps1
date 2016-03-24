@@ -12,6 +12,8 @@ Function Run-DB001()
 
     $PassedList = @()
     $FailedList = @()
+    $WarningList = @()
+    $InfoList = @()
     $ErrorList = @()
 
     $mailboxdatabases = @($ExchangeDatabases | Where {$_.AdminDisplayVersion -like "Version 15.*" -and $_.Recovery -ne $true})
@@ -109,6 +111,8 @@ Function Run-DB001()
                                       -TestId $TestID `
                                       -PassedList $PassedList `
                                       -FailedList $FailedList `
+                                      -WarningList $WarningList `
+                                      -InfoList $InfoList `
                                       -ErrorList $ErrorList `
                                       -Verbose:($PSBoundParameters['Verbose'] -eq $true)
     return $ReportObj
