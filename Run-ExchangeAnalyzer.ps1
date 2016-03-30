@@ -342,10 +342,17 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
             </p>"
 
 #Count of test results
-$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
-$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
-$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
-$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+$PassedItems = @($report | Where {$_.TestOutcome -eq "Passed"})
+$TotalPassed = $PassItems.Count
+
+$WarningItems = @($report | Where {$_.TestOutcome -eq "Warning"})
+$TotalWarning = $WarningItems.Count
+
+$FailedItems = @($report | Where {$_.TestOutcome -eq "Failed"})
+$TotalFailed = $FailedItems.Count
+
+$InfoItems = @($report | Where {$_.TestOutcome -eq "Info"})
+$TotalInfo = $InfoItems.Count
 
 #HTML summary table
 $SummaryTableHtml  = "<h2>Summary:</h2>
@@ -365,6 +372,35 @@ $SummaryTableHtml  = "<h2>Summary:</h2>
                       </tr>
                       </table>
                       </p>"
+
+if ($TotalFailed -gt 0)
+{
+    $SummaryFailedItemsHtml = "<p>Failed items:</p>
+                              <ul>"
+
+    foreach ($FailedItem in $FailedItems)
+    {
+        $SummaryFailedItemsHtml += "<li>$($WarningItem.Comments)</li>"
+    }
+
+    $SummaryFailedItemsHtml += "</ul>
+                                </p>"
+}
+
+if ($TotalWarning -gt 0)
+{
+    $SummaryWarningItemsHtml = "<p>Warning items:</p>
+                                <ul>"
+
+    foreach ($WarningItem in $WarningItems)
+    {
+        $SummaryWarningItemsHtml += "<li>$($WarningItem.Comments)</li>"
+    }
+
+    $SummaryWarningItemsHtml += "</ul>
+                                 </p>"
+}
+
 
 #Build table for summary of Exchange Servers in organization
 $ExchangeServersSummaryHtml = $null
