@@ -79,6 +79,9 @@ Function Run-EXSRV002()
             {
                 Write-Verbose "$server is at least Exchange 2013"
 
+                $buildnumber = $null
+                $buildindex = $null
+
                 $build = ($adv -split "Build ").Trim()[1]
                 $build = $build.SubString(0,$build.Length-1)
                 $arrbuild = $build.Split(".")
@@ -94,8 +97,13 @@ Function Run-EXSRV002()
                 if ($adv -like "Version 15.0*")
                 {
                     $MajorVersion = "15.00"
+                    
                     $buildnumber = "$MajorVersion.$MinorVersion"
+                    Write-Verbose "Build number is: $($buildnumber)"
+                    
                     $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                    Write-Verbose "Build index is: $($buildindex)"
+                     
                     Write-Verbose "Exchange version is: $($Exchange2013Builds[$buildindex]."Product Name")"
                     $buildage = New-TimeSpan -Start ($Exchange2013Builds[$buildindex]."Release Date") -End $now
 
@@ -109,8 +117,13 @@ Function Run-EXSRV002()
                 if ($adv -like "Version 15.1*")
                 {
                     $MajorVersion = "15.01"
+
                     $buildnumber = "$MajorVersion.$MinorVersion"
-                    $buildindex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
+                    Write-Verbose "Build number is: $($buildnumber)"
+                    
+                    $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                    Write-Verbose "Build index is: $($buildindex)"
+
                     Write-Verbose "Exchange version is: $($Exchange2016Builds[$buildindex]."Product Name")"
                     $buildage = New-TimeSpan -Start ($Exchange2016Builds[$buildindex]."Release Date") -End $now
 
