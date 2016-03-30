@@ -380,7 +380,7 @@ if ($TotalFailed -gt 0)
 
     foreach ($FailedItem in $FailedItems)
     {
-        $SummaryFailedItemsHtml += "<li>$($WarningItem.Comments)</li>"
+        $SummaryFailedItemsHtml += "<li>$($FailedItem.Comments)</li>"
     }
 
     $SummaryFailedItemsHtml += "</ul>
