@@ -45,10 +45,6 @@ http://exchangeanalyzer.com
     * Website:	http://exchangeserverpro.com
     * Twitter:	http://twitter.com/exchservpro
 
-- Mike Crowley
-    * Website: https://mikecrowley.wordpress.com/
-    * Twitter: https://twitter.com/miketcrowley
-
 - Michael B Smith
     * Website: http://theessentialexchange.com/
     * Twitter: https://twitter.com/essentialexch
@@ -67,8 +63,10 @@ https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
 
 *** Change Log ***
 
+v0.2.0-Beta.4, 31/3/2016 - Fourth public beta release
+v0.1.2-Beta.3, 18/02/2016 - Third public beta release
 v0.1.1-Beta.2, 28/01/2016 - Second public beta release
-V0.1.0-Beta.1, 14/01/2016 - Public beta release
+v0.1.0-Beta.1, 14/01/2016 - Public beta release
 
 
 *** License ***
@@ -123,7 +121,7 @@ $myDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 $report = @()
 
-# What file types may be provided when creating the output file?"
+# What file types may be provided when creating the output file?
 $supportedOutputFileTypes = @("html","htm")
 
 #endregion
