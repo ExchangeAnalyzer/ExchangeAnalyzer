@@ -466,7 +466,7 @@ $DatabaseSummaryHtml += "<p>Summary of mailbox databases:</p>
                         <p>
                         <table>
                         <tr>
-                        <th>Database Name<th>
+                        <th>Database Name</th>
                         <th>Type</th>
                         <th>Server/DAG</th>
                         <th>Copies</th>
