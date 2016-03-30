@@ -202,7 +202,7 @@ try
     Write-Progress -Activity $ProgressActivity -Status "Get-OrganizationConfig" -PercentComplete 1
     $ExchangeOrganization = Get-OrganizationConfig -ErrorAction STOP
     
-    Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 2
+    Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 1
     $ExchangeServersAll = @(Get-ExchangeServer -ErrorAction STOP)
     $ExchangeServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
@@ -214,23 +214,23 @@ try
         EXIT
     }
 
-    Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 3
+    Write-Progress -Activity $ProgressActivity -Status "Get-MailboxDatabase" -PercentComplete 2
     $ExchangeDatabases = @(Get-MailboxDatabase -Status -ErrorAction STOP)
     Write-Verbose "$($ExchangeDatabases.Count) databases found."
 
     #Do not use -Status switch here as it causes an error to be thrown. DAG status should be
     #queried later after filtering DAG list to only v15.x DAGs.
-    Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 4
+    Write-Progress -Activity $ProgressActivity -Status "Get-DatabaseAvailabilityGroup" -PercentComplete 2
     $ExchangeDAGs = @(Get-DatabaseAvailabilityGroup -ErrorAction STOP)
     Write-Verbose "$($ExchangeDAGs.Count) DAGs found."
 
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 5
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomain" -PercentComplete 3
     $ADDomain = Get-ADDomain -ErrorAction STOP
  
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 6
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADForest" -PercentComplete 3
     $ADForest = Get-ADForest -ErrorAction STOP
  
-    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 7
+    Write-Progress -Activity $ProgressActivity -Status "Get-ADDomainController" -PercentComplete 3
     $ADDomainControllers = @(Get-ADDomainController -filter * -ErrorAction STOP)
     Write-Verbose "$($ADDomainControllers.Count) Domain Controller(s) found."
 }
@@ -243,20 +243,20 @@ catch
 
 #Get all Exchange HTTPS URLs to use for CAS tests
 $msgString = "Determining Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 8
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 $ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 9
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 $CASURLs = @(Get-ExchangeURLs $ClientAccessServers -Verbose:($PSBoundParameters['Verbose'] -eq $true))
 Write-Verbose "CAS URLs collected from $($CASURLs.Count) servers."
 
 #Get all POP settings for CAS/MBX servers
 $msgString = "Collecting POP settings from Client Access and Mailbox servers"
-Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 10
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
