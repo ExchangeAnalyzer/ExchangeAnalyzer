@@ -50,9 +50,9 @@
 		<Category>Client Access</Category>
 		<Name>SSL 3.0 Support</Name>
 		<Description>Check that SSL 3.0 protocol support is disabled</Description>
-        <IfInfoComments/>
+        <IfInfoComments></IfInfoComments>
         <IfPassedComments>All Exchange servers have SSL 3.0 disabled.</IfPassedComments>
-		<IfWarningComments/>
+		<IfWarningComments></IfWarningComments>
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
@@ -127,8 +127,8 @@
 		<Category>Hardware</Category>
 		<Name>Physical or Virtual</Name>
 		<Description>Check whether the Exchange Server is Physical or Virtual.</Description>
-		<IfPassedComments/>
-		<IfFailedComments/>
+		<IfPassedComments></IfPassedComments>
+		<IfFailedComments><IfFailedComments/>
 		<IfInfoComments>All Exchange servers are physical servers.</IfInfoComments>
 		<IfWarningComments>One or more Exchange servers are a virtual server.</IfWarningComments>
 	</Test>
