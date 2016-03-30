@@ -16,11 +16,24 @@ Function Run-EXSRV002()
     $InfoList = @()
     $ErrorList = @()
 
-    Write-Verbose "Scraping TechNet page"
-    $TechNetBuilds = Get-ExchangeBuildNumbers -Verbose:($PSBoundParameters['Verbose'] -eq $true)
-    if ($TechNetBuilds -like "An error occurred*")
+    #Check for presence of ExchangeBuildNumbers.xml file and exit if not found.
+
+    $BuildNumbersXMLFileName = "$($MyDir)\Data\ExchangeBuildNumbers.xml"
+
+    if (!(Test-Path $BuildNumbersXMLFileName))
     {
-        $ErrorList += $TechNetBuilds
+        Write-Warning "$BuildNumbersXMLFileName file not found."
+        EXIT
+    }
+
+    $BuildNumbersXMLContent = Import-Clixml $BuildNumbersXMLFileName
+    
+    Write-Verbose "Importing $BuildNumbersXMLFileName"
+    $BuildNumbersXMLContent = Import-Clixml $BuildNumbersXMLFileName
+
+    if ($BuildNumbersXMLContent -like "An error occurred*")
+    {
+        $ErrorList += $BuildNumbersXMLContent
     }
     else
     {
@@ -29,7 +42,7 @@ Function Run-EXSRV002()
 
         #Process results to rename properties, convert release date strings
         #to proper date values, and exclude legacy versions
-        foreach ($build in $TechNetBuilds)
+        foreach ($build in $BuildNumbersXMLContent)
         {
             if ($build.'Build number' -like "15.00.*")
             {
