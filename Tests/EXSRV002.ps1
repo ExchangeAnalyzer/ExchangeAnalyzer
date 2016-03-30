@@ -81,6 +81,7 @@ Function Run-EXSRV002()
 
                 $buildnumber = $null
                 $buildindex = $null
+                $buildage = $null
 
                 $build = ($adv -split "Build ").Trim()[1]
                 $build = $build.SubString(0,$build.Length-1)
@@ -96,21 +97,30 @@ Function Run-EXSRV002()
 
                 if ($adv -like "Version 15.0*")
                 {
+                   
                     $MajorVersion = "15.00"
                     
                     $buildnumber = "$MajorVersion.$MinorVersion"
                     Write-Verbose "Build number is: $($buildnumber)"
-                    
-                    $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
-                    Write-Verbose "Build index is: $($buildindex)"
-                     
-                    Write-Verbose "Exchange version is: $($Exchange2013Builds[$buildindex]."Product Name")"
-                    $buildage = New-TimeSpan -Start ($Exchange2013Builds[$buildindex]."Release Date") -End $now
 
-                    #Fixes issue when $buildindex is -1 due to being last item in the array
-                    if ($buildindex -eq "-1")
+                    if ($Exchange2013Builds."Build Number" -contains $buildnumber)
                     {
-                        $buildindex = $Exchange2013Builds.Count - 1
+                    
+                        $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                        Write-Verbose "Build index is: $($buildindex)"
+                     
+                        Write-Verbose "Exchange version is: $($Exchange2013Builds[$buildindex]."Product Name")"
+                        $buildage = New-TimeSpan -Start ($Exchange2013Builds[$buildindex]."Release Date") -End $now
+
+                        #Fixes issue when $buildindex is -1 due to being last item in the array
+                        if ($buildindex -eq "-1")
+                        {
+                            $buildindex = $Exchange2013Builds.Count - 1
+                        }
+                    }
+                    else
+                    {
+                        $buildage = "Unknown"
                     }
 
                 }
@@ -120,38 +130,54 @@ Function Run-EXSRV002()
 
                     $buildnumber = "$MajorVersion.$MinorVersion"
                     Write-Verbose "Build number is: $($buildnumber)"
-                    
-                    $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
-                    Write-Verbose "Build index is: $($buildindex)"
 
-                    Write-Verbose "Exchange version is: $($Exchange2016Builds[$buildindex]."Product Name")"
-                    $buildage = New-TimeSpan -Start ($Exchange2016Builds[$buildindex]."Release Date") -End $now
-
-                    #Fixes issue when $buildindex is -1 due to being last item in the array
-                    if ($buildindex -eq "-1")
+                    if ($Exchange2016Builds."Build Number" -contains $buildnumber)
                     {
-                        $buildindex = $Exchange2016Builds.Count - 1
+                        $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                        Write-Verbose "Build index is: $($buildindex)"
+
+                        Write-Verbose "Exchange version is: $($Exchange2016Builds[$buildindex]."Product Name")"
+                        $buildage = New-TimeSpan -Start ($Exchange2016Builds[$buildindex]."Release Date") -End $now
+
+                        #Fixes issue when $buildindex is -1 due to being last item in the array
+                        if ($buildindex -eq "-1")
+                        {
+                            $buildindex = $Exchange2016Builds.Count - 1
+                        }
+                    }
+                    else
+                    {
+                        $buildage = "Unknown"
                     }
 
                 }
 
-                Write-Verbose "$server is N-$buildindex"
-                $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
-
-                if ($buildindex -eq 0)
+                if ($buildage -eq "Unknown")
                 {
-                    Write-Verbose "Adding to passed list: $tmpstring"
-                    $PassedList += $($Server.Name)
-                }
-                elseif ($buildindex -eq 1)
-                {
-                    Write-Verbose "Adding to warning list: $tmpstring"
-                    $WarningList += $tmpstring
+                    Write-Verbose "Build number $buildnumber not found in $BuildNumbersXmlFile"
+                    $tmpstring = "$($Server.Name) (not found in XML file)"
+                    $WarningList += $tmpString
                 }
                 else
-                {        
-                    Write-Verbose "Adding to fail list: $tmpstring"
-                    $FailedList += $tmpstring
+                {
+                    Write-Verbose "$server is N-$buildindex"
+                    $tmpstring = "$($Server.Name) ($($buildage.Days) days old)"
+
+                    if ($buildindex -eq 0)
+                    {
+                        Write-Verbose "Adding to passed list: $tmpstring"
+                        $PassedList += $($Server.Name)
+                    }
+                    elseif ($buildindex -eq 1)
+                    {
+                        Write-Verbose "Adding to warning list: $tmpstring"
+                        $WarningList += $tmpstring
+                    }
+                    else
+                    {        
+                        Write-Verbose "Adding to fail list: $tmpstring"
+                        $FailedList += $tmpstring
+                    }
                 }
             }
             else
