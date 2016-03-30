@@ -274,7 +274,7 @@ foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 	$TestDescription = ($exchangeanalyzertests.Childnodes | Where {$_.Id -eq $Test}).Description
     $TestCount += 1
     $pct = $TestCount/$NumberOfTests * 100
-	Write-Progress -Activity $ProgressActivity -Status "(Test $TestCount of $NumberOfTests) $($Test): $TestDescription" -PercentComplete $pct
+	Write-Progress -Activity $ProgressActivity -Status "Test $($TestCount) of $($NumberOfTests): $TestDescription" -PercentComplete $pct
 
     if (Test-Path "$($MyDir)\Tests\$($Test).ps1")
     {
