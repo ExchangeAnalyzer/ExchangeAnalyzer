@@ -369,6 +369,7 @@ $SummaryTableHtml  = "<h2>Summary:</h2>
 #Build table for summary of Exchange Servers in organization
 $ExchangeServersSummaryHtml = $null
 $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
+                                <p>
                                 <table>
                                 <tr>
                                 <th>Name</th>
@@ -390,7 +391,8 @@ foreach ($Server in $ExchangeServersAll)
                                     </tr>"
 }
 
-$ExchangeServersSummaryHtml += "</table>"
+$ExchangeServersSummaryHtml += "</table>
+                                </p>"
 
 
 #Build table of CAS URLs
@@ -470,7 +472,7 @@ foreach ($reportcategory in $reportcategories)
         $categoryHtmlHeader += $ExchangeServersSummaryHtml
         $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
     }
-    if ($($reportcategory.Name) -eq "Client Access")
+    elseif ($($reportcategory.Name) -eq "Client Access")
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $CASURLSummaryHtml
