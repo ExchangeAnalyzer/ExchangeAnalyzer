@@ -383,7 +383,7 @@ $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
 foreach ($Server in $ExchangeServersAll)
 {
     #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
-    $ServerADSite = ($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    $ServerADSite = ($ExchangeServersAll | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
     
     $ExchangeServersSummaryHtml += "<tr>
                                     <td>$($Server.Name)</td>
