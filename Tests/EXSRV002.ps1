@@ -133,7 +133,7 @@ Function Run-EXSRV002()
 
                     if ($Exchange2016Builds."Build Number" -contains $buildnumber)
                     {
-                        $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
+                        $buildindex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
                         Write-Verbose "Build index is: $($buildindex)"
 
                         Write-Verbose "Exchange version is: $($Exchange2016Builds[$buildindex]."Product Name")"
