@@ -385,6 +385,8 @@ if ($TotalFailed -gt 0)
 
     $SummaryFailedItemsHtml += "</ul>
                                 </p>"
+
+    $SummaryTableHtml += $SummaryFailedItemsHtml
 }
 
 if ($TotalWarning -gt 0)
@@ -399,6 +401,8 @@ if ($TotalWarning -gt 0)
 
     $SummaryWarningItemsHtml += "</ul>
                                  </p>"
+
+    $SummaryTableHtml += $SummaryWarningItemsHtml
 }
 
 
