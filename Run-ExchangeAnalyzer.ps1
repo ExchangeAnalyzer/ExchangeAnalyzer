@@ -460,6 +460,32 @@ foreach ($server in $CASURLs)
                             </p>"
 }
 
+#Build a table of mailbox databases
+$DatabaseSummaryHtml = $null
+$DatabaseSummaryHtml += "<p>Summary of mailbox databases:</p>
+                        <p>
+                        <table>
+                        <tr>
+                        <th>Database Name<th>
+                        <th>Type</th>
+                        <th>Server/DAG</th>
+                        <th>Copies</th>
+                        </tr>"
+
+foreach ($Database in $ExchangeDatabases)
+{
+    $DatabaseSummaryHtml += "<tr>
+                            <td>$($Database.Name)</td>
+                            <td>$($Database.MasterType)</td>
+                            <td>$($Database.MasterServerOrAvailabilityGroup)</td>
+                            <td>$($Database.Copies.Count)</td>
+                            </tr>"
+}
+
+$DatabaseSummaryHtml += "</table>
+                        </p>"
+
+
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
 
@@ -473,6 +499,12 @@ foreach ($reportcategory in $reportcategories)
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $ExchangeServersSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
+    elseif ($($reportcategory.Name) -eq "Databases")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $DatabaseSummaryHtml
         $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
     }
     elseif ($($reportcategory.Name) -eq "Client Access")
