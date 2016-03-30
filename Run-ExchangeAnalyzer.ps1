@@ -366,6 +366,33 @@ $SummaryTableHtml  = "<h2>Summary:</h2>
                       </table>
                       </p>"
 
+#Build table for summary of Exchange Servers in organization
+$ExchangeServersSummaryHtml = $null
+$ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
+                                <table>
+                                <tr>
+                                <th>Name</th>
+                                <th>Site</th>
+                                <th>Domain</th>
+                                <th>Roles</th>
+                                <th>Edition</th>
+                                </tr>"
+
+#Will include all servers, even those not tested by Exchange Analyzer
+foreach ($Server in $ExchangeServersAll)
+{
+    $ExchangeServersSummaryHtml += "<tr>
+                                    <td>$($Server.Name)</td>
+                                    <td>$($server.Name)}).Site.ToString()</td>
+                                    <td>$($server.Domain)</td>
+                                    <td>$($server.ServerRole)</td>
+                                    <td>$($server.Edition)</td>
+                                    </tr>"
+}
+
+$ExchangeServersSummaryHtml += "</table>"
+
+
 #Build table of CAS URLs
 $CASURLSummaryHtml = $null
 $CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
@@ -437,6 +464,12 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable = $null
     
     #Create HTML table headings
+    if ($($reportcategory.Name) -eq "Exchange Servers")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $ExchangeServersSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
     if ($($reportcategory.Name) -eq "Client Access")
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
