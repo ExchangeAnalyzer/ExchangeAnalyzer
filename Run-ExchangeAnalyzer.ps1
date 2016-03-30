@@ -478,7 +478,7 @@ foreach ($Database in $ExchangeDatabases)
                             <td>$($Database.Name)</td>
                             <td>$($Database.MasterType)</td>
                             <td>$($Database.MasterServerOrAvailabilityGroup)</td>
-                            <td>$($Database.Copies.Count)</td>
+                            <td>$($Database.DatabaseCopies.Count)</td>
                             </tr>"
 }
 
