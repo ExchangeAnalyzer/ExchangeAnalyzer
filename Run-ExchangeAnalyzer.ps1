@@ -342,10 +342,17 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
             </p>"
 
 #Count of test results
-$TotalPassed = @($report | Where {$_.TestOutcome -eq "Passed"}).Count
-$TotalWarning = @($report | Where {$_.TestOutcome -eq "Warning"}).Count
-$TotalFailed = @($report | Where {$_.TestOutcome -eq "Failed"}).Count
-$TotalInfo = @($report | Where {$_.TestOutcome -eq "Info"}).Count
+$PassedItems = @($report | Where {$_.TestOutcome -eq "Passed"})
+$TotalPassed = $PassItems.Count
+
+$WarningItems = @($report | Where {$_.TestOutcome -eq "Warning"})
+$TotalWarning = $WarningItems.Count
+
+$FailedItems = @($report | Where {$_.TestOutcome -eq "Failed"})
+$TotalFailed = $FailedItems.Count
+
+$InfoItems = @($report | Where {$_.TestOutcome -eq "Info"})
+$TotalInfo = $InfoItems.Count
 
 #HTML summary table
 $SummaryTableHtml  = "<h2>Summary:</h2>
@@ -365,6 +372,71 @@ $SummaryTableHtml  = "<h2>Summary:</h2>
                       </tr>
                       </table>
                       </p>"
+
+if ($TotalFailed -gt 0)
+{
+    $SummaryFailedItemsHtml = "<p>Failed items:</p>
+                              <ul>"
+
+    foreach ($FailedItem in $FailedItems)
+    {
+        $SummaryFailedItemsHtml += "<li>$($FailedItem.Comments)</li>"
+    }
+
+    $SummaryFailedItemsHtml += "</ul>
+                                </p>"
+
+    $SummaryTableHtml += $SummaryFailedItemsHtml
+}
+
+if ($TotalWarning -gt 0)
+{
+    $SummaryWarningItemsHtml = "<p>Warning items:</p>
+                                <ul>"
+
+    foreach ($WarningItem in $WarningItems)
+    {
+        $SummaryWarningItemsHtml += "<li>$($WarningItem.Comments)</li>"
+    }
+
+    $SummaryWarningItemsHtml += "</ul>
+                                 </p>"
+
+    $SummaryTableHtml += $SummaryWarningItemsHtml
+}
+
+
+#Build table for summary of Exchange Servers in organization
+$ExchangeServersSummaryHtml = $null
+$ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
+                                <p>
+                                <table>
+                                <tr>
+                                <th>Name</th>
+                                <th>Site</th>
+                                <th>Domain</th>
+                                <th>Roles</th>
+                                <th>Edition</th>
+                                </tr>"
+
+#Will include all servers, even those not tested by Exchange Analyzer
+foreach ($Server in $ExchangeServersAll)
+{
+    #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
+    $ServerADSite = ($ExchangeServersAll | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    
+    $ExchangeServersSummaryHtml += "<tr>
+                                    <td>$($Server.Name)</td>
+                                    <td>$($ServerADSite.Split("/")[-1])</td>
+                                    <td>$($Server.Domain)</td>
+                                    <td>$($Server.ServerRole)</td>
+                                    <td>$($Server.Edition)</td>
+                                    </tr>"
+}
+
+$ExchangeServersSummaryHtml += "</table>
+                                </p>"
+
 
 #Build table of CAS URLs
 $CASURLSummaryHtml = $null
@@ -428,6 +500,32 @@ foreach ($server in $CASURLs)
                             </p>"
 }
 
+#Build a table of mailbox databases
+$DatabaseSummaryHtml = $null
+$DatabaseSummaryHtml += "<p>Summary of mailbox databases:</p>
+                        <p>
+                        <table>
+                        <tr>
+                        <th>Database Name</th>
+                        <th>Type</th>
+                        <th>Server/DAG</th>
+                        <th>Copies</th>
+                        </tr>"
+
+foreach ($Database in $ExchangeDatabases)
+{
+    $DatabaseSummaryHtml += "<tr>
+                            <td>$($Database.Name)</td>
+                            <td>$($Database.MasterType)</td>
+                            <td>$($Database.MasterServerOrAvailabilityGroup)</td>
+                            <td>$($Database.DatabaseCopies.Count)</td>
+                            </tr>"
+}
+
+$DatabaseSummaryHtml += "</table>
+                        </p>"
+
+
 #Build a list of report categories
 $reportcategories = $report | Group-Object -Property TestCategory | Select Name
 
@@ -437,7 +535,19 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable = $null
     
     #Create HTML table headings
-    if ($($reportcategory.Name) -eq "Client Access")
+    if ($($reportcategory.Name) -eq "Exchange Servers")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $ExchangeServersSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
+    elseif ($($reportcategory.Name) -eq "Databases")
+    {
+        $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
+        $categoryHtmlHeader += $DatabaseSummaryHtml
+        $categoryHtmlHeader += "<p>Results for $($reportcategory.Name) tests:</p>"
+    }
+    elseif ($($reportcategory.Name) -eq "Client Access")
     {
         $categoryHtmlHeader = "<h2>Category: $($reportcategory.Name)</h2>"
         $categoryHtmlHeader += $CASURLSummaryHtml

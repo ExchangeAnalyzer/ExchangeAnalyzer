@@ -130,6 +130,6 @@
 		<IfPassedComments/>
 		<IfFailedComments/>
 		<IfInfoComments>All Exchange servers are physical servers.</IfInfoComments>
-		<IfWarningComments>One more more Exchange servers are a virtual server.</IfWarningComments>
+		<IfWarningComments>One or more Exchange servers are a virtual server.</IfWarningComments>
 	</Test>
 </Tests>
