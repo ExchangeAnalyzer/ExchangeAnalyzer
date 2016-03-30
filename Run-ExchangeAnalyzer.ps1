@@ -382,12 +382,15 @@ $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
 #Will include all servers, even those not tested by Exchange Analyzer
 foreach ($Server in $ExchangeServersAll)
 {
+    #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
+    $ServerADSite = ($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    
     $ExchangeServersSummaryHtml += "<tr>
                                     <td>$($Server.Name)</td>
-                                    <td>$($server.Name)}).Site.ToString()</td>
-                                    <td>$($server.Domain)</td>
-                                    <td>$($server.ServerRole)</td>
-                                    <td>$($server.Edition)</td>
+                                    <td>$($ServerADSite.Split("/")[-1])</td>
+                                    <td>$($Server.Domain)</td>
+                                    <td>$($Server.ServerRole)</td>
+                                    <td>$($Server.Edition)</td>
                                     </tr>"
 }
 
