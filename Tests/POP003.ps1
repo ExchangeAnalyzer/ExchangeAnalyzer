@@ -33,7 +33,7 @@ Function Run-POP003()
             $false {
                 $tmpString = "$($PopSetting.Server) has protocol logging disabled"
                 Write-Verbose $tmpString
-                $WarningList += $PopSetting.Server
+                $PassedList += $PopSetting.Server
                 }
             default {
                 $ErrorList += "$($PopSetting.Server) protocol log setting could not be determined"
