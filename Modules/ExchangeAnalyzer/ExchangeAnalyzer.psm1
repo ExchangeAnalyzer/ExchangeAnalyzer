@@ -328,4 +328,170 @@ Function Get-ExchangeURLs()
     return $results
 }
 
+#this function reads a property out of the global server property bag
+Function Get-ExAServerProperty()
+{
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        $Server,
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $Property
+    )
+
+    try
+    { 
+        Write-Debug "Searching for property '$Property' for server '$Server'"
+
+        if ($ExAPropertyBag -eq $null)
+        {
+            throw 'ExAPropertyBag cannot be found'
+        }
+
+        if ($ExAPropertyBag.ContainsKey($Server) -eq $false)
+        {
+            Write-Debug "Property Bag has no entries for server '$Server'"
+            return $null
+        }
+
+        if ($ExAPropertyBag[$Server].ContainsKey($Property) -eq $false)
+        {
+            Write-Debug "Property bag does not have property '$Property' for '$Server'"
+            return $null
+        }
+
+        return $ExAPropertyBag[$Server][$Property]
+    }
+    catch
+    {
+        Write-Warning "Error $($_.Exception) retrieving '$Property' for '$Server'"
+        return $null
+    }
+}
+
+#this function publishes a value in to the global server property bag
+function Set-ExAServerProperty()
+{
+    [CmdletBinding()]
+    param(
+        [parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        $Server,
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $Property,
+        [parameter(Mandatory=$false)]
+        $Value = $null
+    )
+
+    Write-Debug "Publishing '$Property' for '$Server'"
+
+    if ($ExAPropertyBag -eq $null)
+    {
+        throw 'ExAPropertyBag cannot be found'    
+    }
+
+    if ($ExAPropertyBag.ContainsKey($Server) -eq $false)
+    {
+        $ExAPropertyBag.Add($Server, @{})
+    }
+
+    $ExAPropertyBag[$Server][$Property] = $Value
+}
+
+Function Get-ExARegistryValue()
+{
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $Host,
+        [parameter(Mandatory=$true)]
+        [Microsoft.Win32.RegistryHive]
+        $Hive,
+        [parameter(Mandatory=$true)]
+        [string]
+        $Key,
+        [parameter(Mandatory=$true)]
+        [string]
+        $Value,
+        [parameter(Mandatory=$false)]
+        [object]
+        $Default = $null
+    )
+
+    ##TODO: Exception Handling
+        # Can't connect
+        # Access Denied
+        # Key doesn't exist
+        # Value doesn't exist - default should work for us
+
+    $remoteHive = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($Hive, $Host)
+
+    $hKey = $remoteHive.OpenSubKey($Key, $false)
+
+    $valueData = $hKey.GetValue($Value, $Default)
+
+    return $valueData
+}
+
+#lightweight wrapper over Get-WmiObject with error handling
+function Get-ExAWmiObject()
+{    
+    [CmdletBinding()]
+    param
+    (
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Class,
+        [parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Computer,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]        
+        $Property,
+        [parameter(Mandatory=$false)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $Filter
+    )
+
+    $parameterSet = @{ 
+        Computer = $Computer
+        Class = $Class
+    }
+
+    if ($PSBoundParameters.ContainsKey('Property'))
+    {
+        $parameterSet.Add('Property', $Property)
+    }
+
+    if ($PSBoundParameters.ContainsKey('Filter'))
+    {
+        $parameterSet.Add('Filter', $Filter)
+    }
+
+    ##TODO:
+        # Computer down
+        # Access Denied
+
+    try
+    { 
+        Write-Debug "Invoking Get-WmiObject for host '$Computer' and Class '$Class'"
+        Get-WmiObject @parameterSet
+    }
+    catch
+    {
+        ##TODO
+        Write-Warning $_.Exception
+        return $null
+    }
+}
+
 Export-ModuleMember -Function * -Alias * -Variable *

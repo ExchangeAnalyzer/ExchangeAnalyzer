@@ -132,4 +132,15 @@
 		<IfInfoComments>All Exchange servers are physical servers.</IfInfoComments>
 		<IfWarningComments>One or more Exchange servers are a virtual server.</IfWarningComments>
 	</Test>
+	
+  <Test>
+		<Id>WSSRV001</Id>
+		<Category>Windows Server</Category>
+		<Name>Exchange Install Volume Free Disk Space</Name>
+		<Description>Check that the Exchange install volume has 30% or greater free disk space.</Description>
+		<IfInfoComments></IfInfoComments>
+        <IfPassedComments>All Exchange install volumes have greater than 30% free disk space.</IfPassedComments>
+       	<IfWarningComments>One or more Exchange install volumes has between 15% and 30% free disk space.</IfWarningComments>		
+       	<IfFailedComments>One or more Exchange install volumes has less than 15% free disk space.</IfFailedComments>        
+	</Test>
 </Tests>
