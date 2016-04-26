@@ -1,4 +1,4 @@
-#This function tests each Exchange server to verify if SSL 3.0 is disabled
+#This function tests each Exchange server to verify a supported version of the .NET framework istalled
 Function Run-EXSRV003()
 {
     [CmdletBinding()]
