@@ -24,6 +24,17 @@
 	</Test>
 
 	<Test>
+		<Id>EXSRV003</Id>
+		<Category>Exchange Servers</Category>
+		<Name>.NET Framework Version</Name>
+		<Description>Check if Exchange Servers are running the recommended version of the .NET Framework.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>All Exchange Server 2013/2016 servers are running the correct version of the .NET Framework</IfPassedComments>
+		<IfWarningComments>One or more Exchange Server 2013/2016 servers are not running the recommended version of the .NET Framework.</IfWarningComments>
+		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running a supported version of the .NET Framework.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>CAS001</Id>
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
