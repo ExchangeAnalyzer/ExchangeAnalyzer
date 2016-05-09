@@ -45,7 +45,7 @@ Function Run-CAS005() {
     # Get all the namespacese we'll need to check, then dedupe it
     $NamespacesToCheck = @()
     $ExternalNamespacesToCheck = @()
-    foreach ($CAS in (Get-ExchangeUrls)) {
+    foreach ($CAS in $CASURLs) {
         # The System.Uri class allows us to format the string as a URI
         # and remove all the https:// and /owa parts
         $NamespacesToCheck += 
