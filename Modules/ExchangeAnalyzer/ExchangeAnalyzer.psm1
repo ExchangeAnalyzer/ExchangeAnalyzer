@@ -429,11 +429,20 @@ Function Get-ExARegistryValue()
         # Key doesn't exist
         # Value doesn't exist - default should work for us
 
-    $remoteHive = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($Hive, $Host)
+    try
+    {
+        $remoteHive = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey($Hive, $Host)
 
-    $hKey = $remoteHive.OpenSubKey($Key, $false)
+        $hKey = $remoteHive.OpenSubKey($Key, $false)
 
-    $valueData = $hKey.GetValue($Value, $Default)
+        $valueData = $hKey.GetValue($Value, $Default)
+    }
+    catch
+    {
+        $remoteHive = $null
+
+        $valueData = "Unable to connect to registry."
+    }
 
     return $valueData
 }
