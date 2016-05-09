@@ -89,6 +89,17 @@
 		<IfFailedComments></IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>IMAP001</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Service Status</Name>
+		<Description>Check the status of the IMAP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
