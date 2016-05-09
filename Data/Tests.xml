@@ -90,6 +90,17 @@
 	</Test>
 
 	<Test>
+		<Id>IMAP003</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Protocol Logging</Name>
+		<Description>Check that IMAP protocol logging is not enabled.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No IMAP services have protocol logging enabled.</IfPassedComments>
+		<IfWarningComments>One or more IMAP services has protocol logging enabled.</IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
 		<Name>Database Backups</Name>
