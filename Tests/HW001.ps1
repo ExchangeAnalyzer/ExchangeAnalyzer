@@ -20,7 +20,24 @@ Function Run-HW001()
         $name = $server.name
 
         # Get system information on the server
-        $virtual = Get-WmiObject -ComputerName $name -Class Win32_ComputerSystem
+        try {
+            $virtual = Get-CIMInstance -ComputerName $name -Class Win32_ComputerSystem -ErrorAction Stop
+        }catch {
+            $tryWMI = $true
+            Write-Verbose "$($TestID): Was not able to acquire information for $name via CIM"
+        }
+
+        if( $tryWMI ) {
+            ## WMI depends on RPC. CIM depends on WinRM. There are pluses and minuses to either, but in recent versions of Windows,
+            ## CIM is preferred. But CIM failed, so we try WMI before we give up.
+            Try {
+                $virtual = Get-WmiObject -ComputerName $name -Class Win32_ComputerSystem -ErrorAction Stop
+            } catch {
+                Write-Verbose "$($TestID): Was not able to acquire information for $name via WMI"
+                $FailedList += $($name)
+                Break
+            }
+        }
 
         # Check to see if the server is VMWare
         if($virtual.Manufacturer -like "*VMWare*") {
