@@ -70,8 +70,7 @@ Function Run-CAS005() {
             ([System.Uri]$CAS.ECPExternal).Host,
             ([System.Uri]$CAS.OABExternal).Host,
             ([System.Uri]$CAS.EWSExternal).Host,
-            ([System.Uri]$CAS.MAPIExternal).Host,
-            ([System.Uri]$CAS.AutoDSCP).Host
+            ([System.Uri]$CAS.MAPIExternal).Host
     }
 
     #Remove duplicates
@@ -155,7 +154,7 @@ Function Run-CAS005() {
                 # unable to resolve the record for some reason, either it 
                 # doesn't exist or the resolver configuration is broken
                 Write-Verbose "----- $TestID`: Unable to resolve namespace '$namespace' against external resolvers"
-                $ErrorList += "Internal: '$namespace': (Unable to resolve)"
+                $ErrorList += "External: '$namespace': (Unable to resolve)"
             }
 
             if ($record) {
