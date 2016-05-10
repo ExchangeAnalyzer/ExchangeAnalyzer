@@ -56,6 +56,16 @@
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>CAS005</Id>
+		<Category>Client Access</Category>
+		<Name>TTL on DNS Entries</Name>
+		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
+        <IfInfoComments></IfInfoComments>
+        <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+        <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
+	</Test>
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
