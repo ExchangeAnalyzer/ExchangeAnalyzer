@@ -441,7 +441,9 @@ Function Get-ExARegistryValue()
     {
         $remoteHive = $null
 
-        $valueData = "Unable to connect to registry."
+        $valueData = $null
+        
+        Write-Error "Unable to connect to registry."
     }
 
     return $valueData
