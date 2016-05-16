@@ -56,6 +56,16 @@
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>CAS005</Id>
+		<Category>Client Access</Category>
+		<Name>TTL on DNS Entries</Name>
+		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
+        <IfInfoComments></IfInfoComments>
+        <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+        <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
+	</Test>
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
@@ -90,6 +100,7 @@
 	</Test>
 
 	<Test>
+<<<<<<< HEAD
 		<Id>IMAP002</Id>
 		<Category>IMAP</Category>
 		<Name>IMAP Secure Login</Name>
@@ -98,6 +109,16 @@
 		<IfPassedComments>No IMAP services allow insecure logins.</IfPassedComments>
 		<IfWarningComments>One or more IMAP services may allow insecure logins.</IfWarningComments>
 		<IfFailedComments>One or more IMAP services allows insecure login.</IfFailedComments>
+=======
+		<Id>IMAP003</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Protocol Logging</Name>
+		<Description>Check that IMAP protocol logging is not enabled.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No IMAP services have protocol logging enabled.</IfPassedComments>
+		<IfWarningComments>One or more IMAP services has protocol logging enabled.</IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+>>>>>>> refs/remotes/origin/development
 	</Test>
 
 	<Test>
