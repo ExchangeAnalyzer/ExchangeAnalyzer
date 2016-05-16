@@ -100,7 +100,6 @@
 	</Test>
 
 	<Test>
-<<<<<<< HEAD
 		<Id>IMAP002</Id>
 		<Category>IMAP</Category>
 		<Name>IMAP Secure Login</Name>
@@ -109,7 +108,9 @@
 		<IfPassedComments>No IMAP services allow insecure logins.</IfPassedComments>
 		<IfWarningComments>One or more IMAP services may allow insecure logins.</IfWarningComments>
 		<IfFailedComments>One or more IMAP services allows insecure login.</IfFailedComments>
-=======
+	</Test>
+
+	<Test>
 		<Id>IMAP003</Id>
 		<Category>IMAP</Category>
 		<Name>IMAP Protocol Logging</Name>
@@ -118,7 +119,6 @@
 		<IfPassedComments>No IMAP services have protocol logging enabled.</IfPassedComments>
 		<IfWarningComments>One or more IMAP services has protocol logging enabled.</IfWarningComments>
 		<IfFailedComments></IfFailedComments>
->>>>>>> refs/remotes/origin/development
 	</Test>
 
 	<Test>
