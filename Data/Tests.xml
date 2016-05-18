@@ -107,7 +107,7 @@
 		<IfInfoComments></IfInfoComments>
 		<IfPassedComments>No IMAP services allow insecure logins.</IfPassedComments>
 		<IfWarningComments>One or more IMAP services may allow insecure logins.</IfWarningComments>
-		<IfFailedComments>One or more IMAP services allows insecure login.</IfFailedComments>
+		<IfFailedComments>One or more IMAP services allows insecure logins.</IfFailedComments>
 	</Test>
 
 	<Test>
