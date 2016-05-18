@@ -270,6 +270,13 @@ Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
 
+#Get all IMAP settings for CAS/MBX servers
+$msgString = "Collecting IMAP settings from Client Access and Mailbox servers"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
+Write-Verbose $msgString
+#This needs to be processed as a foreach to work in PS remoting
+$AllImapSettings = @($ExchangeServers | foreach{Get-ImapSettings -Server $_.Identity})
+
 #endregion -Basic Data Collection
 
 #region -Run tests

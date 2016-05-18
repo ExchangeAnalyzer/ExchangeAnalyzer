@@ -111,6 +111,17 @@
 	</Test>
 
 	<Test>
+		<Id>IMAP002</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Secure Login</Name>
+		<Description>Check that insecure IMAP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No IMAP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more IMAP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more IMAP services allows insecure logins.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>IMAP003</Id>
 		<Category>IMAP</Category>
 		<Name>IMAP Protocol Logging</Name>
