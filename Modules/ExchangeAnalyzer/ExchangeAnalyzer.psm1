@@ -443,7 +443,7 @@ Function Get-ExARegistryValue()
 
         $valueData = $null
         
-        Write-Error "Unable to connect to registry."
+        Write-Error $_.Exception.Message
     }
 
     return $valueData
