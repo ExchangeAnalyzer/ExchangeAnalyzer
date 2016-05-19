@@ -15,11 +15,11 @@ Function Run-EXSRV003()
 
     foreach ($server in $exchangeservers) {
         # Set the inital value
-        $name = $server.name
+        $ServerName = $server.name
         $up = $true
 
         try {
-            $Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey("LocalMachine",$name)
+            $Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey("LocalMachine",$ServerName)
         } catch {
             $up = $false
         }
@@ -36,18 +36,18 @@ Function Run-EXSRV003()
             # Results of the check
             switch ($NETFxVersion)
             {
-                {($_ -ge 378389) -and ($_ -lt 378675)} {$WarningList += "$name - .NET Framework 4.5";Write-Verbose ".NET FrameWork version 4.5 detected on server $name.  4.5.2 is strongly recommended."}
-                {($_ -ge 378675) -and ($_ -lt 379893)} {$WarningList += "$name - .NET Framework 4.5.1";Write-Verbose ".NET FrameWork version 4.5.1 detected on server $name.  4.5.2 is strongly recommended."}
-                {($_ -ge 379893) -and ($_ -lt 393297)} {$PassedList += "$name - .NET Framework 4.5.2";Write-Verbose ".NET FrameWork version 4.5.2 detected on server $name.  This is the recommended version."}
-		        {($_ -ge 393297) -and ($_ -lt 394271)} {$FailedList += "$name - .NET Framework 4.6";Write-Verbose ".NET FrameWork version 4.6 detected on server $name.  4.6 is not supported for Exchange.  4.5.2 is strongly recommended."}
-                {($_ -ge 394271)} {$FailedList += "$name - .NET Framework 4.6.1";Write-Verbose ".NET FrameWork version 4.6.1 or later detected on server $name.  4.6.1 is not supported for Exchange.  4.5.2 is strongly recommended."}
-                default {$WarningList += $name;Write-Verbose("Unable to determine .NET FrameWork version on server $name")}
+                {($_ -ge 378389) -and ($_ -lt 378675)} {$WarningList += "$ServerName - .NET Framework 4.5";Write-Verbose ".NET FrameWork version 4.5 detected on server $ServerName.  4.5.2 is strongly recommended."}
+                {($_ -ge 378675) -and ($_ -lt 379893)} {$WarningList += "$ServerName - .NET Framework 4.5.1";Write-Verbose ".NET FrameWork version 4.5.1 detected on server $ServerName.  4.5.2 is strongly recommended."}
+                {($_ -ge 379893) -and ($_ -lt 393297)} {$PassedList += "$ServerName - .NET Framework 4.5.2";Write-Verbose ".NET FrameWork version 4.5.2 detected on server $ServerName.  This is the recommended version."}
+		        {($_ -ge 393297) -and ($_ -lt 394271)} {$FailedList += "$ServerName - .NET Framework 4.6";Write-Verbose ".NET FrameWork version 4.6 detected on server $ServerName.  4.6 is not supported for Exchange.  4.5.2 is strongly recommended."}
+                {($_ -ge 394271)} {$FailedList += "$ServerName - .NET Framework 4.6.1";Write-Verbose ".NET FrameWork version 4.6.1 or later detected on server $ServerName.  4.6.1 is not supported for Exchange.  4.5.2 is strongly recommended."}
+                default {$WarningList += $ServerName;Write-Verbose("Unable to determine .NET FrameWork version on server $ServerName")}
             }
         }
         else
         {
-            $WarningList += "$name - unable to connect to registry"
-            Write-Verbose "Unable to connect to registry of $name"
+            $WarningList += "$ServerName - unable to connect to registry"
+            Write-Verbose "Unable to connect to registry of $ServerName"
         }
     }
 
