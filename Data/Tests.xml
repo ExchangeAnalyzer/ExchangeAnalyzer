@@ -77,6 +77,7 @@
 		<IfWarningComments></IfWarningComments>
         <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
 	</Test>
+	
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
@@ -166,7 +167,7 @@
 	</Test>
 
 	<Test>
-		<Id>Ad002</Id>
+		<Id>AD002</Id>
 		<Category>Active Directory</Category>
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>
