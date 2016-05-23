@@ -63,6 +63,7 @@ https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
 
 *** Change Log ***
 
+v0.2.1-Beta.5, 20/05/2016 - Fifth public beta release
 v0.2.0-Beta.4, 31/3/2016 - Fourth public beta release
 v0.1.2-Beta.3, 18/02/2016 - Third public beta release
 v0.1.1-Beta.2, 28/01/2016 - Second public beta release
@@ -269,6 +270,13 @@ Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
+
+#Get all IMAP settings for CAS/MBX servers
+$msgString = "Collecting IMAP settings from Client Access and Mailbox servers"
+Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
+Write-Verbose $msgString
+#This needs to be processed as a foreach to work in PS remoting
+$AllImapSettings = @($ExchangeServers | foreach{Get-ImapSettings -Server $_.Identity})
 
 #endregion -Basic Data Collection
 

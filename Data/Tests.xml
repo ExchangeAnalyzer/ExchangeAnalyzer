@@ -24,6 +24,17 @@
 	</Test>
 
 	<Test>
+		<Id>EXSRV003</Id>
+		<Category>Exchange Servers</Category>
+		<Name>.NET Framework Version</Name>
+		<Description>Check if Exchange Servers are running a supported and recommended version of the .NET Framework.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>All Exchange servers are running supported versions of the .NET Framework.</IfPassedComments>
+		<IfWarningComments>One or more Exchange servers are not running the recommended version of the .NET Framework.</IfWarningComments>
+		<IfFailedComments>One or more Exchange servers are not running a supported version of the .NET Framework.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>CAS001</Id>
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
@@ -56,6 +67,17 @@
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
+	<Test>
+		<Id>CAS005</Id>
+		<Category>Client Access</Category>
+		<Name>TTL on DNS Entries</Name>
+		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
+        <IfInfoComments></IfInfoComments>
+        <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+        <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
+	</Test>
+	
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
@@ -89,6 +111,39 @@
 		<IfFailedComments></IfFailedComments>
 	</Test>
 
+    <Test>
+		<Id>IMAP001</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Service Status</Name>
+		<Description>Check the status of the IMAP services.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments></IfPassedComments>
+		<IfWarningComments></IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>IMAP002</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Secure Login</Name>
+		<Description>Check that insecure IMAP logins are not permitted.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No IMAP services allow insecure logins.</IfPassedComments>
+		<IfWarningComments>One or more IMAP services may allow insecure logins.</IfWarningComments>
+		<IfFailedComments>One or more IMAP services allows insecure logins.</IfFailedComments>
+	</Test>
+
+	<Test>
+		<Id>IMAP003</Id>
+		<Category>IMAP</Category>
+		<Name>IMAP Protocol Logging</Name>
+		<Description>Check that IMAP protocol logging is not enabled.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>No IMAP services have protocol logging enabled.</IfPassedComments>
+		<IfWarningComments>One or more IMAP services has protocol logging enabled.</IfWarningComments>
+		<IfFailedComments></IfFailedComments>
+	</Test>
+
 	<Test>
 		<Id>DB001</Id>
 		<Category>Databases</Category>
@@ -112,7 +167,7 @@
 	</Test>
 
 	<Test>
-		<Id>Ad002</Id>
+		<Id>AD002</Id>
 		<Category>Active Directory</Category>
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>
