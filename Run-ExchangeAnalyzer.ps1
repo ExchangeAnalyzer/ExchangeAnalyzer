@@ -63,6 +63,7 @@ https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
 
 *** Change Log ***
 
+v0.2.2-Beta.6, 23/06/2016 - Updated with June 2016 Exchange build numbers
 v0.2.1-Beta.5, 20/05/2016 - Fifth public beta release
 v0.2.0-Beta.4, 31/3/2016 - Fourth public beta release
 v0.1.2-Beta.3, 18/02/2016 - Third public beta release
