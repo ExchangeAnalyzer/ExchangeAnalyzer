@@ -97,6 +97,7 @@ SOFTWARE.
 
 #requires -Modules ExchangeAnalyzer
 #requires -Modules ActiveDirectory
+#requires -Modules DnsClient
 
 #region Start parameters
 
