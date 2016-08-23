@@ -23,14 +23,14 @@ Function Run-IMAP001()
             $IMAPServices = @("MSExchangeImap4","MSExchangeImap4BE")
             foreach ($IMAPService in $IMAPServices)
             {
-                $Service = Get-ExAWMIObject -Computer $Server -Class Win32_Service -Filter "Name=$($IMAPService)"
+                $Service = Get-ExAWMIObject -Computer $Server -Class Win32_Service -Filter "Name='$($IMAPService)'"
  
                 #Storing values in property bags may not be necessary, as this test information is
                 #not re-used elsewhere. May be possible to remove this later if speed is impacted.
-                Set-ExAServerProperty -Server $Server -Property "$($IMAPService)State" -Value $Service.State
-                Set-ExAServerProperty -Server $Server -Property "$($IMAPService)StartMode" -Value $Service.StartMode               
+                Set-ExAServerProperty -Server $Server -Property "$($Service)State" -Value $Service.State
+                Set-ExAServerProperty -Server $Server -Property "$($Service)StartMode" -Value $Service.StartMode               
                 
-                $tmpString = "$($Server): $($IMAPService.Name) is $($IMAPService.State) (Start Mode: $($IMAPService.StartMode)"
+                $tmpString = "$($Server): $($Service.Name) is $($Service.State) (Start Mode: $($Service.StartMode))"
                 Write-Verbose $tmpString
                 $InfoList += $tmpString
             }
