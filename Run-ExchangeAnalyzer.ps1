@@ -277,15 +277,7 @@ Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
 $AllImapSettings = @($ExchangeServers | foreach{Get-ImapSettings -Server $_.Identity})
-#Retrieve IMAP service details
-foreach ($s in $ExchangeServers) {
-    $IMAP4Service = Get-ExAWMIObject -Computer $s.Name -Class Win32_Service -Filter "Name='MSExchangeImap4'"
-    $IMAP4BEService = Get-ExAWMIObject -Computer $s.Name -Class Win32_Service -Filter "Name='MSExchangeImap4BE'"
-    Set-ExAServerProperty -Server $s.Name -Property 'IMAP4ServiceState' -Value $IMAP4Service.State
-    Set-ExAServerProperty -Server $s.Name -Property 'IMAP4ServiceStartMode' -Value $IMAP4Service.StartMode
-    Set-ExAServerProperty -Server $s.Name -Property 'IMAP4BEServiceState' -Value $IMAP4BEService.State
-    Set-ExAServerProperty -Server $s.Name -Property 'IMAP4BEServiceStartMode' -Value $IMAP4BEService.StartMode
-}
+
 
 #endregion -Basic Data Collection
 
