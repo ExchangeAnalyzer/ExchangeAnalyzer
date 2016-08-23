@@ -20,12 +20,17 @@ Function Run-IMAP001()
 
         try
         {
-            #This test won't return StartupType. Need to replace with a WMI query once the WMI framework
-            #has been built into the ExchangeAnalyzer module.
-            $IMAPServices = @(Get-Service -ComputerName $Server MSExchangeIMAP* -ErrorAction STOP)
+            $IMAPServices = @("MSExchangeImap4","MSExchangeImap4BE")
             foreach ($IMAPService in $IMAPServices)
             {
-                $tmpString = "$($Server): $($IMAPService.DisplayName) is $($IMAPService.Status)"
+                $Service = Get-ExAWMIObject -Computer $Server -Class Win32_Service -Filter "Name=$($IMAPService)"
+ 
+                #Storing values in property bags may not be necessary, as this test information is
+                #not re-used elsewhere. May be possible to remove this later if speed is impacted.
+                Set-ExAServerProperty -Server $Server -Property "$($IMAPService)State" -Value $Service.State
+                Set-ExAServerProperty -Server $Server -Property "$($IMAPService)StartMode" -Value $Service.StartMode               
+                
+                $tmpString = "$($Server): $($IMAPService.Name) is $($IMAPService.State) (Start Mode: $($IMAPService.StartMode)"
                 Write-Verbose $tmpString
                 $InfoList += $tmpString
             }
