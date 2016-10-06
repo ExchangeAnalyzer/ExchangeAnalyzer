@@ -63,7 +63,7 @@
 		<Description>Check that SSL 3.0 protocol support is disabled</Description>
         <IfInfoComments></IfInfoComments>
         <IfPassedComments>All Exchange servers have SSL 3.0 disabled.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more Exchange servers could not be checked for SSL 3.0 status.</IfWarningComments>
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
@@ -74,7 +74,7 @@
 		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
         <IfInfoComments></IfInfoComments>
         <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more CAS namespace DNS records have high TTLs.</IfWarningComments>
         <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
 	</Test>
 	
