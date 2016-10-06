@@ -358,7 +358,7 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
 
 #Count of test results
 $PassedItems = @($report | Where {$_.TestOutcome -eq "Passed"})
-$TotalPassed = $PassItems.Count
+$TotalPassed = $PassedItems.Count
 
 $WarningItems = @($report | Where {$_.TestOutcome -eq "Warning"})
 $TotalWarning = $WarningItems.Count
