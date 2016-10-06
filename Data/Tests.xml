@@ -74,7 +74,7 @@
 		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
         <IfInfoComments></IfInfoComments>
         <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more CAS namespace DNS records have high TTLs.</IfWarningComments>
         <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
 	</Test>
     <Test>
