@@ -109,8 +109,8 @@ Function Run-EXSRV002()
                         $buildindex = $Exchange2013Builds."Build Number".IndexOf("$buildnumber")
                         Write-Verbose "Build index is: $($buildindex)"
                      
-                        $BuildProductName = $($Exchange2013Builds[$buildindex]."Product Name")
-                        Write-Verbose "Exchange version is: $($BuildProductName)"
+                        $BuildDescription = $($Exchange2013Builds[$buildindex]."Description")
+                        Write-Verbose "Exchange version is: $($BuildDescription)"
                         $buildage = New-TimeSpan -Start ($Exchange2013Builds[$buildindex]."Release Date") -End $now
 
                         #Fixes issue when $buildindex is -1 due to being last item in the array
@@ -137,8 +137,8 @@ Function Run-EXSRV002()
                         $buildindex = $Exchange2016Builds."Build Number".IndexOf("$buildnumber")
                         Write-Verbose "Build index is: $($buildindex)"
 
-                        $BuildProductName = $($Exchange2016Builds[$buildindex]."Product Name")
-                        Write-Verbose "Exchange version is: $($BuildProductName)"
+                        $BuildDescription = $($Exchange2016Builds[$buildindex]."Description")
+                        Write-Verbose "Exchange version is: $($BuildDescription)"
                         $buildage = New-TimeSpan -Start ($Exchange2016Builds[$buildindex]."Release Date") -End $now
 
                         #Fixes issue when $buildindex is -1 due to being last item in the array
@@ -192,7 +192,7 @@ Function Run-EXSRV002()
 
             #Store build information in server property bag
             Set-ExAServerProperty -Server $Server -Property 'BuildNumber' -Value $BuildNumber
-            Set-ExAServerProperty -Server $Server -Property 'BuildProductName' -Value $BuildProductName
+            Set-ExAServerProperty -Server $Server -Property 'BuildDescription' -Value $BuildDescription
         }
     }
 
