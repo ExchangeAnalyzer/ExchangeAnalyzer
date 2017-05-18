@@ -116,7 +116,7 @@
 		<Category>IMAP</Category>
 		<Name>IMAP Service Status</Name>
 		<Description>Check the status of the IMAP services.</Description>
-		<IfInfoComments></IfInfoComments>
+		<IfInfoComments>IMAP service state and start mode information.</IfInfoComments>
 		<IfPassedComments></IfPassedComments>
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments></IfFailedComments>
