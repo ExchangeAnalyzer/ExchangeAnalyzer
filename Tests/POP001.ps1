@@ -1,4 +1,3 @@
-#This is your test
 Function Run-POP001()
 {
     [CmdletBinding()]
@@ -21,12 +20,17 @@ Function Run-POP001()
 
         try
         {
-            #This test won't return StartupType. Need to replace with a WMI query once the WMI framework
-            #has been built into the ExchangeAnalyzer module.
-            $PopServices = @(Get-Service -ComputerName $Server MSExchangePOP* -ErrorAction STOP)
-            foreach ($PopService in $PopServices)
+            $POPServices = @("MSExchangePop3","MSExchangePOP3BE")
+            foreach ($POPService in $POPServices)
             {
-                $tmpString = "$($Server): $($PopService.DisplayName) is $($PopService.Status)"
+                $Service = Get-ExAWMIObject -Computer $Server -Class Win32_Service -Filter "Name='$($POPService)'"
+
+                #Storing values in property bags may not be necessary, as this test information is
+                #not re-used elsewhere. May be possible to remove this later if speed is impacted.
+                Set-ExAServerProperty -Server $Server -Property "$($Service)State" -Value $Service.State
+                Set-ExAServerProperty -Server $Server -Property "$($Service)StartMode" -Value $Service.StartMode               
+                
+                $tmpString = "$($Server): $($Service.Name) is $($Service.State) (Start Mode: $($Service.StartMode))"
                 Write-Verbose $tmpString
                 $InfoList += $tmpString
             }

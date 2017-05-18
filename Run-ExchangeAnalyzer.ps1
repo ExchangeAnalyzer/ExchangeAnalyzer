@@ -33,7 +33,7 @@ Runs the Exchange Analyzer outputting results to C:\ExchangeReports\ContosoExcha
 Runs the Exchange Analyzer with -Verbose output.
 
 .LINK
-http://exchangeanalyzer.com
+https://exchangeanalyzer.com
 
 .NOTES
 
@@ -42,8 +42,8 @@ http://exchangeanalyzer.com
 ----- Core Team -----
 
 - Paul Cunningham
-    * Website:	http://exchangeserverpro.com
-    * Twitter:	http://twitter.com/exchservpro
+    * Website:	https://paulcunningham.me
+    * Twitter:	https://twitter.com/paulcunningham
 
 - Michael B Smith
     * Website: http://theessentialexchange.com/
@@ -58,7 +58,7 @@ http://exchangeanalyzer.com
 
 ----- Additional Contributions -----
 
-https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
+https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Contributors
 
 
 *** Change Log ***
@@ -70,7 +70,7 @@ https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/releases
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Paul Cunningham, exchangeanalyzer.com
+Copyright (c) 2017 Paul Cunningham, exchangeanalyzer.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -205,11 +205,11 @@ try
     
     Write-Progress -Activity $ProgressActivity -Status "Get-ExchangeServer" -PercentComplete 1
     $ExchangeServersAll = @(Get-ExchangeServer -ErrorAction STOP)
-    $ExchangeServers = @($ExchangeServersAll | Where {$_.AdminDisplayVersion -like "Version 15.*"})
+    $ExchangeServers = @($ExchangeServersAll | Where-Object {$_.AdminDisplayVersion -like "Version 15.*"})
     Write-Verbose "$($ExchangeServers.Count) Exchange servers found."
 
     #Check for supported servers before continuing
-    if (($ExchangeServers | Where {$_.AdminDisplayVersion -like "Version 15.*"}).Count -eq 0)
+    if (($ExchangeServers | Where-Object {$_.AdminDisplayVersion -like "Version 15.*"}).Count -eq 0)
     {
         Write-Warning "No Exchange 2013 or later servers were found. Exchange Analyzer is exiting."
         EXIT
@@ -252,7 +252,7 @@ catch
 $msgString = "Determining Client Access servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
-$ClientAccessServers = @($ExchangeServers | Where {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
+$ClientAccessServers = @($ExchangeServers | Where-Object {$_.IsClientAccessServer -and $_.AdminDisplayVersion -like "Version 15.*"})
 Write-Verbose "$($ClientAccessServers.Count) Client Access servers found."
 
 $msgString = "Collecting Exchange URLs from Client Access servers"
@@ -266,14 +266,15 @@ $msgString = "Collecting POP settings from Client Access and Mailbox servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
-$AllPopSettings = @($ExchangeServers | foreach{Get-PopSettings -Server $_.Identity})
+$AllPopSettings = @($ExchangeServers | ForEach-Object {Get-PopSettings -Server $_.Identity})
 
 #Get all IMAP settings for CAS/MBX servers
 $msgString = "Collecting IMAP settings from Client Access and Mailbox servers"
 Write-Progress -Activity $ProgressActivity -Status $msgString -PercentComplete 4
 Write-Verbose $msgString
 #This needs to be processed as a foreach to work in PS remoting
-$AllImapSettings = @($ExchangeServers | foreach{Get-ImapSettings -Server $_.Identity})
+$AllImapSettings = @($ExchangeServers | ForEach-Object {Get-ImapSettings -Server $_.Identity})
+
 
 #endregion -Basic Data Collection
 
@@ -285,7 +286,7 @@ $NumberOfTests = ($ExchangeAnalyzerTests.Test).Count
 $TestCount = 0
 foreach ($Test in $ExchangeAnalyzerTests.ChildNodes.Id)
 {
-	$TestDescription = ($exchangeanalyzertests.Childnodes | Where {$_.Id -eq $Test}).Description
+	$TestDescription = ($exchangeanalyzertests.Childnodes | Where-Object {$_.Id -eq $Test}).Description
     $TestCount += 1
     $pct = $TestCount/$NumberOfTests * 100
 	Write-Progress -Activity $ProgressActivity -Status "Test $($TestCount) of $($NumberOfTests): $TestDescription" -PercentComplete $pct
@@ -345,25 +346,25 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
             <p><strong>Organization:</strong> $($ExchangeOrganization.Name)</p>
             <p>The following guidelines apply to this report:
             <ul>
-                <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
+                <li>This tests included in this report are documented on the <a href=""https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
                 <li>Click the ""More Info"" link for each test to learn more about that test, what a pass or fail means, and recommendations for how to respond.</li>
                 <li>A test can fail if it can't complete successfully, or if a condition was encountered that requires manual assessment.</li>
                 <li>For some organizations a failed test may be due to a deliberate design or operational decision.</li>
-                <li>Please review the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
+                <li>Please review the <a href=""https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
             </ul>
             </p>"
 
 #Count of test results
-$PassedItems = @($report | Where {$_.TestOutcome -eq "Passed"})
+$PassedItems = @($report | Where-Object {$_.TestOutcome -eq "Passed"})
 $TotalPassed = $PassedItems.Count
 
-$WarningItems = @($report | Where {$_.TestOutcome -eq "Warning"})
+$WarningItems = @($report | Where-Object {$_.TestOutcome -eq "Warning"})
 $TotalWarning = $WarningItems.Count
 
-$FailedItems = @($report | Where {$_.TestOutcome -eq "Failed"})
+$FailedItems = @($report | Where-Object {$_.TestOutcome -eq "Failed"})
 $TotalFailed = $FailedItems.Count
 
-$InfoItems = @($report | Where {$_.TestOutcome -eq "Info"})
+$InfoItems = @($report | Where-Object {$_.TestOutcome -eq "Info"})
 $TotalInfo = $InfoItems.Count
 
 #HTML summary table
@@ -425,6 +426,8 @@ $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
                                 <table>
                                 <tr>
                                 <th>Name</th>
+                                <th>Version</th>
+                                <th>.NET Framework</th>
                                 <th>Site</th>
                                 <th>Domain</th>
                                 <th>Roles</th>
@@ -435,10 +438,12 @@ $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
 foreach ($Server in $ExchangeServersAll)
 {
     #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
-    $ServerADSite = ($ExchangeServersAll | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    $ServerADSite = ($ExchangeServersAll | Where-Object {$_.Name -ieq $($server.Name)}).Site.ToString() 
     
     $ExchangeServersSummaryHtml += "<tr>
                                     <td>$($Server.Name)</td>
+                                    <td>$(Get-ExAServerProperty -Server $Server -Property "BuildDescription")</td>
+                                    <td>$(Get-ExAServerProperty -Server $Server -Property ".NET Framework")</td>
                                     <td>$($ServerADSite.Split("/")[-1])</td>
                                     <td>$($Server.Domain)</td>
                                     <td>$($Server.ServerRole)</td>
@@ -457,7 +462,7 @@ $CASURLSummaryHtml += "<p>Summary of Client Access URLs/Namespaces:</p>"
 foreach ($server in $CASURLs)
 {
     #See Issue #62 in Github for why this ToString() is required for compatiblity with 2013/2016.
-    $ServerADSite = ($ExchangeServers | Where {$_.Name -ieq $($server.Name)}).Site.ToString() 
+    $ServerADSite = ($ExchangeServers | Where-Object {$_.Name -ieq $($server.Name)}).Site.ToString() 
 
     $CASURLSummaryHtml += "<table>
                             <tr>
@@ -469,7 +474,7 @@ foreach ($server in $CASURLs)
                             <th>External Url</th>
                             </tr>
                             <tr>
-                            <td>Outlook Anywhere</td>
+                            <td>Outlook AnyWhere-Object</td>
                             <td>$($server.OAInternal)</td>
                             <td>$($server.OAExternal)</td>
                             </tr>
@@ -539,7 +544,7 @@ $DatabaseSummaryHtml += "</table>
 
 
 #Build a list of report categories
-$reportcategories = $report | Group-Object -Property TestCategory | Select Name
+$reportcategories = $report | Group-Object -Property TestCategory | Select-Object Name
 
 #Create report HTML for each category
 foreach ($reportcategory in $reportcategories)
@@ -584,7 +589,7 @@ foreach ($reportcategory in $reportcategories)
     $categoryHtmlTable += $categoryHtmlHeader
 
     #Generate each HTML table row
-    foreach ($reportline in ($report | Where {$_.TestCategory -eq $reportcategory.Name}))
+    foreach ($reportline in ($report | Where-Object {$_.TestCategory -eq $reportcategory.Name}))
     {
         $HtmlTableRow = "<tr>"
 		$htmltablerow += "<td>$($reportline.TestName)</td>"

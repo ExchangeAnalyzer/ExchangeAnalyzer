@@ -24,6 +24,17 @@
 	</Test>
 
 	<Test>
+		<Id>EXSRV003</Id>
+		<Category>Exchange Servers</Category>
+		<Name>.NET Framework Versions</Name>
+		<Description>Check if Exchange Servers are running the a supported version of .NET Framework.</Description>
+		<IfInfoComments></IfInfoComments>
+		<IfPassedComments>All Exchange Server 2013/2016 servers are running supported versions of .NET Framework.</IfPassedComments>
+		<IfWarningComments>One or more Exchange Server 2013/2016 servers are not running a supported combination of Exchange and .NET Framework.</IfWarningComments>
+		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running a supported combination of Exchange and .NET Framework.</IfFailedComments>
+	</Test>
+
+	<Test>
 		<Id>CAS001</Id>
 		<Category>Client Access</Category>
 		<Name>Client Access Namespaces</Name>
@@ -105,7 +116,7 @@
 		<Category>IMAP</Category>
 		<Name>IMAP Service Status</Name>
 		<Description>Check the status of the IMAP services.</Description>
-		<IfInfoComments></IfInfoComments>
+		<IfInfoComments>IMAP service state and start mode information.</IfInfoComments>
 		<IfPassedComments></IfPassedComments>
 		<IfWarningComments></IfWarningComments>
 		<IfFailedComments></IfFailedComments>
