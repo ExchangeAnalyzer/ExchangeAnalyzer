@@ -33,7 +33,7 @@ Runs the Exchange Analyzer outputting results to C:\ExchangeReports\ContosoExcha
 Runs the Exchange Analyzer with -Verbose output.
 
 .LINK
-http://exchangeanalyzer.com
+https://exchangeanalyzer.com
 
 .NOTES
 
@@ -42,8 +42,8 @@ http://exchangeanalyzer.com
 ----- Core Team -----
 
 - Paul Cunningham
-    * Website:	http://exchangeserverpro.com
-    * Twitter:	http://twitter.com/exchservpro
+    * Website:	https://paulcunningham.me
+    * Twitter:	https://twitter.com/paulcunningham
 
 - Michael B Smith
     * Website: http://theessentialexchange.com/
@@ -58,7 +58,7 @@ http://exchangeanalyzer.com
 
 ----- Additional Contributions -----
 
-https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Contributors
+https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Contributors
 
 
 *** Change Log ***
@@ -70,7 +70,7 @@ https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/releases
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Paul Cunningham, exchangeanalyzer.com
+Copyright (c) 2017 Paul Cunningham, exchangeanalyzer.com
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -345,11 +345,11 @@ $IntroHtml="<h1>Exchange Analyzer Report</h1>
             <p><strong>Organization:</strong> $($ExchangeOrganization.Name)</p>
             <p>The following guidelines apply to this report:
             <ul>
-                <li>This tests included in this report are documented on the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
+                <li>This tests included in this report are documented on the <a href=""https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests"">Exchange Analyzer Wiki</a>.</li>
                 <li>Click the ""More Info"" link for each test to learn more about that test, what a pass or fail means, and recommendations for how to respond.</li>
                 <li>A test can fail if it can't complete successfully, or if a condition was encountered that requires manual assessment.</li>
                 <li>For some organizations a failed test may be due to a deliberate design or operational decision.</li>
-                <li>Please review the <a href=""https://github.com/cunninghamp/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
+                <li>Please review the <a href=""https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Frequently-Asked-Questions"">Frequently Asked Questions</a> if you have any further questions.</li>
             </ul>
             </p>"
 
