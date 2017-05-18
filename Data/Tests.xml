@@ -26,12 +26,12 @@
 	<Test>
 		<Id>EXSRV003</Id>
 		<Category>Exchange Servers</Category>
-		<Name>.NET Framework Version</Name>
-		<Description>Check if Exchange Servers are running a supported and recommended version of the .NET Framework.</Description>
+		<Name>.NET Framework Versions</Name>
+		<Description>Check if Exchange Servers are running the a supported version of .NET Framework.</Description>
 		<IfInfoComments></IfInfoComments>
-		<IfPassedComments>All Exchange servers are running supported versions of the .NET Framework.</IfPassedComments>
-		<IfWarningComments>One or more Exchange servers are not running the recommended version of the .NET Framework.</IfWarningComments>
-		<IfFailedComments>One or more Exchange servers are not running a supported version of the .NET Framework.</IfFailedComments>
+		<IfPassedComments>All Exchange Server 2013/2016 servers are running supported versions of .NET Framework.</IfPassedComments>
+		<IfWarningComments>One or more Exchange Server 2013/2016 servers are not running a supported combination of Exchange and .NET Framework.</IfWarningComments>
+		<IfFailedComments>One or more Exchange Server 2013/2016 servers are not running a supported combination of Exchange and .NET Framework.</IfFailedComments>
 	</Test>
 
 	<Test>
@@ -63,7 +63,7 @@
 		<Description>Check that SSL 3.0 protocol support is disabled</Description>
         <IfInfoComments></IfInfoComments>
         <IfPassedComments>All Exchange servers have SSL 3.0 disabled.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more Exchange servers could not be checked for SSL 3.0 status.</IfWarningComments>
         <IfFailedComments>One or more Exchange servers do not have SSL 3.0 disabled.</IfFailedComments>
 	</Test>
 
@@ -74,9 +74,10 @@
 		<Description>Check that TTLs on DNS entries for CAS namespaces are not excessive</Description>
         <IfInfoComments></IfInfoComments>
         <IfPassedComments>All CAS namespace DNS records have acceptable TTLs.</IfPassedComments>
-		<IfWarningComments></IfWarningComments>
+		<IfWarningComments>One or more CAS namespace DNS records have high TTLs.</IfWarningComments>
         <IfFailedComments>One or more CAS namespace DNS records have excessively high TTLs.</IfFailedComments>
 	</Test>
+	
     <Test>
 		<Id>POP001</Id>
 		<Category>POP</Category>
@@ -166,7 +167,7 @@
 	</Test>
 
 	<Test>
-		<Id>Ad002</Id>
+		<Id>AD002</Id>
 		<Category>Active Directory</Category>
 		<Name>AD Forest Level</Name>
 		<Description>Check that the forest is at the required level.</Description>

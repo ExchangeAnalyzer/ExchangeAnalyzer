@@ -1,3 +1,5 @@
+#requires -Modules ExchangeAnalyzer
+
 #This function tests each Exchange server to verify a supported version of the .NET framework istalled
 Function Run-EXSRV003()
 {
@@ -13,36 +15,65 @@ Function Run-EXSRV003()
     $InfoList = @()
     $ErrorList = @()
 
+    #Import the CSV file containing Net Framework support information
+    Write-Verbose "Importing CSV file for .NET support matrix"
+    $NetFXSupportMatrix = Import-CSV "$($MyDir)\Data\NETFXSupportMatrix.csv"
+
     foreach ($server in $exchangeservers) {
         # Set the inital value
-        $ServerName = $server.name
-        $up = $true
-
-        try {
-            $Registry = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey("LocalMachine",$ServerName)
-        } catch {
-            $up = $false
-        }
-
-        if ($up -eq $true) {
-            # Check the registry path
-            $RegKey = $Registry.OpenSubKey("SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full")
-
-            if ($RegKey -ne $null) {
-                # Get the value
-                [int]$NETFxVersion = $RegKey.GetValue("Release")
-            }
         
+        $ServerName = $server.name
+        $NetFxRelease = $null
+        $NetFXSupportStatus = $null
+
+        Write-Verbose "Checking $ServerName"
+
+        $NetFxRelease = Get-ExARegistryValue -Host $ServerName -Hive LocalMachine -Key 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full' -Value 'Release'
+
+        Write-Verbose "Release: $NetFXRelease"
+
+        If ($NetFxRelease)
+        {
             # Results of the check
-            switch ($NETFxVersion)
+            switch ($NETFxRelease)
             {
-                {($_ -ge 378389) -and ($_ -lt 378675)} {$WarningList += "$ServerName - .NET Framework 4.5"; Write-Verbose ".NET FrameWork version 4.5 detected on server $ServerName.  4.5.2 is strongly recommended."}
-                {($_ -ge 378675) -and ($_ -lt 379893)} {$WarningList += "$ServerName - .NET Framework 4.5.1"; Write-Verbose ".NET FrameWork version 4.5.1 detected on server $ServerName.  4.5.2 is strongly recommended."}
-                {($_ -ge 379893) -and ($_ -lt 393297)} {$PassedList += "$ServerName - .NET Framework 4.5.2"; Write-Verbose ".NET FrameWork version 4.5.2 detected on server $ServerName.  This is the recommended version."}
-		        {($_ -ge 393297) -and ($_ -lt 394271)} {$FailedList += "$ServerName - .NET Framework 4.6"; Write-Verbose ".NET FrameWork version 4.6 detected on server $ServerName.  4.6 is not supported for Exchange.  4.5.2 is strongly recommended."}
-                {($_ -ge 394271)} {$FailedList += "$ServerName - .NET Framework 4.6.1"; Write-Verbose ".NET FrameWork version 4.6.1 or later detected on server $ServerName.  4.6.1 is not supported for Exchange.  4.5.2 is strongly recommended."}
-                default {$WarningList += $ServerName; Write-Verbose("Unable to determine .NET FrameWork version on server $ServerName")}
+                378389 {$NetFXVersion = ".NET Framework 4.5"}
+                378675 {$NetFXVersion = ".NET Framework 4.5.1"}
+                379893 {$NetFXVersion = ".NET Framework 4.5.2"}
+		        393297 {$NetFXVersion = ".NET Framework 4.6"}
+                394271 {$NetFXVersion = ".NET Framework 4.6.1"}
+                394806 {$NetFXVersion = ".NET Framework 4.6.2"}
+                460805 {$NetFXVersion = ".NET Framework 4.7"}
+                default {$NetFxVersion = "Unknown"}
             }
+            
+            Write-Verbose ".NET FX Version is: $NetFXVersion"
+            Set-ExAServerProperty -Server $Server -Property '.NET Framework' -Value $NetFXVersion
+            $ServerVersion = Get-ExAServerProperty -Server $Server -Property 'BuildDescription'
+
+            Write-Verbose "Server version is: $ServerVersion"
+            
+            $NetFXSupportStatus = ($NetFXSupportMatrix | Where {$_.ExchangeDescription -eq $ServerVersion}).$NetFXVersion
+
+            if (-not($NetFXSupportStatus)) {
+                $NetFXSupportStatus = "Unknown"
+            }
+            
+            Write-Verbose "Support status: $NetFXSupportStatus"
+
+            if ($NetFXSupportStatus -eq "Supported") {
+                $PassedList += $ServerName
+            }
+            elseif ($NetFXSupportStatus -eq "Unsupported") {
+                $FailedList += $ServerName
+            }
+            elseif ($NetFxSupportStatus -eq "Unknown") {
+                $WarningList += $ServerName
+            }
+            else {
+                $ErrorList += $ServerName
+            }
+
         }
         else
         {
