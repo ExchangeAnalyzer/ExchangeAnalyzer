@@ -59,7 +59,7 @@ Function Run-DB001()
                 }
                 else
                 {
-                    $LastInc = "{0:D0}" -f ($now.ToUniversalTime() - $db.LastIncrementalBackup.ToUniversalTime()).TotalHours
+                    [int]$LastInc = ($now.ToUniversalTime() - $db.LastIncrementalBackup.ToUniversalTime()).TotalHours
                 }
 
                 if (-not $db.LastDifferentialBackup)
@@ -68,7 +68,7 @@ Function Run-DB001()
                 }
                 else
                 {
-                    $LastDiff = "{0:D0}" -f ($now.ToUniversalTime() - $db.LastDifferentialBackup.ToUniversalTime()).TotalHours
+                    [int]$LastDiff = ($now.ToUniversalTime() - $db.LastDifferentialBackup.ToUniversalTime()).TotalHours
                 }
 
                 if (-not $db.LastFullBackup)
@@ -77,7 +77,7 @@ Function Run-DB001()
                 }
                 else
                 {
-                    $LastFull = "{0:D0}" -f ($now.ToUniversalTime() - $db.LastFullBackup.ToUniversalTime()).TotalHours
+                    [int]$LastFull = ($now.ToUniversalTime() - $db.LastFullBackup.ToUniversalTime()).TotalHours
                 }
 
                 $LastBackups = @{
