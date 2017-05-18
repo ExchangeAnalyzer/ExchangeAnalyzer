@@ -425,6 +425,8 @@ $ExchangeServersSummaryHtml += "<p>Summary of Exchange Servers:</p>
                                 <table>
                                 <tr>
                                 <th>Name</th>
+                                <th>Version</th>
+                                <th>.NET Framework</th>
                                 <th>Site</th>
                                 <th>Domain</th>
                                 <th>Roles</th>
@@ -439,6 +441,8 @@ foreach ($Server in $ExchangeServersAll)
     
     $ExchangeServersSummaryHtml += "<tr>
                                     <td>$($Server.Name)</td>
+                                    <td>$(Get-ExAServerProperty -Server $Server -Property "BuildDescription")</td>
+                                    <td>$(Get-ExAServerProperty -Server $Server -Property ".NET Framework")</td>
                                     <td>$($ServerADSite.Split("/")[-1])</td>
                                     <td>$($Server.Domain)</td>
                                     <td>$($Server.ServerRole)</td>
