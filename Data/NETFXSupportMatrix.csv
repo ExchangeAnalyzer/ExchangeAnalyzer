@@ -1,9 +1,11 @@
-"ExchangeDescription",".NET Framework 4.7",".NET Framework 4.6.2",".NET Framework 4.6.1",".NET Framework 4.5.2",".NET Framework 4.5.1",".NET Framework 4.5"
-"Exchange Server 2016 CU6","Not supported","Supported","Not supported","Not supported","Not supported","Not supported"
-"Exchange Server 2016 CU5","Not supported","Supported","Not supported","Not supported","Not supported","Not supported"
-"Exchange Server 2016 CU4","Not supported","Supported","Supported","Supported","Not supported","Not supported"
-"Exchange Server 2016 CU3","Not supported","Supported","Supported","Supported","Not supported","Not supported"
-"Exchange Server 2013 CU17","Not supported","Supported","Not supported","Not supported","Not supported","Not supported"
-"Exchange Server 2013 CU16","Not supported","Supported","Not supported","Not supported","Not supported","Not supported"
-"Exchange Server 2013 CU15","Not supported","Supported","Supported","Supported","Supported","Not supported"
-"Exchange Server 2013 CU14","Not supported","Not supported","Supported","Supported","Supported","Supported"
+ExchangeDescription,.NET Framework 4.7.1,.NET Framework 4.7,.NET Framework 4.6.2,.NET Framework 4.6.1,.NET Framework 4.5.2,.NET Framework 4.5.1,.NET Framework 4.5
+Exchange Server 2016 CU7,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2016 CU6,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2016 CU5,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2016 CU4,Not supported,Not supported,Supported,Supported,Supported,Not supported,Not supported
+Exchange Server 2016 CU3,Not supported,Not supported,Supported,Supported,Supported,Not supported,Not supported
+Exchange Server 2013 CU18,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2013 CU17,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2013 CU16,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2013 CU15,Not supported,Not supported,Supported,Supported,Supported,Supported,Not supported
+Exchange Server 2013 CU14,Not supported,Not supported,Not supported,Supported,Supported,Supported,Supported
