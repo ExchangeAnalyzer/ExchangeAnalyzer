@@ -48,6 +48,7 @@ Function Run-EXSRV003()
                 394806 {$NetFXVersion = ".NET Framework 4.6.2"}
                 460798 {$NetFXVersion = ".NET Framework 4.7"}
                 460805 {$NetFXVersion = ".NET Framework 4.7"}
+                461310 {$NetFXVersion = ".NET Framework 4.7.1"}
                 default {$NetFxVersion = "Unknown"}
             }
             
@@ -68,11 +69,11 @@ Function Run-EXSRV003()
             if ($NetFXSupportStatus -eq "Supported") {
                 $PassedList += $ServerName
             }
-            elseif ($NetFXSupportStatus -eq "Unsupported") {
-                $FailedList += $ServerName
+            elseif ($NetFXSupportStatus -eq "Not supported") {
+                $FailedList += "$($ServerName) - $($ServerVersion) and $($NetFXVersion) are not supported together."
             }
             elseif ($NetFxSupportStatus -eq "Unknown") {
-                $WarningList += $ServerName
+                $WarningList += "$($ServerName) - unable to determine Exchange/.NET support status. Click the More Info link to learn more."
             }
             else {
                 $ErrorList += $ServerName
