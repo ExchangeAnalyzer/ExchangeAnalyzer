@@ -48,6 +48,7 @@ Function Run-EXSRV003()
                 394806 {$NetFXVersion = ".NET Framework 4.6.2"}
                 460798 {$NetFXVersion = ".NET Framework 4.7"}
                 460805 {$NetFXVersion = ".NET Framework 4.7"}
+                461310 {$NetFXVersion = ".NET Framework 4.7.1"}
                 default {$NetFxVersion = "Unknown"}
             }
             
