@@ -70,10 +70,10 @@ Function Run-EXSRV003()
                 $PassedList += $ServerName
             }
             elseif ($NetFXSupportStatus -eq "Not supported") {
-                $FailedList += $ServerName
+                $FailedList += "$($ServerName) - $($ServerVersion) and $($NetFXVersion) are not supported together."
             }
             elseif ($NetFxSupportStatus -eq "Unknown") {
-                $WarningList += $ServerName
+                $WarningList += "$($ServerName) - unable to determine Exchange/.NET support status. Click the More Info link to learn more."
             }
             else {
                 $ErrorList += $ServerName
