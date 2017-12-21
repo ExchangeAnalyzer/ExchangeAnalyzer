@@ -69,7 +69,7 @@ Function Run-EXSRV003()
             if ($NetFXSupportStatus -eq "Supported") {
                 $PassedList += $ServerName
             }
-            elseif ($NetFXSupportStatus -eq "Unsupported") {
+            elseif ($NetFXSupportStatus -eq "Not supported") {
                 $FailedList += $ServerName
             }
             elseif ($NetFxSupportStatus -eq "Unknown") {
