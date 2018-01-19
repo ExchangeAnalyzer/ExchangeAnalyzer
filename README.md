@@ -4,7 +4,7 @@
 
 ![](https://exchangeanalyzer.com/wp-content/uploads/2016/03/exchange-analyzer-mockup.png)
 
-Exchange Analyzer is a community project that has reached feature completion. There is no active development of further features, however the tool's awareness of Exchange and .NET Framework version numbers is being maintained for compatibility with new Exchange cumulative updates. A [list of implemented tests](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests) is available on the [Exchange Analyzer Wiki](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki).
+Exchange Analyzer is a community project that has reached feature completion. There is no active development of further features, however the tool's awareness of Exchange and .NET Framework version numbers is being maintained for compatibility with new Exchange cumulative updates.
 
 ### Learn More
 
