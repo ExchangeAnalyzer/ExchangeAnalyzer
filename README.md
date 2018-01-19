@@ -4,7 +4,7 @@
 
 ![](https://exchangeanalyzer.com/wp-content/uploads/2016/03/exchange-analyzer-mockup.png)
 
-Exchange Analyzer is a community project, and is currently a beta release seeking feedback and results from real world environments. A [list of implemented tests](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests) is available on the [Exchange Analyzer Wiki](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki). A list of [proposed tests](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Proposed-Tests) that are yet to be developed is also available.
+Exchange Analyzer is a community project that has reached feature completion. There is no active development of further features, however the tool's awareness of Exchange and .NET Framework version numbers is being maintained for compatibility with new Exchange cumulative updates. A [list of implemented tests](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Exchange-Analyzer-Tests) is available on the [Exchange Analyzer Wiki](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki).
 
 ### Learn More
 
@@ -20,7 +20,3 @@ Exchange Analyzer is a community project, and is currently a beta release seekin
 ## License
 
 Exchange Analyzer is released under the MIT license (MIT). Full text of the license is available [here](https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/LICENSE).
-
-## Mailing List
-
-To subscribe to receive news and updates about Exchange Analyzer by email [click here](http://tinyletter.com/ExchangeAnalyzer).
