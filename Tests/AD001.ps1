@@ -86,8 +86,8 @@ Function Run-AD001()
     }
     else
     {
-        $MaxFunctionalLevel = 6
-        $MaxFunctionalLevelText = "Windows Server 2012 R2"
+        $MaxFunctionalLevel = 7
+        $MaxFunctionalLevelText = "Windows Server 2016"
     }
 
     Write-Verbose "The Domain Functional level must be:"
