@@ -10,15 +10,13 @@ There is no active development of further features, however the tool's awareness
 
 ### Learn More
 
-- [About Exchange Analyzer](https://exchangeanalyzer.com/about/)
-- [Using Exchange Analyzer](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Using-Exchange-Analyzer)
 - [Wiki Home Page](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki)
+- [Using Exchange Analyzer](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Using-Exchange-Analyzer)
 
 ## Credits
 
-- [Meet the Team](https://exchangeanalyzer.com/team)
-- [Additional contributors](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Contributors)
+- [List of Contributors](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/wiki/Contributors)
 
 ## License
 
-Exchange Analyzer is released under the MIT license (MIT). Full text of the license is available [here](https://github.com/cunninghamp/ExchangeAnalyzer/blob/master/LICENSE).
+Exchange Analyzer is released under the MIT license (MIT). Full text of the license is available [here](https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/blob/master/LICENSE).
