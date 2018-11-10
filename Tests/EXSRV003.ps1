@@ -1,6 +1,6 @@
 #requires -Modules ExchangeAnalyzer
 
-#This function tests each Exchange server to verify a supported version of the .NET framework istalled
+#This function tests each Exchange server to verify a supported version of the .NET framework is installed
 Function Run-EXSRV003()
 {
     [CmdletBinding()]
@@ -35,6 +35,7 @@ Function Run-EXSRV003()
         If ($NetFxRelease)
         {
             # Results of the check
+            # Refer to https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed#net_b
             switch ($NETFxRelease)
             {
                 378389 {$NetFXVersion = ".NET Framework 4.5"}
@@ -49,6 +50,9 @@ Function Run-EXSRV003()
                 460798 {$NetFXVersion = ".NET Framework 4.7"}
                 460805 {$NetFXVersion = ".NET Framework 4.7"}
                 461310 {$NetFXVersion = ".NET Framework 4.7.1"}
+                461814 {$NetFXVersion = ".NET Framework 4.7.2"}
+                461808 {$NetFXVersion = ".NET Framework 4.7.2"}
+                461814 {$NetFXVersion = ".NET Framework 4.7.2"}
                 default {$NetFxVersion = "Unknown"}
             }
             
