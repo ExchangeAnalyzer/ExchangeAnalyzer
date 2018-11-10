@@ -44,23 +44,23 @@ Function Run-EXSRV002()
         #to proper date values, and exclude legacy versions
         foreach ($build in $BuildNumbersXMLContent)
         {
-            if ($build.'Build number' -like "15.00.*")
+            if ($build.'Build number (long format)' -like "15.00.*")
             {
                 $BuildProperties = [Ordered]@{
                         'Product Name'="Exchange Server 2013"
                         'Description'=$build.'Product name'
-                        'Build Number'=$build.'Build number'
+                        'Build Number'=$build.'Build number (long format)'
                         'Release Date'=$(Get-Date $build.'Release date')
                         }
                 $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
                 $Exchange2013Builds += $buildObject
             }
-            elseif ($build.'Build number' -like "15.01.*")
+            elseif ($build.'Build number (long format)' -like "15.01.*")
             {
                 $BuildProperties = [Ordered]@{
                         'Product Name'="Exchange Server 2016"
                         'Description'=$build.'Product name'
-                        'Build Number'=$build.'Build number'
+                        'Build Number'=$build.'Build number (long format)'
                         'Release Date'=$(Get-Date $build.'Release date')
                         }
                 $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
