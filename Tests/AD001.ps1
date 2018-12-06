@@ -93,6 +93,7 @@ Function Run-AD001()
     {
         $MaxFunctionalLevel = 6
         $MaxFunctionalLevelText = "Windows Server 2012 R2"
+    }
     else
     {
         $MaxFunctionalLevel = 7
