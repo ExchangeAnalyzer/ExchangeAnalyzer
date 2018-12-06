@@ -76,12 +76,13 @@ Function Run-EXSRV002()
                         'Release Date'=$(Get-Date $build.'Release date')
                         }
                 $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
-                $Exchange2016Builds += $buildObject
+                $Exchange2019Builds += $buildObject
             }
         }
 
         $Exchange2013Builds = $Exchange2013Builds | Sort 'Product Name','Release Date' -Descending
         $Exchange2016Builds = $Exchange2016Builds | Sort 'Product Name','Release Date' -Descending
+        $Exchange2019Builds = $Exchange2019Builds | SOrt 'Product Name','Release Date' -Descending
     
         foreach($server in $ExchangeServers)
         {
