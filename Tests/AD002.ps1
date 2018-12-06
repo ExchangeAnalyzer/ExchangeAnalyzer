@@ -56,7 +56,7 @@ Function Run-AD002()
                         Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
                         }
 
-    elseif ($ExchangeVersions.Newest -like "Version 15.2*")
+    if ($ExchangeVersions.Newest -like "Version 15.2*")
     {
         $MinFunctionalLevel = 6
         $MinFunctionalLevelText = "Windows Server 2012 R2"
