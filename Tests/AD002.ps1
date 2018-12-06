@@ -56,7 +56,12 @@ Function Run-AD002()
                         Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
                         }
 
-    if ($ExchangeVersions.Newest -like "Version 15.1*")
+    if ($ExchangeVersions.Newest -like "Version 15.2*")
+    {
+        $MinFunctionalLevel = 6
+        $MinFunctionalLevelText = "Windows Server 2012 R2"
+    }
+    elseif ($ExchangeVersions.Newest -like "Version 15.1*")
     {
         $MinFunctionalLevel = 3
         $MinFunctionalLevelText = "Windows Server 2008"
@@ -72,10 +77,15 @@ Function Run-AD002()
         $MaxFunctionalLevel = 5
         $MaxFunctionalLevelText = "Windows Server 2012"
     }
-    else
+    elseif ($ExchangeVersions.Oldest -like "Version 15.0*")
     {
         $MaxFunctionalLevel = 6
         $MaxFunctionalLevelText = "Windows Server 2012 R2"
+    }
+    else
+    {
+        $MaxFunctionalLevel = 7
+        $MaxFunctionalLevelText = "Windows Server 2016"
     }
 
     Write-Verbose "The Forest Functional level must be:"
@@ -96,6 +106,7 @@ Function Run-AD002()
             4 {$fleveltext = "Windows Server 2008 R2"}
             5 {$fleveltext = "Windows Server 2012"}
             6 {$fleveltext = "Windows Server 2012 R2"}
+            7 {$fleveltext = "Windows Server 2016"}
         }
 
         if ($flevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)

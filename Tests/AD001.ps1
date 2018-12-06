@@ -68,7 +68,12 @@ Function Run-AD001()
                         Oldest = ($ExchangeServers | Sort AdminDisplayVersion -Descending)[-1].AdminDisplayVersion
                         }
 
-    if ($ExchangeVersions.Newest -like "Version 15.1*")
+    if ($ExchangeVersions.Newest -like "Version 15.2*")
+    {
+        $MinFunctionalLevel = 6
+        $MinFunctionalLevelText = "Windows Server 2012 R2"
+    }
+    elseif ($ExchangeVersions.Newest -like "Version 15.1*")
     {
         $MinFunctionalLevel = 3
         $MinFunctionalLevelText = "Windows Server 2008"
@@ -83,6 +88,11 @@ Function Run-AD001()
     {
         $MaxFunctionalLevel = 5
         $MaxFunctionalLevelText = "Windows Server 2012"
+    }
+    elseif ($ExchangeVersions.Oldest -like "Version 15.0*")
+    {
+        $MaxFunctionalLevel = 6
+        $MaxFunctionalLevelText = "Windows Server 2012 R2"
     }
     else
     {
@@ -109,6 +119,7 @@ Function Run-AD001()
             4 {$dleveltext = "Windows Server 2008 R2"}
             5 {$dleveltext = "Windows Server 2012"}
             6 {$dleveltext = "Windows Server 2012 R2"}
+            7 {$dleveltext = "Windows Server 2016"}
         }
 
         if ($dlevel -ge $MinFunctionalLevel -and $dlevel -le $MaxFunctionalLevel)
