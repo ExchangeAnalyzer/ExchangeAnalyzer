@@ -39,6 +39,7 @@ Function Run-EXSRV002()
     {
         $Exchange2013Builds = @()
         $Exchange2016Builds = @()
+        $Exchange2019Builds = @()
 
         #Process results to rename properties, convert release date strings
         #to proper date values, and exclude legacy versions
@@ -59,6 +60,17 @@ Function Run-EXSRV002()
             {
                 $BuildProperties = [Ordered]@{
                         'Product Name'="Exchange Server 2016"
+                        'Description'=$build.'Product name'
+                        'Build Number'=$build.'Build number (long format)'
+                        'Release Date'=$(Get-Date $build.'Release date')
+                        }
+                $buildObject = New-Object -TypeName PSObject -Prop $BuildProperties
+                $Exchange2016Builds += $buildObject
+            }
+            elseif ($build.'Build number (long format)' -like "15.02.*")
+            {
+                $BuildProperties = [Ordered]@{
+                        'Product Name'="Exchange Server 2019"
                         'Description'=$build.'Product name'
                         'Build Number'=$build.'Build number (long format)'
                         'Release Date'=$(Get-Date $build.'Release date')
@@ -154,6 +166,34 @@ Function Run-EXSRV002()
 
                 }
 
+                if ($adv -like "Version 15.2*")
+                {
+                    $MajorVersion = "15.02"
+
+                    $buildnumber = "$MajorVersion.$MinorVersion"
+                    Write-Verbose "Build number is: $($buildnumber)"
+
+                    if ($Exchange2016Builds."Build Number" -contains $buildnumber)
+                    {
+                        $buildindex = $Exchange2019Builds."Build Number".IndexOf("$buildnumber")
+                        Write-Verbose "Build index is: $($buildindex)"
+
+                        $BuildDescription = $($Exchange2019Builds[$buildindex]."Description")
+                        Write-Verbose "Exchange version is: $($BuildDescription)"
+                        $buildage = New-TimeSpan -Start ($Exchange2019Builds[$buildindex]."Release Date") -End $now
+
+                        #Fixes issue when $buildindex is -1 due to being last item in the array
+                        if ($buildindex -eq "-1")
+                        {
+                            $buildindex = $Exchange2019Builds.Count - 1
+                        }
+                    }
+                    else
+                    {
+                        $buildage = "Unknown"
+                    }
+
+                }
 
 
                 if ($buildage -eq "Unknown")
