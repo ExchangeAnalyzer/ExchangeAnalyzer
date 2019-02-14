@@ -1,6 +1,8 @@
 ExchangeDescription,.NET Framework 4.7.2,.NET Framework 4.7.1,.NET Framework 4.7,.NET Framework 4.6.2,.NET Framework 4.6.1,.NET Framework 4.5.2,.NET Framework 4.5.1,.NET Framework 4.5
+Exchange Server 2019 CU1,Supported,Not supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2019 RTM,Supported,Not supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
-Exchange Server 2016 CU11,Supported,Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2016 CU12,Supported,Not Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2016 CU11,Supported,Not Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2016 CU10,Not supported,Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2016 CU9,Not supported,Supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2016 CU8,Not supported,Supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
@@ -9,7 +11,8 @@ Exchange Server 2016 CU6,Not supported,Not supported,Not supported,Supported,Not
 Exchange Server 2016 CU5,Not supported,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2016 CU4,Not supported,Not supported,Not supported,Supported,Supported,Supported,Not supported,Not supported
 Exchange Server 2016 CU3,Not supported,Not supported,Not supported,Supported,Supported,Supported,Not supported,Not supported
-Exchange Server 2016 CU21,Supported,Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2013 CU22,Supported,Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
+Exchange Server 2013 CU21,Supported,Supported,Not supported,Not Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2013 CU20,Not supported,Supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2013 CU19,Not supported,Supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
 Exchange Server 2013 CU18,Not supported,Not supported,Not supported,Supported,Not supported,Not supported,Not supported,Not supported
