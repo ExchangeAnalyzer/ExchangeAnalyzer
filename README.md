@@ -6,7 +6,9 @@
 
 Exchange Analyzer is a community project that has reached feature completion. It is not a complete best practices analyzer, nor should it be considered a complete Exchange organization health check.
 
-There is no active development of further features, however the tool's awareness of Exchange and .NET Framework version numbers is being maintained for compatibility with new Exchange cumulative updates.
+Exchange Analyzer is no longer in active development. You can maintain Exchange Analyzer's reporting accuracy by:
+- Updating the build numbers XML file after each quarterly release using [this script](https://github.com/ExchangeAnalyzer/BuildNumbersXMLFile)
+- Manually updating the /Data/NETFXSupportMatrix.csv file to match the [Exchange Supportability Matrix](https://docs.microsoft.com/en-us/exchange/plan-and-deploy/supportability-matrix?view=exchserver-2019#microsoft-net-framework)
 
 ### Learn More
 
