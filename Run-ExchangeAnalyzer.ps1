@@ -6,7 +6,7 @@ Exchange Analyzer - An Exchange Server 2013/2016 Best Practices Analyzer
 Exchange Analyzer is a PowerShell tool that scans an Exchange Server 2013 or 2016 organization
 and reports on compliance with best practices.
 
-Please refer to the installation and usage instructions at http://exchangeanalyzer.com
+Please refer to the installation and usage instructions at https://github.com/ExchangeAnalyzer/ExchangeAnalyzer/
 
 .OUTPUTS
 Results are output to a HTML report.
